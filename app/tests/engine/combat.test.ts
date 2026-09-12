@@ -1,0 +1,104 @@
+import { describe, expect, it } from 'vitest';
+import { getCombatResult } from '../../src/data/crt';
+import { getEffectiveCombatSkill, resolveCombatRound } from '../../src/engine/combat';
+import { createCharacter } from '../../src/engine/character';
+import type { ActionChart, Enemy } from '../../src/engine/types';
+
+function fixedRng(...values: number[]): () => number {
+  let i = 0;
+  return () => values[Math.min(i++, values.length - 1)];
+}
+
+describe('getCombatResult', () => {
+  it('kills Lone Wolf automatically at ratio <= -11 and a low roll', () => {
+    const result = getCombatResult(-15, 1);
+    expect(result.playerLoss).toBe('K');
+    expect(result.enemyLoss).toBe(0);
+  });
+
+  it('kills the enemy automatically at ratio >= 11 and a high roll', () => {
+    const result = getCombatResult(15, 9);
+    expect(result.enemyLoss).toBe('K');
+    expect(result.playerLoss).toBe(0);
+  });
+
+  it('is monotonic: a better ratio never increases the player loss for the same roll', () => {
+    for (let roll = 0; roll <= 9; roll++) {
+      let previous = getCombatResult(-11, roll);
+      for (let ratio = -10; ratio <= 11; ratio++) {
+        const current = getCombatResult(ratio, roll);
+        const prevLoss = previous.playerLoss === 'K' ? 8 : previous.playerLoss;
+        const currLoss = current.playerLoss === 'K' ? 8 : current.playerLoss;
+        expect(currLoss).toBeLessThanOrEqual(prevLoss);
+        previous = current;
+      }
+    }
+  });
+
+  it('returns numeric losses within sane bounds away from the extremes', () => {
+    const result = getCombatResult(0, 5);
+    expect(result.enemyLoss).not.toBe('K');
+    expect(result.playerLoss).not.toBe('K');
+  });
+});
+
+describe('getEffectiveCombatSkill', () => {
+  const baseChart: ActionChart = {
+    ...createCharacter(fixedRng(0, 0, 0)),
+    disciplines: [],
+    equippedWeapon: 'Axe',
+    weapons: ['Axe'],
+  };
+  const enemy: Enemy = { name: 'Giak', combatSkill: 10, endurance: 10 };
+
+  it('applies a -4 penalty when no weapon is equipped', () => {
+    const unarmed: ActionChart = { ...baseChart, equippedWeapon: null };
+    expect(getEffectiveCombatSkill(unarmed, enemy)).toBe(baseChart.combatSkill - 4);
+  });
+
+  it('applies +2 Weaponskill bonus only when wielding the matching weapon', () => {
+    const withDiscipline: ActionChart = {
+      ...baseChart,
+      disciplines: ['Weaponskill'],
+      weaponskillWeapon: 'Axe',
+    };
+    expect(getEffectiveCombatSkill(withDiscipline, enemy)).toBe(baseChart.combatSkill + 2);
+
+    const wrongWeapon: ActionChart = { ...withDiscipline, weaponskillWeapon: 'Sword' };
+    expect(getEffectiveCombatSkill(wrongWeapon, enemy)).toBe(baseChart.combatSkill);
+  });
+
+  it('applies +2 Mindblast bonus unless the enemy is immune', () => {
+    const withMindblast: ActionChart = { ...baseChart, disciplines: ['Mindblast'] };
+    expect(getEffectiveCombatSkill(withMindblast, enemy)).toBe(baseChart.combatSkill + 2);
+    expect(getEffectiveCombatSkill(withMindblast, { ...enemy, mindblastImmune: true })).toBe(baseChart.combatSkill);
+  });
+});
+
+describe('resolveCombatRound', () => {
+  it('applies Mindshield to fully block Mindblast damage', () => {
+    const chart: ActionChart = {
+      ...createCharacter(fixedRng(0, 0, 0)),
+      disciplines: ['Mindshield'],
+      equippedWeapon: 'Axe',
+      weapons: ['Axe'],
+    };
+    const enemy: Enemy = { name: 'Mindblasting Foe', combatSkill: 30, endurance: 10, attacksWithMindblast: true };
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.9));
+    expect(result.playerLoss).toBe(0);
+  });
+
+  it('reduces both endurances and flags kills at zero', () => {
+    const chart: ActionChart = {
+      ...createCharacter(fixedRng(0, 0, 0)),
+      combatSkill: 20,
+      enduranceCurrent: 5,
+      equippedWeapon: 'Axe',
+      weapons: ['Axe'],
+    };
+    const enemy: Enemy = { name: 'Weakling', combatSkill: 1, endurance: 1 };
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.99));
+    expect(result.enemy.endurance).toBe(0);
+    expect(result.enemyKilled).toBe(true);
+  });
+});
