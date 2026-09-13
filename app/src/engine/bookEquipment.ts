@@ -212,6 +212,34 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
       },
     ],
   },
+  ss: {
+    goldRollBonus: 10,
+    weaponPool: ['Dagger', 'Sword', 'Spear', 'Mace'],
+    healingPotionLabel: 'Potion of Laumspur',
+    applyBaseEquipment: (c) => {
+      addSpecialItem(c, { name: 'Map of the Desert Empire' });
+    },
+    chooseCount: 4,
+    chooseOptions: [
+      { id: 'dagger', label: 'Dagger', apply: (c) => addWeaponIfRoom(c, 'Dagger') },
+      { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: (c) => grantHealingPotion(c) },
+      { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
+      { id: 'spear', label: 'Spear', apply: (c) => addWeaponIfRoom(c, 'Spear') },
+      {
+        id: 'special-rations',
+        label: '2 Special Rations',
+        apply: (c) => { for (let i = 0; i < 2; i++) addMealIfRoom(c); },
+      },
+      { id: 'mace', label: 'Mace', apply: (c) => addWeaponIfRoom(c, 'Mace') },
+      {
+        id: 'shield',
+        label: 'Shield (+2 Combat Skill in combat)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Shield', knownEffects: '+2 Combat Skill in combat' });
+        },
+      },
+    ],
+  },
 };
 
 export function getBookEquipment(bookId: string): BookEquipmentConfig {

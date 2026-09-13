@@ -3,12 +3,14 @@ import sectionsFt from '../data/sections.ft.json';
 import sectionsFa from '../data/sections.fa.json';
 import sectionsTck from '../data/sections.tck.json';
 import sectionsTcd from '../data/sections.tcd.json';
+import sectionsSs from '../data/sections.ss.json';
 import type { SectionMap } from '../data/section-types';
 import { getFootnote } from '../data/footnotes';
 import { applyHealingRegen } from '../engine/disciplines';
 import { ActionChartSidebar } from '../components/ActionChartSidebar';
 import { ChoiceList } from '../components/ChoiceList';
 import { RandomNumberBranch } from '../components/RandomNumberBranch';
+import { ManualSectionJump } from '../components/ManualSectionJump';
 import { CombatModal } from '../components/CombatModal';
 import { getBook } from '../data/books';
 import type { ActionChart } from '../engine/types';
@@ -18,6 +20,7 @@ const SECTIONS_BY_BOOK: Record<string, SectionMap> = {
   fa: sectionsFa as unknown as SectionMap,
   tck: sectionsTck as unknown as SectionMap,
   tcd: sectionsTcd as unknown as SectionMap,
+  ss: sectionsSs as unknown as SectionMap,
 };
 
 const EVADE_KEYWORDS = /\bevad|\bflee|\bescape|\brun away\b/i;
@@ -68,11 +71,18 @@ export function GameScreen({ chart, onChartChange, onGameOver }: Props) {
         ))}
 
         {footnote && <div className="callout callout-info">📖 {footnote.note}</div>}
-        {section.parserWarning && (
+        {section.hasPuzzle ? (
           <div className="callout callout-warning">
-            🎲 Esta seção envolve um sorteio de número aleatório com efeito narrado em texto livre — leia com atenção e
-            ajuste sua Ficha de Aventura manualmente se necessário.
+            🧩 Esta seção é um quebra-cabeça do livro original — descubra o número da seção certa pelas pistas da
+            história (pode envolver consultar um mapa ou outra referência do livro) e digite abaixo.
           </div>
+        ) : (
+          section.parserWarning && (
+            <div className="callout callout-warning">
+              🎲 Esta seção envolve um sorteio de número aleatório com efeito narrado em texto livre — leia com
+              atenção e ajuste sua Ficha de Aventura manualmente se necessário.
+            </div>
+          )
         )}
 
         {section.combats.length > 0 && !combatResolved && (
@@ -117,7 +127,14 @@ export function GameScreen({ chart, onChartChange, onGameOver }: Props) {
             {section.randomNumberBranch && section.ranges ? (
               <RandomNumberBranch ranges={section.ranges} onResolved={goTo} />
             ) : (
-              <ChoiceList choices={section.choices} onChoose={goTo} />
+              <>
+                {section.choices.length > 0 && <ChoiceList choices={section.choices} onChoose={goTo} />}
+                {/* sect58-style sections mix a puzzle option with regular choices (wrong combo / give up),
+                    so this must not be exclusive with ChoiceList above. */}
+                {section.hasPuzzle && (
+                  <ManualSectionJump maxSection={getBook(chart.bookId).sectionCount} onGo={goTo} />
+                )}
+              </>
             )}
           </>
         )}

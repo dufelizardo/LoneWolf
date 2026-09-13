@@ -9,7 +9,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const KAI_ROOT = process.env.LW_KAI_ROOT ?? join(__dirname, '../../kai');
 const DATA_DIR = join(__dirname, '../src/data');
 const ILLUSTRATIONS_ROOT = join(__dirname, '../public/illustrations');
-const SECTION_COUNT = 350;
 
 function contentDirFor(book: BookMeta): string {
   return join(KAI_ROOT, book.id, 'en', 'xhtml', 'lw', book.code);
@@ -129,6 +128,10 @@ function parseSectionFile(contentDir: string, num: number): Section {
   combatParagraphs.remove();
 
   const isDeadEnd = clone.find('p.deadend').length > 0;
+  // Reader-solved puzzles (e.g. sect58/sect331 in Shadow on the Sand) use <p class="puzzle"> and
+  // link to part1.htm/part2.htm (the printed book's table of contents) instead of a sect*.htm
+  // target, so no choice gets extracted below — without this flag they'd be misread as endings.
+  const hasPuzzle = clone.find('p.puzzle').length > 0;
 
   const illustrations: string[] = [];
   clone.find('figure img').each((_, el) => {
@@ -162,10 +165,10 @@ function parseSectionFile(contentDir: string, num: number): Section {
   }
 
   const choices: Choice[] = choicesRaw.map((c) => ({ text: c.text, targetSection: c.targetSection }));
-  const isEnding = choices.length === 0 && !isDeadEnd;
+  const isEnding = choices.length === 0 && !isDeadEnd && !hasPuzzle;
 
-  if (choices.length === 0 && !isDeadEnd && !isEnding) {
-    parserWarning = (parserWarning ? parserWarning + '; ' : '') + 'no choices found and not marked as deadend/ending';
+  if (hasPuzzle) {
+    parserWarning = (parserWarning ? parserWarning + '; ' : '') + 'puzzle section, manual section entry required';
   }
 
   return {
@@ -176,6 +179,7 @@ function parseSectionFile(contentDir: string, num: number): Section {
     choices,
     isDeadEnd,
     isEnding,
+    hasPuzzle,
     randomNumberBranch,
     ranges,
     parserWarning,
@@ -217,7 +221,7 @@ function parseBook(book: BookMeta): { warnings: string[] } {
   const sections: SectionMap = {};
   const warnings: string[] = [];
 
-  for (let i = 1; i <= SECTION_COUNT; i++) {
+  for (let i = 1; i <= book.sectionCount; i++) {
     const section = parseSectionFile(contentDir, i);
     sections[i] = section;
     if (section.parserWarning) warnings.push(`sect${i}: ${section.parserWarning}`);
