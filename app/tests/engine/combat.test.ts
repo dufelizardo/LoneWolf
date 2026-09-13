@@ -136,6 +136,55 @@ describe('getEffectiveCombatSkill', () => {
     expect(getEffectiveCombatSkill(baseChart, enemy, { useCombatPotion: false })).toBe(baseChart.combatSkill);
     expect(getEffectiveCombatSkill(baseChart, enemy)).toBe(baseChart.combatSkill);
   });
+
+  it('upgrades the Weaponmastery bonus to +4 (instead of +3) at Scion-kai rank (8+ Magnakai Disciplines)', () => {
+    const withMastery: ActionChart = { ...baseChart, masteredWeapons: ['Axe', 'Bow', 'Sword'] };
+
+    // Mentora rank (7 disciplines) still gets the base +3.
+    const mentoraWeaponmaster: ActionChart = {
+      ...withMastery,
+      magnakaiDisciplines: ['Weaponmastery', 'Curing', 'Huntmastery', 'Divination', 'Nexus', 'PsiScreen', 'Pathsmanship'],
+    };
+    expect(getEffectiveCombatSkill(mentoraWeaponmaster, enemy)).toBe(baseChart.combatSkill + 3);
+
+    // Scion-kai rank (8 disciplines) gets +4.
+    const scionKaiWeaponmaster: ActionChart = {
+      ...withMastery,
+      magnakaiDisciplines: [
+        'Weaponmastery', 'Curing', 'Huntmastery', 'Divination', 'Nexus', 'PsiScreen', 'Pathsmanship', 'AnimalControl',
+      ],
+    };
+    expect(getEffectiveCombatSkill(scionKaiWeaponmaster, enemy)).toBe(baseChart.combatSkill + 4);
+  });
+
+  it('reduces the unarmed penalty further to -1 at Scion-kai rank (8+ Magnakai Disciplines)', () => {
+    const unarmed: ActionChart = { ...baseChart, equippedWeapon: null };
+
+    // Tutelary rank (5 disciplines) still gets -2.
+    const tutelaryWeaponmaster: ActionChart = {
+      ...unarmed,
+      magnakaiDisciplines: ['Weaponmastery', 'Curing', 'Huntmastery', 'Divination', 'Nexus'],
+    };
+    expect(getEffectiveCombatSkill(tutelaryWeaponmaster, enemy)).toBe(baseChart.combatSkill - 2);
+
+    // Scion-kai rank (8 disciplines) gets -1.
+    const scionKaiWeaponmaster: ActionChart = {
+      ...unarmed,
+      magnakaiDisciplines: [
+        'Weaponmastery', 'Curing', 'Huntmastery', 'Divination', 'Nexus', 'PsiScreen', 'Pathsmanship', 'AnimalControl',
+      ],
+    };
+    expect(getEffectiveCombatSkill(scionKaiWeaponmaster, enemy)).toBe(baseChart.combatSkill - 1);
+
+    // 8 disciplines without Weaponmastery: still the base -4.
+    const scionKaiWithoutWeaponmastery: ActionChart = {
+      ...unarmed,
+      magnakaiDisciplines: [
+        'Curing', 'Huntmastery', 'Divination', 'Nexus', 'PsiScreen', 'Pathsmanship', 'AnimalControl', 'Invisibility',
+      ],
+    };
+    expect(getEffectiveCombatSkill(scionKaiWithoutWeaponmastery, enemy)).toBe(baseChart.combatSkill - 4);
+  });
 });
 
 describe('resolveCombatRound', () => {

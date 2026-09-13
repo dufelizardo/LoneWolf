@@ -177,6 +177,16 @@ describe('carryOverCharacterToBook healing potion carry-over (regression)', () =
   });
 });
 
+describe('chooseEquipmentOptions re-picking an already-carried weapon (regression)', () => {
+  it('does not duplicate a weapon the carried-over character already owns', () => {
+    const book1Chart = createFreshCharacterForBook('ft', fixedRng(0.3, 0.3, 0.3, 0.3));
+    const withSword = { ...book1Chart, weapons: ['Sword'] as const, equippedWeapon: 'Sword' as const };
+    const carried = carryOverCharacterToBook(withSword, 'fa', fixedRng(0));
+    const equipped = chooseEquipmentOptions(carried, ['sword', 'mace']);
+    expect(equipped.weapons.filter((w) => w === 'Sword')).toHaveLength(1);
+  });
+});
+
 describe('chooseEquipmentOptions (book "tcd", choose-six)', () => {
   const sixOptions = [
     'dagger',
@@ -599,5 +609,46 @@ describe('chooseEquipmentOptions (book "tdt", choose-five)', () => {
     const chart = createFreshCharacterForBook('tdt', () => 0);
     expect(() => chooseEquipmentOptions(chart, fiveOptions.slice(0, 4))).toThrow();
     expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
+  });
+});
+
+describe('chooseEquipmentOptions (book "tpt", choose-six)', () => {
+  const sixOptions = ['sword', 'bow', 'quiver', 'rope', 'potion-of-laumspur', 'meals'];
+
+  it('grants Sword and Bow weapons', () => {
+    const chart = createFreshCharacterForBook('tpt', () => 0);
+    const equipped = chooseEquipmentOptions(chart, sixOptions);
+    expect(equipped.weapons).toContain('Sword');
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('tpt', () => 0);
+    const equipped = chooseEquipmentOptions(chart, sixOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants 3 Meals on top of the 2 base Meals (5 total)', () => {
+    const chart = createFreshCharacterForBook('tpt', () => 0);
+    expect(chart.meals).toBe(2);
+    const equipped = chooseEquipmentOptions(chart, sixOptions);
+    expect(equipped.meals).toBe(5);
+  });
+
+  it('grants a Potion of Laumspur dose', () => {
+    const chart = createFreshCharacterForBook('tpt', () => 0);
+    const equipped = chooseEquipmentOptions(chart, sixOptions);
+    expect(equipped.healingPotionDoses).toBe(1);
+  });
+
+  it('never grants a starting map (unlike every other Magnakai book)', () => {
+    const chart = createFreshCharacterForBook('tpt', () => 0);
+    expect(chart.specialItems.some((i) => i.name.startsWith('Map'))).toBe(false);
+  });
+
+  it('rejects a selection that is not exactly six options', () => {
+    const chart = createFreshCharacterForBook('tpt', () => 0);
+    expect(() => chooseEquipmentOptions(chart, sixOptions.slice(0, 5))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...sixOptions, 'dagger'])).toThrow();
   });
 });

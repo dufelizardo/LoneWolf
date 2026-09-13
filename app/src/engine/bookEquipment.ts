@@ -29,6 +29,10 @@ export interface BookEquipmentConfig {
 }
 
 function addWeaponIfRoom(chart: ActionChart, weapon: WeaponType) {
+  // A carried-over character can be offered a weapon they already own (their "Equipamento herdado"
+  // isn't excluded from the choices shown) - without this guard picking it again would push a
+  // duplicate entry into chart.weapons, breaking components that key their weapon list by name.
+  if (chart.weapons.includes(weapon)) return;
   if (chart.weapons.length >= MAX_WEAPONS) return;
   chart.weapons.push(weapon);
   if (!chart.equippedWeapon) chart.equippedWeapon = weapon;
@@ -460,6 +464,42 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
         label: 'Potion of Alether',
         apply: (c) => grantCombatPotion(c),
       },
+    ],
+  },
+  tpt: {
+    goldRollBonus: 10,
+    // Never actually read for tpt — same reasoning as tkt above.
+    weaponPool: ALL_WEAPONS,
+    healingPotionLabel: 'Potion of Laumspur',
+    // No map is granted here (unlike every other Magnakai book) — the story drops Lone Wolf
+    // straight into the otherworldly Daziarn plane rather than a normal territory to traverse
+    // (equipmnt.htm grants only a Backpack with 2 Meals and Gold Crowns).
+    applyBaseEquipment: (c) => {
+      addMealIfRoom(c);
+      addMealIfRoom(c);
+    },
+    chooseCount: 6,
+    chooseOptions: [
+      { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
+      { id: 'bow', label: 'Bow', apply: (c) => addWeaponIfRoom(c, 'Bow') },
+      {
+        id: 'quiver',
+        label: 'Quiver (6 Arrows)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Quiver', knownEffects: 'Holds up to 6 Arrows' });
+          addArrows(c, 6);
+        },
+      },
+      { id: 'rope', label: 'Rope', apply: (c) => addBackpackItemIfRoom(c, 'Rope') },
+      { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: (c) => grantHealingPotion(c) },
+      { id: 'lantern', label: 'Lantern', apply: (c) => addBackpackItemIfRoom(c, 'Lantern') },
+      { id: 'mace', label: 'Mace', apply: (c) => addWeaponIfRoom(c, 'Mace') },
+      {
+        id: 'meals',
+        label: '3 Meals',
+        apply: (c) => { for (let i = 0; i < 3; i++) addMealIfRoom(c); },
+      },
+      { id: 'dagger', label: 'Dagger', apply: (c) => addWeaponIfRoom(c, 'Dagger') },
     ],
   },
 };
