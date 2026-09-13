@@ -21,8 +21,7 @@ export function createFreshCharacterForBook(bookId: string, rng: Rng = Math.rand
     meals: 0,
     specialItems: [],
     goldCrowns: rollRandomNumber(rng) + config.goldRollBonus,
-    hasHealingPotion: false,
-    hasHealingPotionUsed: false,
+    healingPotionDoses: 0,
     currentSection: 1,
     visitedSections: [],
     isAlive: true,
@@ -91,13 +90,14 @@ function assignDisciplines(chart: ActionChart, disciplines: Discipline[], rng: R
   return next;
 }
 
-/** Applies exactly two chosen equipment options for a 'choose-two' book. */
+/** Applies the player's chosen equipment options for a choose-based book (count set by chooseCount). */
 export function chooseEquipmentOptions(chart: ActionChart, optionIds: string[]): ActionChart {
   const config = getBookEquipment(chart.bookId);
   const options = config.chooseOptions;
-  if (!options) throw new Error(`Book ${chart.bookId} does not use choose-two equipment`);
-  if (optionIds.length !== 2) {
-    throw new Error(`Expected exactly 2 equipment choices, got ${optionIds.length}`);
+  if (!options) throw new Error(`Book ${chart.bookId} does not use choose-based equipment`);
+  const required = config.chooseCount ?? 2;
+  if (optionIds.length !== required) {
+    throw new Error(`Expected exactly ${required} equipment choices, got ${optionIds.length}`);
   }
 
   const next: ActionChart = {

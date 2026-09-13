@@ -44,7 +44,8 @@ export type WeaponType =
   | 'Quarterstaff'
   | 'Spear'
   | 'Broadsword'
-  | 'Warhammer';
+  | 'Warhammer'
+  | 'Dagger';
 
 export const ALL_WEAPONS: WeaponType[] = [
   'Axe',
@@ -55,6 +56,7 @@ export const ALL_WEAPONS: WeaponType[] = [
   'Spear',
   'Broadsword',
   'Warhammer',
+  'Dagger',
 ];
 
 export const MAX_WEAPONS = 2;
@@ -81,8 +83,8 @@ export interface ActionChart {
   meals: number;
   specialItems: SpecialItem[];
   goldCrowns: number;
-  hasHealingPotion: boolean;
-  hasHealingPotionUsed: boolean;
+  /** Number of unused healing-potion doses currently carried (0 = none). Each dose restores a fixed amount once used. */
+  healingPotionDoses: number;
   currentSection: number;
   visitedSections: number[];
   isAlive: boolean;
@@ -98,7 +100,7 @@ export interface Enemy {
   mindblastImmune?: boolean;
 }
 
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 /** The ActionChart snapshot as it stood the moment a book's canonical ending was reached. */
 export interface CampaignProgress {

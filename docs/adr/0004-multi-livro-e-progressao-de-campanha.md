@@ -13,6 +13,11 @@ arquitetura — só dados novos (`books.ts`, `bookEquipment.ts`), nenhuma mudan�
 `parseContent.ts` nem no motor de combate/disciplinas além do apontado na seção "Atualização —
 Livro 3" abaixo. Ver essa seção para os dois ajustes de motor que o conteúdo do Livro 3 forçou.
 
+**Atualização:** Livro 4 (*The Chasm of Doom*) adicionado. Reaproveita a mesma arquitetura, mas
+forçou duas generalizações reais no motor (equipamento "escolha N" configurável, Poção de Cura como
+contador de doses) e revelou que uma terceira mudança aparentemente necessária (restrição zonal de
+Hunting) na verdade não exige nenhum código — ver seção "Atualização — Livro 4" abaixo.
+
 ## Contexto
 
 O jogo só conhecia um livro (*Flight from the Dark*, id interno `ft`, conteúdo em
@@ -139,6 +144,44 @@ Também foram corrigidos dois bugs reais na Poção de Cura, achados ao investig
 graça uma poção já usada a cada transferência de livro, e escolher uma poção nova deixava o
 personagem com uma poção "já usada" sem nunca ter usado a nova. Ambos exigiam pensar em 3 livros
 em sequência para aparecer — não davam pra notar só com 2.
+
+## Atualização — Livro 4 (Chasm of Doom)
+
+Confirma o segundo `❌` do trade-off de equipamento acima ("um Livro 3 com mecânica totalmente
+diferente pode exigir um terceiro modo") — só que foi o Livro 4, não o 3, que exigiu isso:
+
+- **Equipamento "escolha N" configurável**: os Livros 2-3 sempre exigiram escolher exatamente 2
+  itens. `equipmnt.htm` do Livro 4 pede **exatamente 6 de 9** ("you may take up to six... list the
+  six items that you choose"). Em vez de criar um `equipmentMode` novo com lógica própria,
+  generalizei o "2" hardcoded (em `chooseEquipmentOptions` e na tela de criação de personagem) para
+  um campo `chooseCount` no `BookEquipmentConfig` de cada livro — `fa`/`tck` ganharam `chooseCount: 2`
+  explícito, `tcd` usa `chooseCount: 6`. `equipmentMode: 'choose-six'` em `books.ts` é só
+  documentacional (confirmei por grep que `equipmentMode` nunca é lido em lugar nenhum do código —
+  quem decide o comportamento real é sempre a presença de `randomTable`/`chooseOptions` e agora
+  `chooseCount`).
+- **Poção de Cura vira contador de doses**: a opção de equipamento do Livro 4 concede **2 Potions of
+  Laumspur** de uma vez ("each potion contains enough for one dose") — conferi o texto original dos
+  Livros 1-3 e todos os três dizem explicitamente "there is only enough for one dose", então isso é
+  uma diferença real do Livro 4, não uma inconsistência dos livros anteriores. O modelo antigo
+  (`hasHealingPotion: boolean` + `hasHealingPotionUsed: boolean`) só suportava 0 ou 1 dose. Troquei
+  por `healingPotionDoses: number`, o que também **elimina** a necessidade dos dois patches de
+  carry-over que o Livro 3 precisou (documentados acima) — um contador simplesmente atravessa
+  `...previous` sem nenhum tratamento especial, porque somar/subtrair um número já é a operação
+  certa por natureza (diferente de um par de booleanos, que não tem uma forma óbvia de "somar").
+- **Achado que não virou código — restrição zonal de Hunting**: `equipmnt.htm` do Livro 4 diz que
+  Hunting não funciona "in an area of wilderness where the opportunity for hunting is limited", e o
+  conteúdo confirma duas zonas (Wildlands ao sul do Pass of Moytura, Maaken Mines) com avisos
+  repetidos no texto de cada seção relevante, não um único ponto de entrada/saída fixo. Antes de
+  implementar rastreamento de zona, investiguei como o app realmente aplica a penalidade de -3
+  Endurance por falta de Refeição, e descobri que **`applyMissedMealPenalty` nunca é chamada em
+  lugar nenhum do fluxo de jogo** (`GameScreen.tsx` não a invoca — o único lugar que a chama é o
+  próprio teste unitário). A penalidade sempre foi aplicada manualmente pelo jogador, lendo o texto
+  da seção e usando os botões de Endurance/Refeição já existentes na Ficha — isso vale pro
+  `huntingDisabled` do Livro 3 também. Ou seja, a isenção de Hunting **sempre foi uma decisão manual
+  do jogador**, então a restrição zonal do Livro 4 não precisa de nenhum mecanismo novo: o jogador já
+  vai se orientar pelo mesmo aviso que o texto do livro sempre mostrou, exatamente como faz pra
+  qualquer outra Refeição do jogo. Ficou só documentado aqui pra ninguém tentar "terminar" essa
+  feature achando que falta alguma coisa.
 
 ## Consequências
 

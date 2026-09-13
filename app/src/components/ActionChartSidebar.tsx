@@ -173,8 +173,8 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
             Adicionar
           </button>
         </div>
-        {chart.hasHealingPotion && (
-          <button type="button" onClick={() => onChange(useHealingPotion(chart))} disabled={chart.hasHealingPotionUsed}>
+        {chart.healingPotionDoses > 0 && (
+          <button type="button" onClick={() => onChange(useHealingPotion(chart))}>
             Usar {healingPotionLabel}
           </button>
         )}
@@ -197,8 +197,8 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
               {item.description && <div className="item-detail">{item.description}</div>}
             </li>
           ))}
-          {chart.hasHealingPotion && (
-            <li>{healingPotionLabel}{chart.hasHealingPotionUsed ? ' (usada)' : ''}</li>
+          {chart.healingPotionDoses > 0 && (
+            <li>{healingPotionLabel}{chart.healingPotionDoses > 1 ? ` x${chart.healingPotionDoses}` : ''}</li>
           )}
         </ul>
         <div className="button-row">

@@ -69,20 +69,27 @@ describe('applyHealingRegen', () => {
 });
 
 describe('useHealingPotion', () => {
-  it('restores 4 Endurance and marks the potion used', () => {
-    const chart = chartFor('tck', {
-      hasHealingPotion: true,
-      hasHealingPotionUsed: false,
-      enduranceCurrent: 10,
-      enduranceMax: 20,
-    });
+  it('restores 4 Endurance and consumes one dose', () => {
+    const chart = chartFor('tck', { healingPotionDoses: 1, enduranceCurrent: 10, enduranceMax: 20 });
     const after = useHealingPotion(chart);
     expect(after.enduranceCurrent).toBe(14);
-    expect(after.hasHealingPotionUsed).toBe(true);
+    expect(after.healingPotionDoses).toBe(0);
   });
 
-  it('is a no-op once already used', () => {
-    const chart = chartFor('tck', { hasHealingPotion: true, hasHealingPotionUsed: true, enduranceCurrent: 10 });
+  it('is a no-op once out of doses', () => {
+    const chart = chartFor('tck', { healingPotionDoses: 0, enduranceCurrent: 10 });
     expect(useHealingPotion(chart).enduranceCurrent).toBe(10);
+  });
+
+  it('supports multiple doses (e.g. Book 4\'s "2 Potions of Laumspur")', () => {
+    const chart = chartFor('tcd', { healingPotionDoses: 2, enduranceCurrent: 10, enduranceMax: 20 });
+    const afterFirst = useHealingPotion(chart);
+    expect(afterFirst.healingPotionDoses).toBe(1);
+    expect(afterFirst.enduranceCurrent).toBe(14);
+    const afterSecond = useHealingPotion(afterFirst);
+    expect(afterSecond.healingPotionDoses).toBe(0);
+    expect(afterSecond.enduranceCurrent).toBe(18);
+    const afterThird = useHealingPotion(afterSecond);
+    expect(afterThird.enduranceCurrent).toBe(18);
   });
 });
