@@ -59,6 +59,12 @@ export const MAX_WEAPONS = 2;
 export const MAX_BACKPACK_ITEMS = 8;
 export const MAX_GOLD_CROWNS = 50;
 
+export interface SpecialItem {
+  name: string;
+  description?: string;
+  knownEffects?: string;
+}
+
 export interface ActionChart {
   bookId: string;
   combatSkill: number;
@@ -69,7 +75,9 @@ export interface ActionChart {
   weapons: WeaponType[];
   equippedWeapon: WeaponType | null;
   backpackItems: string[];
-  specialItems: string[];
+  /** Meals count toward the shared 8-item Backpack limit but are tracked separately (see MAX_BACKPACK_ITEMS). */
+  meals: number;
+  specialItems: SpecialItem[];
   goldCrowns: number;
   hasHealingPotion: boolean;
   hasHealingPotionUsed: boolean;
@@ -88,7 +96,7 @@ export interface Enemy {
   mindblastImmune?: boolean;
 }
 
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 /** The ActionChart snapshot as it stood the moment a book's canonical ending was reached. */
 export interface CampaignProgress {

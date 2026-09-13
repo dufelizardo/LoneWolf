@@ -1,4 +1,8 @@
-import { MAX_BACKPACK_ITEMS, MAX_GOLD_CROWNS, MAX_WEAPONS, type ActionChart, type WeaponType } from './types';
+import { MAX_BACKPACK_ITEMS, MAX_GOLD_CROWNS, MAX_WEAPONS, type ActionChart, type SpecialItem, type WeaponType } from './types';
+
+function backpackSlotsUsed(chart: ActionChart): number {
+  return chart.backpackItems.length + chart.meals;
+}
 
 export function adjustEndurance(chart: ActionChart, delta: number): ActionChart {
   const enduranceCurrent = Math.max(0, Math.min(chart.enduranceMax, chart.enduranceCurrent + delta));
@@ -16,7 +20,7 @@ export function adjustGold(chart: ActionChart, delta: number): ActionChart {
 }
 
 export function addBackpackItem(chart: ActionChart, item: string): ActionChart {
-  if (chart.backpackItems.length >= MAX_BACKPACK_ITEMS) return chart;
+  if (backpackSlotsUsed(chart) >= MAX_BACKPACK_ITEMS) return chart;
   return { ...chart, backpackItems: [...chart.backpackItems, item] };
 }
 
@@ -28,12 +32,22 @@ export function removeBackpackItem(chart: ActionChart, item: string): ActionChar
   return { ...chart, backpackItems };
 }
 
-export function addSpecialItem(chart: ActionChart, item: string): ActionChart {
+export function addMeal(chart: ActionChart): ActionChart {
+  if (backpackSlotsUsed(chart) >= MAX_BACKPACK_ITEMS) return chart;
+  return { ...chart, meals: chart.meals + 1 };
+}
+
+export function removeMeal(chart: ActionChart): ActionChart {
+  if (chart.meals <= 0) return chart;
+  return { ...chart, meals: chart.meals - 1 };
+}
+
+export function addSpecialItem(chart: ActionChart, item: SpecialItem): ActionChart {
   return { ...chart, specialItems: [...chart.specialItems, item] };
 }
 
-export function removeSpecialItem(chart: ActionChart, item: string): ActionChart {
-  const index = chart.specialItems.indexOf(item);
+export function removeSpecialItem(chart: ActionChart, name: string): ActionChart {
+  const index = chart.specialItems.findIndex((item) => item.name === name);
   if (index === -1) return chart;
   const specialItems = [...chart.specialItems];
   specialItems.splice(index, 1);

@@ -26,7 +26,7 @@ export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy): numbe
   }
 
   for (const item of chart.specialItems) {
-    skill += SPECIAL_ITEM_COMBAT_BONUS[item] ?? 0;
+    skill += SPECIAL_ITEM_COMBAT_BONUS[item.name] ?? 0;
   }
 
   return skill;

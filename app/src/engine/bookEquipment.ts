@@ -1,4 +1,4 @@
-import type { ActionChart, WeaponType } from './types';
+import type { ActionChart, SpecialItem, WeaponType } from './types';
 import { MAX_BACKPACK_ITEMS, MAX_WEAPONS } from './types';
 
 export interface EquipmentOption {
@@ -26,9 +26,18 @@ function addWeaponIfRoom(chart: ActionChart, weapon: WeaponType) {
   if (!chart.equippedWeapon) chart.equippedWeapon = weapon;
 }
 
-function addBackpackItemIfRoom(chart: ActionChart, item: string) {
-  if (chart.backpackItems.length >= MAX_BACKPACK_ITEMS) return;
-  chart.backpackItems.push(item);
+/** Backpack Items and Meals share the same 8-slot cap. */
+function hasBackpackRoom(chart: ActionChart): boolean {
+  return chart.backpackItems.length + chart.meals < MAX_BACKPACK_ITEMS;
+}
+
+function addMealIfRoom(chart: ActionChart) {
+  if (!hasBackpackRoom(chart)) return;
+  chart.meals += 1;
+}
+
+function addSpecialItem(chart: ActionChart, item: SpecialItem) {
+  chart.specialItems.push(item);
 }
 
 export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
@@ -37,8 +46,8 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
     weaponPool: ['Axe', 'Sword', 'Mace', 'Quarterstaff', 'Spear', 'Broadsword'],
     applyBaseEquipment: (c) => {
       addWeaponIfRoom(c, 'Axe');
-      addBackpackItemIfRoom(c, 'Meal');
-      c.specialItems.push('Map of Sommerlund');
+      addMealIfRoom(c);
+      addSpecialItem(c, { name: 'Map of Sommerlund' });
     },
     randomTable: {
       1: { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
@@ -46,17 +55,17 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
         id: 'helmet',
         label: 'Helmet (+2 Endurance)',
         apply: (c) => {
-          c.specialItems.push('Helmet');
+          addSpecialItem(c, { name: 'Helmet', knownEffects: '+2 Endurance' });
           c.enduranceMax += 2;
           c.enduranceCurrent += 2;
         },
       },
-      3: { id: 'two-meals', label: 'Two Meals', apply: (c) => { addBackpackItemIfRoom(c, 'Meal'); addBackpackItemIfRoom(c, 'Meal'); } },
+      3: { id: 'two-meals', label: 'Two Meals', apply: (c) => { addMealIfRoom(c); addMealIfRoom(c); } },
       4: {
         id: 'chainmail',
         label: 'Chainmail Waistcoat (+4 Endurance)',
         apply: (c) => {
-          c.specialItems.push('Chainmail Waistcoat');
+          addSpecialItem(c, { name: 'Chainmail Waistcoat', knownEffects: '+4 Endurance' });
           c.enduranceMax += 4;
           c.enduranceCurrent += 4;
         },
@@ -73,17 +82,22 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
     goldRollBonus: 10,
     weaponPool: ['Sword', 'ShortSword', 'Mace', 'Quarterstaff', 'Spear', 'Broadsword'],
     applyBaseEquipment: (c) => {
-      c.specialItems.push('Map', 'Seal of Hammerdal');
+      addSpecialItem(c, { name: 'Map', description: 'Found in the ashes of the Kai Monastery.' });
+      addSpecialItem(c, {
+        name: 'Seal of Hammerdal',
+        description:
+          'A golden ring bearing the royal arms of Durenor, given by King Alin — proof of your right to claim the Sommerswerd.',
+      });
     },
     chooseOptions: [
       { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
       { id: 'short-sword', label: 'Short Sword', apply: (c) => addWeaponIfRoom(c, 'ShortSword') },
-      { id: 'two-meals', label: 'Two Meals', apply: (c) => { addBackpackItemIfRoom(c, 'Meal'); addBackpackItemIfRoom(c, 'Meal'); } },
+      { id: 'two-meals', label: 'Two Meals', apply: (c) => { addMealIfRoom(c); addMealIfRoom(c); } },
       {
         id: 'chainmail',
         label: 'Chainmail Waistcoat (+4 Endurance)',
         apply: (c) => {
-          c.specialItems.push('Chainmail Waistcoat');
+          addSpecialItem(c, { name: 'Chainmail Waistcoat', knownEffects: '+4 Endurance' });
           c.enduranceMax += 4;
           c.enduranceCurrent += 4;
         },
@@ -96,7 +110,7 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
         id: 'shield',
         label: 'Shield (+2 Combat Skill in combat)',
         apply: (c) => {
-          c.specialItems.push('Shield');
+          addSpecialItem(c, { name: 'Shield', knownEffects: '+2 Combat Skill in combat' });
         },
       },
       { id: 'broadsword', label: 'Broadsword', apply: (c) => addWeaponIfRoom(c, 'Broadsword') },

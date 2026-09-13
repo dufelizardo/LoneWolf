@@ -75,7 +75,7 @@ describe('getEffectiveCombatSkill', () => {
   });
 
   it('applies +2 Combat Skill while holding a Shield (Book 2 special item)', () => {
-    const withShield: ActionChart = { ...baseChart, specialItems: [...baseChart.specialItems, 'Shield'] };
+    const withShield: ActionChart = { ...baseChart, specialItems: [...baseChart.specialItems, { name: 'Shield' }] };
     expect(getEffectiveCombatSkill(withShield, enemy)).toBe(baseChart.combatSkill + 2);
   });
 });

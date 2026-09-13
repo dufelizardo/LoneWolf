@@ -25,8 +25,8 @@ describe('createFreshCharacterForBook("ft")', () => {
   it('always starts with an Axe, a Meal, and the Map of Sommerlund', () => {
     const chart = createFreshCharacterForBook('ft', fixedRng(0.1, 0.1, 0.1, 0.1));
     expect(chart.weapons).toContain('Axe');
-    expect(chart.backpackItems).toContain('Meal');
-    expect(chart.specialItems).toContain('Map of Sommerlund');
+    expect(chart.meals).toBeGreaterThanOrEqual(1);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of Sommerlund');
   });
 
   it('caps gold crowns rolled at creation to a single digit (0-9)', () => {
@@ -76,7 +76,8 @@ describe('carryOverCharacterToBook', () => {
     expect(carried.disciplines).toEqual(book1Chart.disciplines);
     expect(carried.weapons).toEqual(book1Chart.weapons);
     // fa's fixed narrative grants (Map, Seal of Hammerdal) are added on top of whatever was carried.
-    expect(carried.specialItems).toEqual([...book1Chart.specialItems, 'Map', 'Seal of Hammerdal']);
+    const carriedNames = carried.specialItems.map((i) => i.name);
+    expect(carriedNames).toEqual([...book1Chart.specialItems.map((i) => i.name), 'Map', 'Seal of Hammerdal']);
     expect(carried.goldCrowns).toBeGreaterThan(book1Chart.goldCrowns);
     expect(carried.currentSection).toBe(1);
     expect(carried.visitedSections).toEqual([]);
@@ -85,10 +86,10 @@ describe('carryOverCharacterToBook', () => {
   it('respects the weapon and backpack caps when the fixed grants would overflow them', () => {
     const book1Chart = createFreshCharacterForBook('ft', fixedRng(0.3, 0.3, 0.3, 0.3));
     book1Chart.weapons = ['Sword', 'Mace'];
-    book1Chart.backpackItems = new Array(MAX_BACKPACK_ITEMS).fill('Meal');
+    book1Chart.meals = MAX_BACKPACK_ITEMS;
     const carried = carryOverCharacterToBook(book1Chart, 'fa', fixedRng(0));
     expect(carried.weapons.length).toBeLessThanOrEqual(MAX_WEAPONS);
-    expect(carried.backpackItems.length).toBeLessThanOrEqual(MAX_BACKPACK_ITEMS);
+    expect(carried.backpackItems.length + carried.meals).toBeLessThanOrEqual(MAX_BACKPACK_ITEMS);
   });
 });
 
@@ -122,7 +123,7 @@ describe('chooseEquipmentOptions (book "fa", choose-two)', () => {
   it('applies exactly the two chosen options', () => {
     const chart = createFreshCharacterForBook('fa', () => 0);
     const equipped = chooseEquipmentOptions(chart, ['shield', 'mace']);
-    expect(equipped.specialItems).toContain('Shield');
+    expect(equipped.specialItems.map((i) => i.name)).toContain('Shield');
     expect(equipped.weapons).toContain('Mace');
   });
 

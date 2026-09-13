@@ -14,11 +14,8 @@ export function applyHealingRegen(chart: ActionChart, hadCombatThisSection: bool
 }
 
 export function eatMeal(chart: ActionChart): ActionChart {
-  const mealIndex = chart.backpackItems.indexOf('Meal');
-  if (mealIndex === -1) return chart;
-  const backpackItems = [...chart.backpackItems];
-  backpackItems.splice(mealIndex, 1);
-  return { ...chart, backpackItems };
+  if (chart.meals <= 0) return chart;
+  return { ...chart, meals: chart.meals - 1 };
 }
 
 /** Call when the story requires a Meal and the player has none (and lacks Hunting). */
