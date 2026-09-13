@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import sectionsFt from '../data/sections.ft.json';
 import sectionsFa from '../data/sections.fa.json';
+import sectionsTck from '../data/sections.tck.json';
 import type { SectionMap } from '../data/section-types';
 import { getFootnote } from '../data/footnotes';
 import { applyHealingRegen } from '../engine/disciplines';
@@ -8,11 +9,13 @@ import { ActionChartSidebar } from '../components/ActionChartSidebar';
 import { ChoiceList } from '../components/ChoiceList';
 import { RandomNumberBranch } from '../components/RandomNumberBranch';
 import { CombatModal } from '../components/CombatModal';
+import { getBook } from '../data/books';
 import type { ActionChart } from '../engine/types';
 
 const SECTIONS_BY_BOOK: Record<string, SectionMap> = {
   ft: sectionsFt as unknown as SectionMap,
   fa: sectionsFa as unknown as SectionMap,
+  tck: sectionsTck as unknown as SectionMap,
 };
 
 const EVADE_KEYWORDS = /\bevad|\bflee|\bescape|\brun away\b/i;
@@ -31,7 +34,10 @@ export function GameScreen({ chart, onChartChange, onGameOver }: Props) {
 
   useEffect(() => {
     if (section.isDeadEnd) onGameOver('deadend');
-    else if (section.isEnding) onGameOver('ending');
+    // A book can have a non-canonical ending (e.g. tck sect61: "you survive but fail your
+    // mission and may not continue on to future adventures") — only the book's own final
+    // section counts as the canonical, campaign-progressing ending.
+    else if (section.isEnding) onGameOver(section.number === getBook(chart.bookId).finalSection ? 'ending' : 'deadend');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [section.number, section.isDeadEnd, section.isEnding]);
 

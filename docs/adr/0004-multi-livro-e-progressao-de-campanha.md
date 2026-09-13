@@ -8,6 +8,11 @@ tela de seleção/introdução, transferência de personagem (disciplina extra, 
 Livro 1, ficha corretamente herdada + somada na entrada do Livro 2. Mergeado em `main`
 (PR #2) e publicado via `publish-image.yml`.
 
+**Atualização:** Livro 3 (*The Caverns of Kalte*) adicionado reaproveitando 100% desta
+arquitetura — só dados novos (`books.ts`, `bookEquipment.ts`), nenhuma mudança em
+`parseContent.ts` nem no motor de combate/disciplinas além do apontado na seção "Atualização —
+Livro 3" abaixo. Ver essa seção para os dois ajustes de motor que o conteúdo do Livro 3 forçou.
+
 ## Contexto
 
 O jogo só conhecia um livro (*Flight from the Dark*, id interno `ft`, conteúdo em
@@ -103,6 +108,37 @@ anterior foi concluído, o jogador escolhe entre "Transferir personagem" (usa a 
 - ❌ Só cobre os dois modos observados até agora; um Livro 3 com uma mecânica de equipamento
   totalmente diferente pode exigir um terceiro modo — aceito como extensão futura, não bloqueou
   esta decisão.
+
+## Atualização — Livro 3 (Caverns of Kalte)
+
+Confirma o trade-off "só cobre os dois modos observados até agora": o Livro 3 usa `choose-two`
+igual ao Livro 2 (8 armas + Padded Leather Waistcoat + Potion of Laumspur + Special Rations), sem
+precisar de um terceiro `equipmentMode`. Mesmo assim, o conteúdo real do livro forçou duas
+generalizações que não existiam antes:
+
+- **`healingPotionLabel` e `huntingDisabled` em `BookEquipmentConfig`**: a "Poção de Cura" tem nome
+  próprio por livro (`Healing Potion` em `ft`/`fa`, `Potion of Laumspur` em `tck`, mecanicamente
+  idêntica) — a Ficha e a tela de criação agora leem esse nome do registro em vez de um texto fixo.
+  E `equipmnt.htm` do Livro 3 diz explicitamente que a Disciplina Hunting **não** isenta de Refeição
+  neste livro ("Kalte é um deserto gelado") — `huntingDisabled: true` desliga essa isenção só para
+  `tck`, sem afetar `ft`/`fa`.
+- **`finalSection` em `BookMeta` — final canônico vs. final não-canônico**: o parser marca uma seção
+  como `isEnding` sempre que ela não tem escolhas (sem link pra frente). Isso bastava enquanto cada
+  livro só tinha *um* desses finais. O Livro 3 tem dois: a seção 350 (sucesso da missão) e a seção
+  61, um final onde o personagem sobrevive mas **falha** a missão — o próprio livro registra em nota
+  de rodapé que "this peculiar ending is the only time in the Lone Wolf series where you can fail
+  your mission without dying […] you may not continue on to future adventures". Sem distinguir os
+  dois, `App.tsx` marcaria o Livro 3 como concluído (e desbloquearia o próximo) mesmo numa seção que
+  o próprio texto diz explicitamente que não conclui a aventura. Corrigido comparando
+  `section.number` com o novo campo `finalSection` do livro antes de tratar como conclusão de
+  campanha — qualquer outro `isEnding` vira um "fim de missão" que não desbloqueia nada, reaproveitando
+  a mesma tela de `deadend`.
+
+Também foram corrigidos dois bugs reais na Poção de Cura, achados ao investigar como o estado
+"já usada" deveria se comportar atravessando 3 livros: `carryOverCharacterToBook` reabastecia de
+graça uma poção já usada a cada transferência de livro, e escolher uma poção nova deixava o
+personagem com uma poção "já usada" sem nunca ter usado a nova. Ambos exigiam pensar em 3 livros
+em sequência para aparecer — não davam pra notar só com 2.
 
 ## Consequências
 

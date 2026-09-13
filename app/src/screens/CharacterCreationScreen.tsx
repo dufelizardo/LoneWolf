@@ -86,7 +86,7 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
           {baseChart.meals > 0 ? `, ${baseChart.meals} Refeição(ões)` : ''}
           {baseChart.backpackItems.length > 0 ? `, ${baseChart.backpackItems.join(', ')}` : ''}
           {baseChart.specialItems.length > 0 ? `, ${baseChart.specialItems.map((i) => i.name).join(', ')}` : ''}
-          {baseChart.hasHealingPotion ? ', Healing Potion' : ''}, {baseChart.goldCrowns} Coroas de Ouro
+          {baseChart.hasHealingPotion ? `, ${equipmentConfig.healingPotionLabel}` : ''}, {baseChart.goldCrowns} Coroas de Ouro
         </p>
       </section>
 
