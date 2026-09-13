@@ -78,7 +78,8 @@ merge é um `gh pr merge --merge` simples, sem flag de bypass.
 - Branch protection na `main` (exigir `test-app`/`test-api` antes de permitir merge) ainda não
   configurada — sem isso, a PR *pode* ser mergeada manualmente mesmo com check falhando, o
   `auto-merge.yml` só controla o caminho automático, não impede o caminho manual.
-- Ciclo completo (`developer` → PR → checks → merge automático → `publish-image.yml` →
-  reconciliação do ArgoCD) ainda não foi validado de ponta a ponta com uma PR real.
-- Mesma lacuna de tag móvel (`:main`) já registrada na ADR-0001 — o merge automático não resolve
-  o problema de o ArgoCD não perceber sozinho um novo *digest* atrás da mesma tag.
+- ~~Ciclo completo ainda não validado~~ — **validado**: as 4 primeiras PRs (`developer` → `main`)
+  precisaram de merge manual porque o `WOLK_KEY` estava sem a permissão de PR necessária; corrigido
+  pelo dono do repositório, e a PR #5 já mergeou 100% sozinha via `auto-merge.yml`.
+- ~~Mesma lacuna de tag móvel~~ — **resolvida** (ver ADR-0001): `publish-image.yml` agora pina os
+  manifests na tag `:<sha>` do build, então o merge automático também já reconcilia o ArgoCD sozinho.

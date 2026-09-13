@@ -38,3 +38,34 @@ jobs:
             ghcr.io/dufelizardo/${{ matrix.image }}:${{ github.sha }}
           cache-from: type=gha,scope=${{ matrix.image }}
           cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+
+  # :main/:latest are mutable - ArgoCD's syncPolicy only reacts to the manifest text actually
+  # changing in Git, not to a new digest behind an unchanged tag (see ADR-0001/ADR-0003). Pinning
+  # the Deployments to this build's immutable :<sha> tag and committing that back to main is what
+  # makes ArgoCD see a real diff and roll out automatically, with no SSH/manual restart needed.
+  pin-manifests:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Pin Deployments to this build's image tag
+        run: |
+          sed -i "s#image: ghcr.io/dufelizardo/lonewolf:.*#image: ghcr.io/dufelizardo/lonewolf:${{ github.sha }}#" k8s/base/deployment.yaml
+          sed -i "s#image: ghcr.io/dufelizardo/lonewolf-api:.*#image: ghcr.io/dufelizardo/lonewolf-api:${{ github.sha }}#" k8s/base/api-deployment.yaml
+
+      - name: Commit and push if the pinned tag changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add k8s/base/deployment.yaml k8s/base/api-deployment.yaml
+          if git diff --cached --quiet; then
+            echo "Manifests already pinned to this commit's image"
+          else
+            git commit -m "chore: pin lonewolf images to ${{ github.sha }} [skip ci]"
+            git push origin HEAD:main
+          fi

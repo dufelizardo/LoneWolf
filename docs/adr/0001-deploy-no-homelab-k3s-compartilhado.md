@@ -99,11 +99,11 @@ Orçamento de recursos (requests): 64Mi + 64Mi + 128Mi = 256Mi de RAM — bem ab
   MetalLB (`192.168.0.200-192.168.0.210`).
 
 **Negativas / pendências**
-- **Mesma lacuna de tag móvel do mais_saude_publica**: o Deployment referencia `:main` (tag
-  móvel); o ArgoCD não detecta sozinho quando o *digest* por trás da tag muda, só quando o
-  manifest do Git muda. Hoje contornado com `kubectl rollout restart` manual após cada
-  `publish-image.yml`; resolver com Argo CD Image Updater ou tags por commit fica em aberto para
-  os dois projetos.
+- ~~Mesma lacuna de tag móvel do mais_saude_publica~~ — **resolvida**: `publish-image.yml` ganhou um
+  job `pin-manifests` que atualiza os `Deployment` para a tag `:<sha>` do build e commita direto em
+  `main`, então o ArgoCD passa a ver uma mudança real no manifest a cada deploy (ver ADR-0003 e o
+  próprio `publish-image.yml`). O `mais_saude_publica` continua com a lacuna original — essa correção
+  não foi replicada lá (fora do escopo deste projeto).
 - **Save na nuvem sem autenticação** (qualquer um com o código de 8 caracteres acessa o save) —
   aceitável apenas enquanto o Ingress ficar restrito à LAN de casa; se o domínio algum dia for
   exposto à internet, isso precisa ser revisto antes.
