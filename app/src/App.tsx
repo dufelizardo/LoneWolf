@@ -60,7 +60,9 @@ function App() {
   return (
     <div className="app-shell">
       <header className="app-header">
-        <h1>Lone Wolf</h1>
+        <h1>
+          Lone Wolf <span className="app-version">v{__APP_VERSION__}</span>
+        </h1>
         <SaveLoadControls
           campaign={campaign}
           chart={chart}

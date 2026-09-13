@@ -24,6 +24,12 @@
   margin: 0;
 }
 
+.app-version {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text);
+}
+
 .save-load-controls {
   display: flex;
   gap: 8px;
@@ -308,6 +314,16 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.special-items-list li {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+
+.item-detail {
+  font-size: 0.8em;
+  color: var(--text);
 }
 
 .action-chart input[type='text'] {

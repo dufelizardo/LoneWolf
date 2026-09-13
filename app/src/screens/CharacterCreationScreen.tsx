@@ -7,6 +7,7 @@ import {
   createFreshCharacterForBook,
 } from '../engine/character';
 import { getBookEquipment } from '../engine/bookEquipment';
+import { getKaiRank } from '../engine/kaiRank';
 import { ALL_DISCIPLINES, DISCIPLINE_LABELS, type ActionChart, type Discipline } from '../engine/types';
 import type { BookMeta } from '../data/books';
 import type { CreationMode } from '../App';
@@ -81,8 +82,10 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
         </p>
         <p>
           <strong>Equipamento{isCarryOver ? ' herdado' : ' inicial'}:</strong>{' '}
-          {baseChart.weapons.join(', ') || '(nenhuma arma)'}, {baseChart.backpackItems.join(', ') || '(mochila vazia)'}
-          , {baseChart.specialItems.join(', ')}
+          {baseChart.weapons.join(', ') || '(nenhuma arma)'}
+          {baseChart.meals > 0 ? `, ${baseChart.meals} Refeição(ões)` : ''}
+          {baseChart.backpackItems.length > 0 ? `, ${baseChart.backpackItems.join(', ')}` : ''}
+          {baseChart.specialItems.length > 0 ? `, ${baseChart.specialItems.map((i) => i.name).join(', ')}` : ''}
           {baseChart.hasHealingPotion ? ', Healing Potion' : ''}, {baseChart.goldCrowns} Coroas de Ouro
         </p>
       </section>
@@ -92,6 +95,9 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
           Escolha exatamente {requiredDisciplines} Disciplina{requiredDisciplines > 1 ? 's' : ''} Kai nova
           {requiredDisciplines > 1 ? 's' : ''} ({selectedDisciplines.length}/{requiredDisciplines})
         </h3>
+        <p className="item-detail">
+          Rank resultante: {getKaiRank(baseChart.disciplines.length + selectedDisciplines.length)}
+        </p>
         <ul className="discipline-picker">
           {availableDisciplines.map((d) => (
             <li key={d}>
