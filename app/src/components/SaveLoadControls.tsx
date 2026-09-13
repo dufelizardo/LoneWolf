@@ -1,12 +1,56 @@
+import { useState } from 'react';
+import { getLastCloudCode, loadGameFromCloud, saveGameToCloud } from '../engine/persistence';
+import type { ActionChart } from '../engine/types';
+
 interface Props {
+  chart: ActionChart | null;
   canSave: boolean;
   canLoad: boolean;
   onNewGame: () => void;
   onSave: () => void;
   onLoad: () => void;
+  onCloudLoad: (chart: ActionChart) => void;
 }
 
-export function SaveLoadControls({ canSave, canLoad, onNewGame, onSave, onLoad }: Props) {
+export function SaveLoadControls({ chart, canSave, canLoad, onNewGame, onSave, onLoad, onCloudLoad }: Props) {
+  const [cloudCode, setCloudCode] = useState(() => getLastCloudCode() ?? '');
+  const [status, setStatus] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const handleCloudSave = async () => {
+    if (!chart) return;
+    setBusy(true);
+    setStatus(null);
+    try {
+      const code = await saveGameToCloud(chart, cloudCode || null);
+      setCloudCode(code);
+      setStatus(`Salvo na nuvem. Código: ${code}`);
+    } catch {
+      setStatus('Falha ao salvar na nuvem.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleCloudLoad = async () => {
+    if (!cloudCode) return;
+    setBusy(true);
+    setStatus(null);
+    try {
+      const loaded = await loadGameFromCloud(cloudCode);
+      if (loaded) {
+        onCloudLoad(loaded);
+        setStatus('Jogo carregado da nuvem.');
+      } else {
+        setStatus('Código não encontrado.');
+      }
+    } catch {
+      setStatus('Falha ao carregar da nuvem.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <div className="save-load-controls">
       <button type="button" onClick={onNewGame}>
@@ -18,6 +62,21 @@ export function SaveLoadControls({ canSave, canLoad, onNewGame, onSave, onLoad }
       <button type="button" onClick={onLoad} disabled={!canLoad}>
         Carregar
       </button>
+
+      <input
+        type="text"
+        value={cloudCode}
+        onChange={(e) => setCloudCode(e.target.value.trim().toUpperCase())}
+        placeholder="Código de save"
+        className="cloud-code-input"
+      />
+      <button type="button" onClick={handleCloudSave} disabled={!canSave || busy}>
+        Salvar na Nuvem
+      </button>
+      <button type="button" onClick={handleCloudLoad} disabled={!cloudCode || busy}>
+        Carregar da Nuvem
+      </button>
+      {status && <span className="cloud-status">{status}</span>}
     </div>
   );
 }

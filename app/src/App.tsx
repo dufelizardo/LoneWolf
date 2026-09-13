@@ -37,11 +37,16 @@ function App() {
       <header className="app-header">
         <h1>Lone Wolf: Flight from the Dark</h1>
         <SaveLoadControls
+          chart={chart}
           canSave={mode === 'playing' && chart !== null}
           canLoad={hasSave()}
           onNewGame={startNewGame}
           onSave={() => chart && saveGame(chart)}
           onLoad={handleLoad}
+          onCloudLoad={(loaded) => {
+            setChart(loaded);
+            setMode('playing');
+          }}
         />
       </header>
 

@@ -9,6 +9,8 @@ Duas pastas neste repositório:
 - **`app/`** — o jogo web (React + TypeScript + Vite) que transforma esse conteúdo em uma aventura
   jogável, com ficha de personagem completa, combate automático contra a Combat Results Table e
   disciplinas Kai.
+- **`api/`** — serviço Node.js + Express + Postgres para salvar o progresso na nuvem (ver seção
+  "Save na nuvem" abaixo).
 
 ## Rodando o jogo
 
@@ -27,6 +29,29 @@ Para rodar os testes automatizados (motor de jogo + validação do conteúdo par
 npm test
 ```
 
+## Save na nuvem (API + Postgres)
+
+O jogo sempre salvou o progresso só no `localStorage` do navegador. Agora existe também um save na
+nuvem, para continuar em outro aparelho: ao clicar "Salvar na Nuvem" a primeira vez, o servidor gera um
+**código de save** (8 caracteres) mostrado na tela; digite esse código em outro aparelho e clique
+"Carregar da Nuvem". **Não há login/senha** — qualquer um com o código acessa aquele save. Isso é
+aceitável porque o jogo só roda na LAN de casa (`lonewolf.local`), nunca exposto à internet.
+
+O serviço `api/` expõe:
+- `POST /api/saves` — cria um save novo, retorna `{ code }`.
+- `GET /api/saves/:code` — retorna `{ chart }` ou 404.
+- `PUT /api/saves/:code` — atualiza um save existente.
+- `GET /healthz` — usado pelas probes do Kubernetes.
+
+Variáveis de ambiente da API: `PGHOST`, `PGPORT`, `PGUSER`, `PGPASSWORD`, `PGDATABASE`, `PORT` (padrão
+`3000`). Rodando local:
+
+```bash
+cd api
+npm install
+PGHOST=localhost PGUSER=lonewolf PGPASSWORD=lonewolf PGDATABASE=lonewolf npm run dev
+```
+
 ## Container / Docker
 
 ```bash
@@ -36,8 +61,9 @@ docker run --rm -p 8080:8080 lonewolf:local
 # abrir http://localhost:8080
 ```
 
-O `Dockerfile` é multi-stage: builda o app com Node e serve os arquivos estáticos gerados via Nginx
-(`nginx.conf`), escutando na porta `8080`.
+O `Dockerfile` do `app/` é multi-stage: builda o app com Node e serve os arquivos estáticos gerados via
+Nginx (`nginx.conf`), escutando na porta `8080`. O `api/Dockerfile` é semelhante, mas roda `node
+dist/index.js` na porta `3000`.
 
 ## CI/CD
 
@@ -71,13 +97,24 @@ kubectl get appproject default -n argocd
 # 1. Registrar a aplicação no ArgoCD (uma vez só)
 kubectl apply -f k8s/argocd-app.yaml
 
-# 2. Resolver o domínio local (mesmo padrão do *.mais-saude.local),
+# 2. Criar a senha do Postgres (uma vez só) — NÃO é commitada no repositório público,
+#    então precisa existir no cluster antes do Deployment do Postgres/API funcionar.
+#    (troque SENHA-AQUI por uma senha real; o namespace lonewolf é criado pelo
+#    próprio ArgoCD no passo 1, com CreateNamespace=true)
+kubectl create secret generic lonewolf-postgres-secret \
+  --namespace lonewolf \
+  --from-literal=POSTGRES_PASSWORD='SENHA-AQUI'
+
+# 3. Resolver o domínio local (mesmo padrão do *.mais-saude.local),
 #    usando o IP do Traefik/MetalLB (192.168.0.200 neste cluster)
 echo "192.168.0.200 lonewolf.local" | sudo tee -a /etc/hosts
 
-# 3. Acessar
+# 4. Acessar
 curl http://lonewolf.local
+curl -X POST http://lonewolf.local/api/saves -H "Content-Type: application/json" -d '{}'
 ```
+
+(`/healthz` só é usado internamente pelas probes do Kubernetes, não é roteado pelo Ingress.)
 
 A partir daí, todo push em `main` gera uma nova imagem `:main`/`:latest`/`:<sha>` via
 `publish-image.yml`, e o ArgoCD reconcilia o Deployment. **Ponto em aberto (confirmado nas ADRs do
@@ -90,6 +127,7 @@ um novo `publish-image.yml` é rodar, no cluster:
 
 ```bash
 kubectl rollout restart deployment/lonewolf -n lonewolf
+kubectl rollout restart deployment/lonewolf-api -n lonewolf
 ```
 
 ## Nota sobre a Combat Results Table

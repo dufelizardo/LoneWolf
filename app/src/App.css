@@ -27,6 +27,23 @@
 .save-load-controls {
   display: flex;
   gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cloud-code-input {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: var(--bg);
+  color: var(--text-h);
+  width: 120px;
+  text-transform: uppercase;
+}
+
+.cloud-status {
+  font-size: 0.85em;
+  color: var(--text);
 }
 
 .save-load-controls button,

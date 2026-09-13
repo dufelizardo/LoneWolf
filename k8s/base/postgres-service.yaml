@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lonewolf-postgres
+  labels:
+    app: lonewolf-postgres
+spec:
+  selector:
+    app: lonewolf-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432

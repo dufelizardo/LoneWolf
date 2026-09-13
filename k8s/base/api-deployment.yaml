@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lonewolf-api
+  labels:
+    app: lonewolf-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lonewolf-api
+  template:
+    metadata:
+      labels:
+        app: lonewolf-api
+    spec:
+      containers:
+        - name: lonewolf-api
+          image: ghcr.io/dufelizardo/lonewolf-api:main
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PGHOST
+              value: lonewolf-postgres
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: lonewolf
+            - name: PGUSER
+              value: lonewolf
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: lonewolf-postgres-secret
+                  key: POSTGRES_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

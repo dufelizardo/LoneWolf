@@ -10,6 +10,13 @@ jobs:
     permissions:
       contents: read
       packages: write
+    strategy:
+      matrix:
+        include:
+          - context: app
+            image: lonewolf
+          - context: api
+            image: lonewolf-api
     steps:
       - uses: actions/checkout@v4
 
@@ -23,11 +30,11 @@ jobs:
 
       - uses: docker/build-push-action@v6
         with:
-          context: app
+          context: ${{ matrix.context }}
           push: true
           tags: |
-            ghcr.io/dufelizardo/lonewolf:main
-            ghcr.io/dufelizardo/lonewolf:latest
-            ghcr.io/dufelizardo/lonewolf:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            ghcr.io/dufelizardo/${{ matrix.image }}:main
+            ghcr.io/dufelizardo/${{ matrix.image }}:latest
+            ghcr.io/dufelizardo/${{ matrix.image }}:${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
