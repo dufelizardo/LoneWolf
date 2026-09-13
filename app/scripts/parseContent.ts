@@ -5,7 +5,7 @@ import * as cheerio from 'cheerio';
 import type { Section, Choice, CombatEncounter, RandomRange, SectionMap } from '../src/data/section-types.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const CONTENT_DIR = process.env.LW_CONTENT_DIR ?? join(__dirname, '../../en/xhtml/lw/01fftd');
+const CONTENT_DIR = process.env.LW_CONTENT_DIR ?? join(__dirname, '../../kai/ft/en/xhtml/lw/01fftd');
 const OUT_FILE = join(__dirname, '../src/data/sections.json');
 const ILLUSTRATIONS_OUT_DIR = join(__dirname, '../public/illustrations');
 const SECTION_COUNT = 350;
