@@ -4,6 +4,7 @@ import sectionsFa from '../data/sections.fa.json';
 import sectionsTck from '../data/sections.tck.json';
 import sectionsTcd from '../data/sections.tcd.json';
 import sectionsSs from '../data/sections.ss.json';
+import sectionsTkt from '../data/sections.tkt.json';
 import type { SectionMap } from '../data/section-types';
 import { getFootnote } from '../data/footnotes';
 import { applyHealingRegen } from '../engine/disciplines';
@@ -21,6 +22,7 @@ const SECTIONS_BY_BOOK: Record<string, SectionMap> = {
   tck: sectionsTck as unknown as SectionMap,
   tcd: sectionsTcd as unknown as SectionMap,
   ss: sectionsSs as unknown as SectionMap,
+  tkt: sectionsTkt as unknown as SectionMap,
 };
 
 const EVADE_KEYWORDS = /\bevad|\bflee|\bescape|\brun away\b/i;

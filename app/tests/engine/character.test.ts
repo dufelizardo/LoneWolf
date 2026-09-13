@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
   addExtraDiscipline,
+  addExtraMagnakaiDiscipline,
   applyDisciplines,
+  applyMagnakaiDisciplines,
   carryOverCharacterToBook,
   chooseEquipmentOptions,
+  chooseMasteredWeapons,
   createFreshCharacterForBook,
 } from '../../src/engine/character';
-import { ALL_DISCIPLINES, MAX_BACKPACK_ITEMS, MAX_WEAPONS } from '../../src/engine/types';
+import { ALL_DISCIPLINES, ALL_MAGNAKAI_DISCIPLINES, MAX_BACKPACK_ITEMS, MAX_WEAPONS } from '../../src/engine/types';
 
 function fixedRng(...values: number[]): () => number {
   let i = 0;
@@ -245,5 +248,139 @@ describe('chooseEquipmentOptions (book "ss", choose-four)', () => {
     const chart = createFreshCharacterForBook('ss', () => 0);
     expect(() => chooseEquipmentOptions(chart, fourOptions.slice(0, 3))).toThrow();
     expect(() => chooseEquipmentOptions(chart, [...fourOptions, 'sword'])).toThrow();
+  });
+});
+
+describe('applyMagnakaiDisciplines', () => {
+  it('rejects anything other than exactly 3 disciplines', () => {
+    const chart = createFreshCharacterForBook('tkt', fixedRng(0, 0, 0, 0));
+    expect(() => applyMagnakaiDisciplines(chart, ALL_MAGNAKAI_DISCIPLINES.slice(0, 2))).toThrow();
+    expect(() => applyMagnakaiDisciplines(chart, ALL_MAGNAKAI_DISCIPLINES.slice(0, 4))).toThrow();
+  });
+
+  it('sets exactly the 3 chosen disciplines', () => {
+    const chart = createFreshCharacterForBook('tkt', fixedRng(0, 0, 0, 0));
+    const equipped = applyMagnakaiDisciplines(chart, ['Curing', 'Huntmastery', 'Divination']);
+    expect(equipped.magnakaiDisciplines).toEqual(['Curing', 'Huntmastery', 'Divination']);
+  });
+});
+
+describe('addExtraMagnakaiDiscipline', () => {
+  it('adds exactly one new discipline, going from 3 to 4', () => {
+    const chart = applyMagnakaiDisciplines(createFreshCharacterForBook('tkt', fixedRng(0, 0, 0, 0)), [
+      'Curing',
+      'Huntmastery',
+      'Divination',
+    ]);
+    const withExtra = addExtraMagnakaiDiscipline(chart, 'PsiSurge');
+    expect(withExtra.magnakaiDisciplines).toHaveLength(4);
+    expect(withExtra.magnakaiDisciplines).toContain('PsiSurge');
+  });
+
+  it('rejects a discipline the character already has', () => {
+    const chart = applyMagnakaiDisciplines(createFreshCharacterForBook('tkt', fixedRng(0, 0, 0, 0)), [
+      'Curing',
+      'Huntmastery',
+      'Divination',
+    ]);
+    expect(() => addExtraMagnakaiDiscipline(chart, 'Curing')).toThrow();
+  });
+});
+
+describe('chooseMasteredWeapons', () => {
+  it('rejects anything other than exactly 3 weapons', () => {
+    const chart = createFreshCharacterForBook('tkt', () => 0);
+    expect(() => chooseMasteredWeapons(chart, ['Sword', 'Bow'])).toThrow();
+    expect(() => chooseMasteredWeapons(chart, ['Sword', 'Bow', 'Axe', 'Dagger'])).toThrow();
+  });
+
+  it('sets masteredWeapons independently of carried weapons', () => {
+    const chart = createFreshCharacterForBook('tkt', () => 0);
+    const equipped = chooseMasteredWeapons(chart, ['Sword', 'Bow', 'Axe']);
+    expect(equipped.masteredWeapons).toEqual(['Sword', 'Bow', 'Axe']);
+    // "does not mean you begin the adventure carrying any of them" (equipmnt.htm)
+    expect(equipped.weapons).toEqual(chart.weapons);
+  });
+});
+
+describe('carryOverCharacterToBook crossing into the Magnakai phase (regression)', () => {
+  it('clears Kai disciplines and weaponskillWeapon when entering a Magnakai-phase book', () => {
+    const kaiChart = applyDisciplines(createFreshCharacterForBook('ft', fixedRng(0, 0, 0, 0)), [
+      'Weaponskill',
+      'Healing',
+      'Hunting',
+      'Mindshield',
+      'Mindblast',
+    ], fixedRng(0));
+    expect(kaiChart.disciplines).toHaveLength(5);
+    expect(kaiChart.weaponskillWeapon).not.toBeNull();
+
+    const carried = carryOverCharacterToBook(kaiChart, 'tkt', fixedRng(0));
+    expect(carried.disciplines).toEqual([]);
+    expect(carried.weaponskillWeapon).toBeNull();
+    expect(carried.magnakaiDisciplines).toEqual([]);
+  });
+
+  it('keeps Combat Skill, Endurance, Weapons and Special Items across the phase boundary', () => {
+    const kaiChart = createFreshCharacterForBook('ft', fixedRng(0.3, 0.3, 0.3, 0.3));
+    const carried = carryOverCharacterToBook(kaiChart, 'tkt', fixedRng(0));
+    expect(carried.combatSkill).toBe(kaiChart.combatSkill);
+    expect(carried.enduranceMax).toBe(kaiChart.enduranceMax);
+    expect(carried.weapons).toEqual(kaiChart.weapons);
+    expect(carried.specialItems.map((i) => i.name)).toEqual(
+      expect.arrayContaining(kaiChart.specialItems.map((i) => i.name)),
+    );
+  });
+
+  it('does not clear disciplines when carrying over within the same phase', () => {
+    const chart1 = applyDisciplines(createFreshCharacterForBook('ft', fixedRng(0, 0, 0, 0)), [
+      'Healing',
+      'Hunting',
+      'Camouflage',
+      'Tracking',
+      'SixthSense',
+    ]);
+    const carried = carryOverCharacterToBook(chart1, 'fa', fixedRng(0));
+    expect(carried.disciplines).toEqual(chart1.disciplines);
+  });
+});
+
+describe('chooseEquipmentOptions (book "tkt", choose-five)', () => {
+  const fiveOptions = ['bow', 'quiver', 'special-rations', 'rope', 'tinderbox'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('tkt', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('tkt', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants 4 Meals from the Special Rations option', () => {
+    const chart = createFreshCharacterForBook('tkt', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.meals).toBe(4);
+  });
+
+  it('grants Rope and Tinderbox as plain backpack items', () => {
+    const chart = createFreshCharacterForBook('tkt', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.backpackItems).toContain('Rope');
+    expect(equipped.backpackItems).toContain('Tinderbox');
+  });
+
+  it('always starts with the Map of the Stornlands', () => {
+    const chart = createFreshCharacterForBook('tkt', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of the Stornlands');
+  });
+
+  it('rejects a selection that is not exactly five options', () => {
+    const chart = createFreshCharacterForBook('tkt', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fiveOptions.slice(0, 4))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
   });
 });

@@ -36,6 +36,47 @@ export const DISCIPLINE_LABELS: Record<Discipline, string> = {
   MindOverMatter: 'Mind Over Matter',
 };
 
+/** The Magnakai phase (Book 6+) replaces the 10 Kai Disciplines with an unrelated set of 10 — there
+ * is no conversion table between them (confirmed in discplnz.htm: a Magnakai character simply
+ * chooses 3 of these freely, regardless of which Kai Disciplines they held). */
+export type MagnakaiDiscipline =
+  | 'Weaponmastery'
+  | 'AnimalControl'
+  | 'Curing'
+  | 'Invisibility'
+  | 'Huntmastery'
+  | 'Pathsmanship'
+  | 'PsiSurge'
+  | 'PsiScreen'
+  | 'Nexus'
+  | 'Divination';
+
+export const ALL_MAGNAKAI_DISCIPLINES: MagnakaiDiscipline[] = [
+  'Weaponmastery',
+  'AnimalControl',
+  'Curing',
+  'Invisibility',
+  'Huntmastery',
+  'Pathsmanship',
+  'PsiSurge',
+  'PsiScreen',
+  'Nexus',
+  'Divination',
+];
+
+export const MAGNAKAI_DISCIPLINE_LABELS: Record<MagnakaiDiscipline, string> = {
+  Weaponmastery: 'Weaponmastery',
+  AnimalControl: 'Animal Control',
+  Curing: 'Curing',
+  Invisibility: 'Invisibility',
+  Huntmastery: 'Huntmastery',
+  Pathsmanship: 'Pathsmanship',
+  PsiSurge: 'Psi-surge',
+  PsiScreen: 'Psi-screen',
+  Nexus: 'Nexus',
+  Divination: 'Divination',
+};
+
 export type WeaponType =
   | 'Axe'
   | 'Sword'
@@ -45,7 +86,8 @@ export type WeaponType =
   | 'Spear'
   | 'Broadsword'
   | 'Warhammer'
-  | 'Dagger';
+  | 'Dagger'
+  | 'Bow';
 
 export const ALL_WEAPONS: WeaponType[] = [
   'Axe',
@@ -57,6 +99,7 @@ export const ALL_WEAPONS: WeaponType[] = [
   'Broadsword',
   'Warhammer',
   'Dagger',
+  'Bow',
 ];
 
 export const MAX_WEAPONS = 2;
@@ -76,6 +119,10 @@ export interface ActionChart {
   enduranceCurrent: number;
   disciplines: Discipline[];
   weaponskillWeapon: WeaponType | null;
+  /** Empty for every Kai-phase chart; populated only once a character enters the Magnakai phase (Book 6+), at which point `disciplines`/`weaponskillWeapon` are cleared (see carryOverCharacterToBook). A real chart never has both non-empty. */
+  magnakaiDisciplines: MagnakaiDiscipline[];
+  /** The Weaponmastery discipline's chosen weapons (up to 3) — separate from `weapons` (what's actually carried); having a weapon mastered doesn't mean carrying it. */
+  masteredWeapons: WeaponType[];
   weapons: WeaponType[];
   equippedWeapon: WeaponType | null;
   backpackItems: string[];
@@ -85,6 +132,8 @@ export interface ActionChart {
   goldCrowns: number;
   /** Number of unused healing-potion doses currently carried (0 = none). Each dose restores a fixed amount once used. */
   healingPotionDoses: number;
+  /** Arrows remaining for a Bow (from a Quiver). Never auto-decremented or checked by combat.ts — self-tracked by the player, same manual-adjudication pattern as Meals/huntingDisabled. */
+  arrows: number;
   currentSection: number;
   visitedSections: number[];
   isAlive: boolean;
@@ -94,13 +143,13 @@ export interface Enemy {
   name: string;
   combatSkill: number;
   endurance: number;
-  /** This enemy attacks the player's mind — Mindshield blocks the Endurance loss it deals. */
+  /** This enemy attacks the player's mind — blocked by Mindshield (Kai) or Psi-screen (Magnakai). */
   attacksWithMindblast?: boolean;
-  /** This enemy is immune to the player's own Mindblast discipline bonus. */
+  /** This enemy is immune to the player's own Mindblast (Kai) or Psi-surge/Mindblast (Magnakai) bonus. */
   mindblastImmune?: boolean;
 }
 
-export const SAVE_VERSION = 4;
+export const SAVE_VERSION = 5;
 
 /** The ActionChart snapshot as it stood the moment a book's canonical ending was reached. */
 export interface CampaignProgress {

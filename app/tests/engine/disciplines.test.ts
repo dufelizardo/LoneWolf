@@ -37,6 +37,11 @@ describe('applyMissedMealPenalty', () => {
     const chart = chartFor('ft', { disciplines: [], enduranceCurrent: 1 });
     expect(applyMissedMealPenalty(chart).enduranceCurrent).toBe(0);
   });
+
+  it('exempts a Huntmastery character from the penalty (Magnakai successor to Hunting)', () => {
+    const chart = chartFor('tkt', { magnakaiDisciplines: ['Huntmastery'], enduranceCurrent: 20 });
+    expect(applyMissedMealPenalty(chart).enduranceCurrent).toBe(20);
+  });
 });
 
 describe('eatMeal', () => {
@@ -65,6 +70,11 @@ describe('applyHealingRegen', () => {
   it('does not exceed enduranceMax', () => {
     const chart = chartFor('ft', { disciplines: ['Healing'], enduranceCurrent: 20, enduranceMax: 20 });
     expect(applyHealingRegen(chart, false).enduranceCurrent).toBe(20);
+  });
+
+  it('regenerates for a Curing character too (Magnakai successor to Healing)', () => {
+    const chart = chartFor('tkt', { magnakaiDisciplines: ['Curing'], enduranceCurrent: 10, enduranceMax: 20 });
+    expect(applyHealingRegen(chart, false).enduranceCurrent).toBe(11);
   });
 });
 

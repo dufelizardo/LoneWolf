@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  adjustArrows,
   adjustCombatSkill,
   adjustEndurance,
   adjustGold,
@@ -15,8 +16,16 @@ import {
 } from '../engine/inventory';
 import { eatMeal, useHealingPotion } from '../engine/disciplines';
 import { getBookEquipment } from '../engine/bookEquipment';
-import { getKaiRank } from '../engine/kaiRank';
-import { ALL_WEAPONS, DISCIPLINE_LABELS, MAX_BACKPACK_ITEMS, MAX_WEAPONS, type ActionChart, type WeaponType } from '../engine/types';
+import { getRankForChart } from '../engine/kaiRank';
+import {
+  ALL_WEAPONS,
+  DISCIPLINE_LABELS,
+  MAGNAKAI_DISCIPLINE_LABELS,
+  MAX_BACKPACK_ITEMS,
+  MAX_WEAPONS,
+  type ActionChart,
+  type WeaponType,
+} from '../engine/types';
 
 interface Props {
   chart: ActionChart;
@@ -71,18 +80,21 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
 
         <div className="stat-row">
           <span>RANK</span>
-          <span>{getKaiRank(chart.disciplines.length)}</span>
+          <span>{getRankForChart(chart)}</span>
         </div>
       </section>
 
       <section>
-        <h3>Disciplinas Kai</h3>
+        <h3>{chart.magnakaiDisciplines.length > 0 ? 'Disciplinas Magnakai' : 'Disciplinas Kai'}</h3>
         <ul className="plain-list">
           {chart.disciplines.map((d) => (
             <li key={d}>
               {DISCIPLINE_LABELS[d]}
               {d === 'Weaponskill' && chart.weaponskillWeapon ? ` (${chart.weaponskillWeapon})` : ''}
             </li>
+          ))}
+          {chart.magnakaiDisciplines.map((d) => (
+            <li key={d}>{MAGNAKAI_DISCIPLINE_LABELS[d]}</li>
           ))}
         </ul>
       </section>
@@ -91,6 +103,9 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
         <h3>
           Armas ({chart.weapons.length}/{MAX_WEAPONS})
         </h3>
+        {chart.masteredWeapons.length > 0 && (
+          <p className="item-detail">Armas Dominadas (Weaponmastery): {chart.masteredWeapons.join(', ')}</p>
+        )}
         <ul className="plain-list">
           {chart.weapons.map((w) => (
             <li key={w}>
@@ -124,6 +139,17 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
             Adicionar
           </button>
         </div>
+        {(chart.arrows > 0 || chart.weapons.includes('Bow')) && (
+          <div className="button-row">
+            <span>Flechas ({chart.arrows})</span>
+            <button type="button" onClick={() => onChange(adjustArrows(chart, -1))} disabled={chart.arrows <= 0}>
+              -1
+            </button>
+            <button type="button" onClick={() => onChange(adjustArrows(chart, 1))}>
+              +1
+            </button>
+          </div>
+        )}
       </section>
 
       <section>

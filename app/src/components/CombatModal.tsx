@@ -15,13 +15,20 @@ function toEnemy(encounter: CombatEncounter): Enemy {
   return { name: encounter.enemyName, combatSkill: encounter.combatSkill, endurance: encounter.endurance };
 }
 
+const PSI_SURGE_MIN_ENDURANCE = 6;
+
 export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onFinished }: Props) {
   const [enemyIndex, setEnemyIndex] = useState(0);
   const [enemy, setEnemy] = useState<Enemy>(() => toEnemy(encounters[0]));
   const [log, setLog] = useState<string[]>([]);
+  const [usePsiSurge, setUsePsiSurge] = useState(false);
+
+  const hasPsiSurge = chart.magnakaiDisciplines.includes('PsiSurge');
+  const psiSurgeAvailable = chart.enduranceCurrent > PSI_SURGE_MIN_ENDURANCE;
 
   const fightRound = () => {
-    const result = resolveCombatRound(chart, enemy, Math.random);
+    const result = resolveCombatRound(chart, enemy, Math.random, { usePsiSurge });
+    setUsePsiSurge(false); // must be actively re-chosen every round, never "sticky"
     onChartChange(result.chart);
     setEnemy(result.enemy);
     setLog((prev) => [...prev, result.log]);
@@ -74,6 +81,19 @@ export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onF
           <p key={i}>{entry}</p>
         ))}
       </div>
+
+      {hasPsiSurge && (
+        <label className="psi-surge-toggle">
+          <input
+            type="checkbox"
+            checked={usePsiSurge}
+            disabled={!psiSurgeAvailable}
+            onChange={(e) => setUsePsiSurge(e.target.checked)}
+          />
+          Usar Psi-surge nesta rodada (+4 Combat Skill, -2 Endurance
+          {!psiSurgeAvailable ? ' — indisponível com Endurance ≤ 6' : ''})
+        </label>
+      )}
 
       <div className="button-row">
         <button type="button" className="primary-button" onClick={fightRound}>

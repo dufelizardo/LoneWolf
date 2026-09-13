@@ -42,6 +42,11 @@ function addMealIfRoom(chart: ActionChart) {
   chart.meals += 1;
 }
 
+function addBackpackItemIfRoom(chart: ActionChart, item: string) {
+  if (!hasBackpackRoom(chart)) return;
+  chart.backpackItems.push(item);
+}
+
 function addSpecialItem(chart: ActionChart, item: SpecialItem) {
   chart.specialItems.push(item);
 }
@@ -49,6 +54,11 @@ function addSpecialItem(chart: ActionChart, item: SpecialItem) {
 /** Grants healing-potion doses on top of whatever the character already carries. */
 function grantHealingPotion(chart: ActionChart, doses = 1) {
   chart.healingPotionDoses += doses;
+}
+
+/** Grants Arrows (for a Bow) on top of whatever the character already carries. */
+function addArrows(chart: ActionChart, count: number) {
+  chart.arrows += count;
 }
 
 export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
@@ -238,6 +248,50 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
           addSpecialItem(c, { name: 'Shield', knownEffects: '+2 Combat Skill in combat' });
         },
       },
+    ],
+  },
+  tkt: {
+    goldRollBonus: 10,
+    // Never actually read for tkt — Magnakai's Weaponmastery is a free choice of 3 weapons, not a
+    // random roll from a book pool like Kai's Weaponskill. Kept only to satisfy the config shape.
+    weaponPool: ALL_WEAPONS,
+    healingPotionLabel: 'Potion of Laumspur',
+    applyBaseEquipment: (c) => {
+      addSpecialItem(c, { name: 'Map of the Stornlands' });
+    },
+    chooseCount: 5,
+    chooseOptions: [
+      { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
+      { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: (c) => grantHealingPotion(c) },
+      { id: 'warhammer', label: 'Warhammer', apply: (c) => addWeaponIfRoom(c, 'Warhammer') },
+      { id: 'bow', label: 'Bow', apply: (c) => addWeaponIfRoom(c, 'Bow') },
+      {
+        id: 'quiver',
+        label: 'Quiver (6 Arrows)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Quiver', knownEffects: 'Holds up to 6 Arrows' });
+          addArrows(c, 6);
+        },
+      },
+      {
+        id: 'special-rations',
+        label: '4 Special Rations',
+        apply: (c) => { for (let i = 0; i < 4; i++) addMealIfRoom(c); },
+      },
+      { id: 'quarterstaff', label: 'Quarterstaff', apply: (c) => addWeaponIfRoom(c, 'Quarterstaff') },
+      {
+        id: 'padded-leather-waistcoat',
+        label: 'Padded Leather Waistcoat (+2 Endurance)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Padded Leather Waistcoat', knownEffects: '+2 Endurance' });
+          c.enduranceMax += 2;
+          c.enduranceCurrent += 2;
+        },
+      },
+      { id: 'rope', label: 'Rope', apply: (c) => addBackpackItemIfRoom(c, 'Rope') },
+      { id: 'dagger', label: 'Dagger', apply: (c) => addWeaponIfRoom(c, 'Dagger') },
+      { id: 'tinderbox', label: 'Tinderbox', apply: (c) => addBackpackItemIfRoom(c, 'Tinderbox') },
+      { id: 'axe', label: 'Axe', apply: (c) => addWeaponIfRoom(c, 'Axe') },
     ],
   },
 };

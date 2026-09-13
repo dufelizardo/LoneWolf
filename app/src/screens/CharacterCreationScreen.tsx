@@ -1,14 +1,27 @@
 import { useState } from 'react';
 import {
   addExtraDiscipline,
+  addExtraMagnakaiDiscipline,
   applyDisciplines,
+  applyMagnakaiDisciplines,
   carryOverCharacterToBook,
   chooseEquipmentOptions,
+  chooseMasteredWeapons,
   createFreshCharacterForBook,
 } from '../engine/character';
 import { getBookEquipment } from '../engine/bookEquipment';
-import { getKaiRank } from '../engine/kaiRank';
-import { ALL_DISCIPLINES, DISCIPLINE_LABELS, type ActionChart, type Discipline } from '../engine/types';
+import { getRankForChart } from '../engine/kaiRank';
+import {
+  ALL_DISCIPLINES,
+  ALL_MAGNAKAI_DISCIPLINES,
+  ALL_WEAPONS,
+  DISCIPLINE_LABELS,
+  MAGNAKAI_DISCIPLINE_LABELS,
+  type ActionChart,
+  type Discipline,
+  type MagnakaiDiscipline,
+  type WeaponType,
+} from '../engine/types';
 import type { BookMeta } from '../data/books';
 import type { CreationMode } from '../App';
 
@@ -21,15 +34,33 @@ interface Props {
 
 export function CharacterCreationScreen({ book, creationMode, previousChart, onReady }: Props) {
   const isCarryOver = creationMode === 'carryover' && previousChart !== null;
-  const requiredDisciplines = isCarryOver ? 1 : 5;
-  const availableDisciplines = isCarryOver
-    ? ALL_DISCIPLINES.filter((d) => !previousChart!.disciplines.includes(d))
-    : ALL_DISCIPLINES;
+  const isMagnakaiPhase = book.phase === 'magnakai';
 
   const [baseChart] = useState<ActionChart>(() =>
     isCarryOver ? carryOverCharacterToBook(previousChart!, book.id) : createFreshCharacterForBook(book.id),
   );
+
+  // Kai-phase discipline selection (Books 1-5) — unchanged from before Magnakai existed.
+  const requiredDisciplines = isCarryOver ? 1 : 5;
+  const availableDisciplines = isCarryOver
+    ? ALL_DISCIPLINES.filter((d) => !previousChart!.disciplines.includes(d))
+    : ALL_DISCIPLINES;
   const [selectedDisciplines, setSelectedDisciplines] = useState<Discipline[]>([]);
+
+  // Magnakai-phase discipline selection (Book 6+) — a wholly separate pool, no conversion from Kai.
+  // Entering the phase for the first time means choosing 3 fresh; already having some (a future
+  // Book 7+ carry-over) means adding 1 more, mirroring the Kai "+1 per book" shape.
+  const magnakaiFirstEntry = isMagnakaiPhase && baseChart.magnakaiDisciplines.length === 0;
+  const requiredMagnakaiDisciplines = magnakaiFirstEntry ? 3 : 1;
+  const availableMagnakaiDisciplines = ALL_MAGNAKAI_DISCIPLINES.filter(
+    (d) => !baseChart.magnakaiDisciplines.includes(d),
+  );
+  const [selectedMagnakaiDisciplines, setSelectedMagnakaiDisciplines] = useState<MagnakaiDiscipline[]>([]);
+
+  // Weaponmastery grants 3 mastered weapons, chosen separately from — and not implying possession
+  // of — any carried weapon. Only relevant if the player picks Weaponmastery among their Disciplines.
+  const needsMasteredWeapons = isMagnakaiPhase && selectedMagnakaiDisciplines.includes('Weaponmastery');
+  const [selectedMasteredWeapons, setSelectedMasteredWeapons] = useState<WeaponType[]>([]);
 
   const equipmentConfig = getBookEquipment(book.id);
   const needsEquipmentChoice = equipmentConfig.chooseOptions !== undefined;
@@ -44,6 +75,22 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
     });
   };
 
+  const toggleMagnakaiDiscipline = (discipline: MagnakaiDiscipline) => {
+    setSelectedMagnakaiDisciplines((prev) => {
+      if (prev.includes(discipline)) return prev.filter((d) => d !== discipline);
+      if (prev.length >= requiredMagnakaiDisciplines) return prev;
+      return [...prev, discipline];
+    });
+  };
+
+  const toggleMasteredWeapon = (weapon: WeaponType) => {
+    setSelectedMasteredWeapons((prev) => {
+      if (prev.includes(weapon)) return prev.filter((w) => w !== weapon);
+      if (prev.length >= 3) return prev;
+      return [...prev, weapon];
+    });
+  };
+
   const toggleEquipment = (id: string) => {
     setSelectedEquipment((prev) => {
       if (prev.includes(id)) return prev.filter((x) => x !== id);
@@ -52,15 +99,32 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
     });
   };
 
-  const disciplinesReady = selectedDisciplines.length === requiredDisciplines;
+  const disciplinesReady = isMagnakaiPhase
+    ? selectedMagnakaiDisciplines.length === requiredMagnakaiDisciplines
+    : selectedDisciplines.length === requiredDisciplines;
+  const masteredWeaponsReady = !needsMasteredWeapons || selectedMasteredWeapons.length === 3;
   const equipmentReady = !needsEquipmentChoice || selectedEquipment.length === requiredEquipment;
 
-  const confirm = () => {
-    if (!disciplinesReady || !equipmentReady) return;
+  const previewRank = isMagnakaiPhase
+    ? getRankForChart({ ...baseChart, magnakaiDisciplines: [...baseChart.magnakaiDisciplines, ...selectedMagnakaiDisciplines] })
+    : getRankForChart({ ...baseChart, disciplines: [...baseChart.disciplines, ...selectedDisciplines] });
 
-    let chart = isCarryOver
-      ? addExtraDiscipline(baseChart, selectedDisciplines[0])
-      : applyDisciplines(baseChart, selectedDisciplines);
+  const confirm = () => {
+    if (!disciplinesReady || !masteredWeaponsReady || !equipmentReady) return;
+
+    let chart: ActionChart;
+    if (isMagnakaiPhase) {
+      chart = magnakaiFirstEntry
+        ? applyMagnakaiDisciplines(baseChart, selectedMagnakaiDisciplines)
+        : addExtraMagnakaiDiscipline(baseChart, selectedMagnakaiDisciplines[0]);
+      if (needsMasteredWeapons) {
+        chart = chooseMasteredWeapons(chart, selectedMasteredWeapons);
+      }
+    } else {
+      chart = isCarryOver
+        ? addExtraDiscipline(baseChart, selectedDisciplines[0])
+        : applyDisciplines(baseChart, selectedDisciplines);
+    }
 
     if (needsEquipmentChoice) {
       chart = chooseEquipmentOptions(chart, selectedEquipment);
@@ -85,6 +149,7 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
           <strong>Equipamento{isCarryOver ? ' herdado' : ' inicial'}:</strong>{' '}
           {baseChart.weapons.join(', ') || '(nenhuma arma)'}
           {baseChart.meals > 0 ? `, ${baseChart.meals} Refeição(ões)` : ''}
+          {baseChart.arrows > 0 ? `, ${baseChart.arrows} Flechas` : ''}
           {baseChart.backpackItems.length > 0 ? `, ${baseChart.backpackItems.join(', ')}` : ''}
           {baseChart.specialItems.length > 0 ? `, ${baseChart.specialItems.map((i) => i.name).join(', ')}` : ''}
           {baseChart.healingPotionDoses > 0
@@ -94,30 +159,84 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
         </p>
       </section>
 
-      <section>
-        <h3>
-          Escolha exatamente {requiredDisciplines} Disciplina{requiredDisciplines > 1 ? 's' : ''} Kai nova
-          {requiredDisciplines > 1 ? 's' : ''} ({selectedDisciplines.length}/{requiredDisciplines})
-        </h3>
-        <p className="item-detail">
-          Rank resultante: {getKaiRank(baseChart.disciplines.length + selectedDisciplines.length)}
-        </p>
-        <ul className="discipline-picker">
-          {availableDisciplines.map((d) => (
-            <li key={d}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={selectedDisciplines.includes(d)}
-                  onChange={() => toggleDiscipline(d)}
-                  disabled={!selectedDisciplines.includes(d) && selectedDisciplines.length >= requiredDisciplines}
-                />
-                {DISCIPLINE_LABELS[d]}
-              </label>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {isMagnakaiPhase ? (
+        <section>
+          <h3>
+            Escolha exatamente {requiredMagnakaiDisciplines} Disciplina{requiredMagnakaiDisciplines > 1 ? 's' : ''}{' '}
+            Magnakai nova{requiredMagnakaiDisciplines > 1 ? 's' : ''} ({selectedMagnakaiDisciplines.length}/
+            {requiredMagnakaiDisciplines})
+          </h3>
+          <p className="item-detail">Rank resultante: {previewRank}</p>
+          <ul className="discipline-picker">
+            {availableMagnakaiDisciplines.map((d) => (
+              <li key={d}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={selectedMagnakaiDisciplines.includes(d)}
+                    onChange={() => toggleMagnakaiDiscipline(d)}
+                    disabled={
+                      !selectedMagnakaiDisciplines.includes(d) &&
+                      selectedMagnakaiDisciplines.length >= requiredMagnakaiDisciplines
+                    }
+                  />
+                  {MAGNAKAI_DISCIPLINE_LABELS[d]}
+                </label>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : (
+        <section>
+          <h3>
+            Escolha exatamente {requiredDisciplines} Disciplina{requiredDisciplines > 1 ? 's' : ''} Kai nova
+            {requiredDisciplines > 1 ? 's' : ''} ({selectedDisciplines.length}/{requiredDisciplines})
+          </h3>
+          <p className="item-detail">Rank resultante: {previewRank}</p>
+          <ul className="discipline-picker">
+            {availableDisciplines.map((d) => (
+              <li key={d}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={selectedDisciplines.includes(d)}
+                    onChange={() => toggleDiscipline(d)}
+                    disabled={!selectedDisciplines.includes(d) && selectedDisciplines.length >= requiredDisciplines}
+                  />
+                  {DISCIPLINE_LABELS[d]}
+                </label>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {needsMasteredWeapons && (
+        <section>
+          <h3>
+            Escolha exatamente 3 armas para Maestria (Weaponmastery) ({selectedMasteredWeapons.length}/3)
+          </h3>
+          <p className="item-detail">
+            Ser hábil com uma arma não significa começar a aventura carregando ela — isso é escolhido
+            separadamente no equipamento abaixo.
+          </p>
+          <ul className="discipline-picker">
+            {ALL_WEAPONS.map((w) => (
+              <li key={w}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={selectedMasteredWeapons.includes(w)}
+                    onChange={() => toggleMasteredWeapon(w)}
+                    disabled={!selectedMasteredWeapons.includes(w) && selectedMasteredWeapons.length >= 3}
+                  />
+                  {w}
+                </label>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {needsEquipmentChoice && (
         <section>
@@ -142,7 +261,12 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
         </section>
       )}
 
-      <button type="button" className="primary-button" disabled={!disciplinesReady || !equipmentReady} onClick={confirm}>
+      <button
+        type="button"
+        className="primary-button"
+        disabled={!disciplinesReady || !masteredWeaponsReady || !equipmentReady}
+        onClick={confirm}
+      >
         Começar Aventura
       </button>
     </div>

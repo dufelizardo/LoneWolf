@@ -4,9 +4,14 @@ import type { ActionChart } from './types';
 const HEALING_REGEN_PER_SECTION = 1;
 const NO_MEAL_PENALTY = 3;
 
-/** Call once per section transition. Applies the Healing discipline's passive regeneration. */
+/**
+ * Call once per section transition. Applies the passive Endurance regeneration granted by the Kai
+ * Healing discipline or its Magnakai successor Curing (identical effect — a chart only ever has one
+ * of the two arrays populated, see carryOverCharacterToBook, so this OR needs no phase check).
+ */
 export function applyHealingRegen(chart: ActionChart, hadCombatThisSection: boolean): ActionChart {
-  if (hadCombatThisSection || !chart.disciplines.includes('Healing')) return chart;
+  const canRegen = chart.disciplines.includes('Healing') || chart.magnakaiDisciplines.includes('Curing');
+  if (hadCombatThisSection || !canRegen) return chart;
   if (chart.enduranceCurrent >= chart.enduranceMax) return chart;
   return {
     ...chart,
@@ -19,9 +24,10 @@ export function eatMeal(chart: ActionChart): ActionChart {
   return { ...chart, meals: chart.meals - 1 };
 }
 
-/** Call when the story requires a Meal and the player has none (and lacks Hunting). */
+/** Call when the story requires a Meal and the player has none (and lacks Hunting/Huntmastery). */
 export function applyMissedMealPenalty(chart: ActionChart): ActionChart {
-  const huntingExempts = chart.disciplines.includes('Hunting') && !getBookEquipment(chart.bookId).huntingDisabled;
+  const hasExemptDiscipline = chart.disciplines.includes('Hunting') || chart.magnakaiDisciplines.includes('Huntmastery');
+  const huntingExempts = hasExemptDiscipline && !getBookEquipment(chart.bookId).huntingDisabled;
   if (huntingExempts) return chart;
   return { ...chart, enduranceCurrent: Math.max(0, chart.enduranceCurrent - NO_MEAL_PENALTY) };
 }
