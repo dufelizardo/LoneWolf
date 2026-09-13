@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { resolveCombatRound } from '../engine/combat';
+import { useCombatPotion } from '../engine/disciplines';
+import { getBookEquipment } from '../engine/bookEquipment';
 import type { ActionChart, Enemy } from '../engine/types';
 import type { CombatEncounter, Choice } from '../data/section-types';
 
@@ -22,13 +24,26 @@ export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onF
   const [enemy, setEnemy] = useState<Enemy>(() => toEnemy(encounters[0]));
   const [log, setLog] = useState<string[]>([]);
   const [usePsiSurge, setUsePsiSurge] = useState(false);
+  const [wantsCombatPotion, setWantsCombatPotion] = useState(false);
+  const [potionActiveThisFight, setPotionActiveThisFight] = useState(false);
 
   const hasPsiSurge = chart.magnakaiDisciplines.includes('PsiSurge');
   const psiSurgeAvailable = chart.enduranceCurrent > PSI_SURGE_MIN_ENDURANCE;
+  const combatPotionLabel = getBookEquipment(chart.bookId).combatPotionLabel ?? 'Potion of Alether';
 
   const fightRound = () => {
-    const result = resolveCombatRound(chart, enemy, Math.random, { usePsiSurge });
+    // The potion is bought once, before the first round, then stays active (unlike Psi-surge's
+    // per-round re-chosen toggle) for the rest of this whole fight.
+    const activatingPotionNow = log.length === 0 && wantsCombatPotion && chart.combatPotionDoses > 0;
+    const chartForRound = activatingPotionNow ? useCombatPotion(chart) : chart;
+    const potionActiveNow = potionActiveThisFight || activatingPotionNow;
+
+    const result = resolveCombatRound(chartForRound, enemy, Math.random, {
+      usePsiSurge,
+      useCombatPotion: potionActiveNow,
+    });
     setUsePsiSurge(false); // must be actively re-chosen every round, never "sticky"
+    if (activatingPotionNow) setPotionActiveThisFight(true);
     onChartChange(result.chart);
     setEnemy(result.enemy);
     setLog((prev) => [...prev, result.log]);
@@ -92,6 +107,17 @@ export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onF
           />
           Usar Psi-surge nesta rodada (+4 Combat Skill, -2 Endurance
           {!psiSurgeAvailable ? ' — indisponível com Endurance ≤ 6' : ''})
+        </label>
+      )}
+
+      {log.length === 0 && chart.combatPotionDoses > 0 && !potionActiveThisFight && (
+        <label className="combat-potion-toggle">
+          <input
+            type="checkbox"
+            checked={wantsCombatPotion}
+            onChange={(e) => setWantsCombatPotion(e.target.checked)}
+          />
+          Beber {combatPotionLabel} antes desta luta (+2 Combat Skill nesta luta, consome 1 dose)
         </label>
       )}
 

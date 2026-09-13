@@ -130,6 +130,12 @@ describe('getEffectiveCombatSkill', () => {
     };
     expect(getEffectiveCombatSkill(tutelaryWeaponmaster, enemy)).toBe(baseChart.combatSkill - 2);
   });
+
+  it('applies +2 Combat Skill when useCombatPotion is set, regardless of doses (caller already spent the dose)', () => {
+    expect(getEffectiveCombatSkill(baseChart, enemy, { useCombatPotion: true })).toBe(baseChart.combatSkill + 2);
+    expect(getEffectiveCombatSkill(baseChart, enemy, { useCombatPotion: false })).toBe(baseChart.combatSkill);
+    expect(getEffectiveCombatSkill(baseChart, enemy)).toBe(baseChart.combatSkill);
+  });
 });
 
 describe('resolveCombatRound', () => {

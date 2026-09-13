@@ -38,6 +38,7 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
   const [newSpecialName, setNewSpecialName] = useState('');
   const [newSpecialEffect, setNewSpecialEffect] = useState('');
   const healingPotionLabel = getBookEquipment(chart.bookId).healingPotionLabel;
+  const combatPotionLabel = getBookEquipment(chart.bookId).combatPotionLabel;
 
   const enduracePct = Math.max(0, Math.min(100, (chart.enduranceCurrent / chart.enduranceMax) * 100));
   const backpackSlotsUsed = chart.backpackItems.length + chart.meals;
@@ -225,6 +226,12 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
           ))}
           {chart.healingPotionDoses > 0 && (
             <li>{healingPotionLabel}{chart.healingPotionDoses > 1 ? ` x${chart.healingPotionDoses}` : ''}</li>
+          )}
+          {chart.combatPotionDoses > 0 && (
+            <li>
+              {combatPotionLabel ?? 'Potion of Alether'}
+              {chart.combatPotionDoses > 1 ? ` x${chart.combatPotionDoses}` : ''} (usada antes de uma luta)
+            </li>
           )}
         </ul>
         <div className="button-row">

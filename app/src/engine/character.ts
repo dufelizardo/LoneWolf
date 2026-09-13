@@ -25,6 +25,7 @@ export function createFreshCharacterForBook(bookId: string, rng: Rng = Math.rand
     specialItems: [],
     goldCrowns: rollRandomNumber(rng) + config.goldRollBonus,
     healingPotionDoses: 0,
+    combatPotionDoses: 0,
     arrows: 0,
     currentSection: 1,
     visitedSections: [],

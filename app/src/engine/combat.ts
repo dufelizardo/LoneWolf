@@ -16,6 +16,12 @@ const PSI_SURGE_BONUS = 4;
 const PSI_SURGE_FREE_BONUS = 2; // the free "Mindblast" sub-mode of Psi-surge
 const PSI_SURGE_COST = 2; // Endurance, only when the costed mode actually activates
 const PSI_SURGE_MIN_ENDURANCE = 6; // "Psi-surge cannot be used if your ENDURANCE falls to 6 points or below"
+// "This potion of strength will increase your COMBAT SKILL by +2 points when swallowed immediately
+// prior to a combat. It lasts for the duration of one combat only." (equipmnt.htm, Book 10). The
+// dose itself is spent via useCombatPotion (disciplines.ts) before the fight starts; this flag is
+// just "is it currently active", decided and held by the caller (CombatModal) for the whole fight -
+// unlike Psi-surge's per-round cost, this isn't re-paid or re-validated here.
+const COMBAT_POTION_BONUS = 2;
 
 /** Special Items that grant a flat Combat Skill bonus whenever held (e.g. the Book 2 Shield). */
 const SPECIAL_ITEM_COMBAT_BONUS: Record<string, number> = {
@@ -25,6 +31,8 @@ const SPECIAL_ITEM_COMBAT_BONUS: Record<string, number> = {
 export interface CombatRoundOptions {
   /** Player's choice to activate the costed +4 CS mode this round, instead of the free +2 CS Mindblast sub-mode. Only relevant with the Psi-surge discipline; ignored otherwise. */
   usePsiSurge?: boolean;
+  /** Whether a Potion of Alether is currently active for this fight (dose already spent by the caller via useCombatPotion). Applies flatly every round for the rest of the fight, not just once. */
+  useCombatPotion?: boolean;
 }
 
 function psiSurgeCanActivate(chart: ActionChart, options: CombatRoundOptions): boolean {
@@ -52,6 +60,10 @@ export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy, option
 
   if (chart.magnakaiDisciplines.includes('PsiSurge') && !enemy.mindblastImmune) {
     skill += psiSurgeCanActivate(chart, options) ? PSI_SURGE_BONUS : PSI_SURGE_FREE_BONUS;
+  }
+
+  if (options.useCombatPotion) {
+    skill += COMBAT_POTION_BONUS;
   }
 
   for (const item of chart.specialItems) {

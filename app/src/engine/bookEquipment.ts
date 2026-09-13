@@ -14,6 +14,8 @@ export interface BookEquipmentConfig {
   weaponPool: WeaponType[];
   /** Display name for this book's post-combat healing item (mechanically always +4 Endurance per dose). */
   healingPotionLabel: string;
+  /** Display name for this book's pre-combat Combat Skill potion (Book 10+; always +2 CS for one whole fight per dose, via useCombatPotion). Absent in books before it existed. */
+  combatPotionLabel?: string;
   /** Some books (e.g. Kalte's icy wastes) explicitly disable Hunting's no-Meal-needed exemption for the whole book. */
   huntingDisabled?: boolean;
   /** Items every character gets regardless of how equipment is chosen (fixed narrative grants). */
@@ -54,6 +56,11 @@ function addSpecialItem(chart: ActionChart, item: SpecialItem) {
 /** Grants healing-potion doses on top of whatever the character already carries. */
 function grantHealingPotion(chart: ActionChart, doses = 1) {
   chart.healingPotionDoses += doses;
+}
+
+/** Grants Potion of Alether doses (+2 Combat Skill for one whole fight when drunk) on top of whatever the character already carries. */
+function grantCombatPotion(chart: ActionChart, doses = 1) {
+  chart.combatPotionDoses += doses;
 }
 
 /** Grants Arrows (for a Bow) on top of whatever the character already carries. */
@@ -414,6 +421,44 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
             addSpecialItem(c, { name: 'Fireseed', knownEffects: 'Explodes on impact with a hard surface' });
           }
         },
+      },
+    ],
+  },
+  tdt: {
+    goldRollBonus: 10,
+    // Never actually read for tdt — same reasoning as tkt above.
+    weaponPool: ALL_WEAPONS,
+    healingPotionLabel: 'Potion of Laumspur',
+    combatPotionLabel: 'Potion of Alether',
+    applyBaseEquipment: (c) => {
+      addSpecialItem(c, { name: 'Map of Ghatan' });
+    },
+    chooseCount: 5,
+    chooseOptions: [
+      { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
+      { id: 'bow', label: 'Bow', apply: (c) => addWeaponIfRoom(c, 'Bow') },
+      {
+        id: 'quiver',
+        label: 'Quiver (6 Arrows)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Quiver', knownEffects: 'Holds up to 6 Arrows' });
+          addArrows(c, 6);
+        },
+      },
+      { id: 'rope', label: 'Rope', apply: (c) => addBackpackItemIfRoom(c, 'Rope') },
+      { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: (c) => grantHealingPotion(c) },
+      { id: 'lantern', label: 'Lantern', apply: (c) => addBackpackItemIfRoom(c, 'Lantern') },
+      { id: 'mace', label: 'Mace', apply: (c) => addWeaponIfRoom(c, 'Mace') },
+      {
+        id: 'meals',
+        label: '3 Meals',
+        apply: (c) => { for (let i = 0; i < 3; i++) addMealIfRoom(c); },
+      },
+      { id: 'dagger', label: 'Dagger', apply: (c) => addWeaponIfRoom(c, 'Dagger') },
+      {
+        id: 'potion-of-alether',
+        label: 'Potion of Alether',
+        apply: (c) => grantCombatPotion(c),
       },
     ],
   },

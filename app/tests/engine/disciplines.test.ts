@@ -3,6 +3,7 @@ import {
   applyHealingRegen,
   applyMissedMealPenalty,
   eatMeal,
+  useCombatPotion,
   useHealingPotion,
 } from '../../src/engine/disciplines';
 import { createFreshCharacterForBook } from '../../src/engine/character';
@@ -101,5 +102,30 @@ describe('useHealingPotion', () => {
     expect(afterSecond.enduranceCurrent).toBe(18);
     const afterThird = useHealingPotion(afterSecond);
     expect(afterThird.enduranceCurrent).toBe(18);
+  });
+});
+
+describe('useCombatPotion', () => {
+  it('consumes exactly one dose and leaves Combat Skill/Endurance untouched (the +2 CS effect is applied in combat.ts, not here)', () => {
+    const chart = chartFor('tdt', { combatPotionDoses: 1, combatSkill: 20, enduranceCurrent: 20 });
+    const after = useCombatPotion(chart);
+    expect(after.combatPotionDoses).toBe(0);
+    expect(after.combatSkill).toBe(20);
+    expect(after.enduranceCurrent).toBe(20);
+  });
+
+  it('is a no-op once out of doses', () => {
+    const chart = chartFor('tdt', { combatPotionDoses: 0 });
+    expect(useCombatPotion(chart).combatPotionDoses).toBe(0);
+  });
+
+  it('supports multiple doses', () => {
+    const chart = chartFor('tdt', { combatPotionDoses: 2 });
+    const afterFirst = useCombatPotion(chart);
+    expect(afterFirst.combatPotionDoses).toBe(1);
+    const afterSecond = useCombatPotion(afterFirst);
+    expect(afterSecond.combatPotionDoses).toBe(0);
+    const afterThird = useCombatPotion(afterSecond);
+    expect(afterThird.combatPotionDoses).toBe(0);
   });
 });
