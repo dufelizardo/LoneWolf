@@ -1,20 +1,20 @@
-import { SAVE_VERSION, type ActionChart, type SaveGame } from './types';
+import { SAVE_VERSION, createEmptyCampaign, type ActionChart, type CampaignProgress, type SaveGame } from './types';
 
 const STORAGE_KEY = 'lonewolf-save';
 const CLOUD_CODE_KEY = 'lonewolf-cloud-code';
 
-export function saveGame(chart: ActionChart): void {
-  const save: SaveGame = { saveVersion: SAVE_VERSION, chart };
+export function saveGame(campaign: CampaignProgress, chart: ActionChart | null): void {
+  const save: SaveGame = { saveVersion: SAVE_VERSION, campaign, chart };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(save));
 }
 
-export function loadGame(): ActionChart | null {
+export function loadGame(): SaveGame | null {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return null;
   try {
     const save = JSON.parse(raw) as SaveGame;
     if (save.saveVersion !== SAVE_VERSION) return null;
-    return save.chart;
+    return save;
   } catch {
     return null;
   }
@@ -33,17 +33,22 @@ export function getLastCloudCode(): string | null {
 }
 
 /** Saves to the server. Creates a new save code the first time, or updates the existing one. */
-export async function saveGameToCloud(chart: ActionChart, code?: string | null): Promise<string> {
+export async function saveGameToCloud(
+  campaign: CampaignProgress,
+  chart: ActionChart | null,
+  code?: string | null,
+): Promise<string> {
+  const save: SaveGame = { saveVersion: SAVE_VERSION, campaign, chart };
   const response = code
     ? await fetch(`/api/saves/${code}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(chart),
+        body: JSON.stringify(save),
       })
     : await fetch('/api/saves', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(chart),
+        body: JSON.stringify(save),
       });
 
   if (!response.ok) {
@@ -55,13 +60,19 @@ export async function saveGameToCloud(chart: ActionChart, code?: string | null):
   return resultCode;
 }
 
-export async function loadGameFromCloud(code: string): Promise<ActionChart | null> {
+export async function loadGameFromCloud(code: string): Promise<SaveGame | null> {
   const response = await fetch(`/api/saves/${code}`);
   if (response.status === 404) return null;
   if (!response.ok) {
     throw new Error(`Cloud load failed (${response.status})`);
   }
-  const { chart } = (await response.json()) as { chart: ActionChart };
+  const { chart: stored } = (await response.json()) as { chart: unknown };
+  const save = stored as SaveGame;
+  if (!save || save.saveVersion !== SAVE_VERSION) return null;
   localStorage.setItem(CLOUD_CODE_KEY, code);
-  return chart;
+  return save;
+}
+
+export function newCampaign(): CampaignProgress {
+  return createEmptyCampaign();
 }

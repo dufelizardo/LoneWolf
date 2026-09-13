@@ -3,17 +3,22 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as cheerio from 'cheerio';
 import type { Section, Choice, CombatEncounter, RandomRange, SectionMap } from '../src/data/section-types.ts';
+import { BOOKS, type BookMeta } from '../src/data/books.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const CONTENT_DIR = process.env.LW_CONTENT_DIR ?? join(__dirname, '../../kai/ft/en/xhtml/lw/01fftd');
-const OUT_FILE = join(__dirname, '../src/data/sections.json');
-const ILLUSTRATIONS_OUT_DIR = join(__dirname, '../public/illustrations');
+const KAI_ROOT = process.env.LW_KAI_ROOT ?? join(__dirname, '../../kai');
+const DATA_DIR = join(__dirname, '../src/data');
+const ILLUSTRATIONS_ROOT = join(__dirname, '../public/illustrations');
 const SECTION_COUNT = 350;
+
+function contentDirFor(book: BookMeta): string {
+  return join(KAI_ROOT, book.id, 'en', 'xhtml', 'lw', book.code);
+}
 
 const ALLOWED_TAGS = new Set(['p', 'span', 'figure', 'img', 'em', 'strong', 'br', 'a']);
 
 function normalizeText(text: string): string {
-  return text.replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
+  return text.replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 function normalizeDashes(text: string): string {
@@ -106,8 +111,8 @@ function tryParseRandomRanges(choices: { text: string; targetSection: number }[]
   return ranges;
 }
 
-function parseSectionFile(num: number): Section {
-  const filePath = join(CONTENT_DIR, `sect${num}.htm`);
+function parseSectionFile(contentDir: string, num: number): Section {
+  const filePath = join(contentDir, `sect${num}.htm`);
   const html = readFileSync(filePath, 'utf-8');
   const $ = cheerio.load(html, { xmlMode: false });
 
@@ -145,7 +150,6 @@ function parseSectionFile(num: number): Section {
 
   const bodyHtml = sanitizeBodyHtml($, clone);
 
-  const fullText = container.text();
   const randomNumberBranch = container.find('a[href="random.htm"]').length > 0;
 
   let ranges: RandomRange[] | null = null;
@@ -178,24 +182,35 @@ function parseSectionFile(num: number): Section {
   };
 }
 
-function copyIllustrations(sections: SectionMap) {
-  if (!existsSync(ILLUSTRATIONS_OUT_DIR)) mkdirSync(ILLUSTRATIONS_OUT_DIR, { recursive: true });
+function parseStorySoFar(contentDir: string): string {
+  const filePath = join(contentDir, 'tssf.htm');
+  const html = readFileSync(filePath, 'utf-8');
+  const $ = cheerio.load(html, { xmlMode: false });
+  const container = $('div.maintext').first();
+  const clone = container.clone();
+  clone.find('h2, h3').remove();
+  return sanitizeBodyHtml($, clone);
+}
+
+function copyIllustrations(contentDir: string, outDir: string, sections: SectionMap) {
+  if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
   const seen = new Set<string>();
   for (const section of Object.values(sections)) {
     for (const filename of section.illustrations) {
       if (seen.has(filename)) continue;
       seen.add(filename);
-      const src = join(CONTENT_DIR, filename);
-      const dest = join(ILLUSTRATIONS_OUT_DIR, filename);
+      const src = join(contentDir, filename);
+      const dest = join(outDir, filename);
       if (existsSync(src)) copyFileSync(src, dest);
       else console.warn(`[parseContent] illustration not found: ${filename}`);
     }
   }
 }
 
-function main() {
-  if (!existsSync(CONTENT_DIR)) {
-    console.error(`Content directory not found: ${CONTENT_DIR}`);
+function parseBook(book: BookMeta): { warnings: string[] } {
+  const contentDir = contentDirFor(book);
+  if (!existsSync(contentDir)) {
+    console.error(`Content directory not found for book "${book.id}": ${contentDir}`);
     process.exit(1);
   }
 
@@ -203,18 +218,37 @@ function main() {
   const warnings: string[] = [];
 
   for (let i = 1; i <= SECTION_COUNT; i++) {
-    const section = parseSectionFile(i);
+    const section = parseSectionFile(contentDir, i);
     sections[i] = section;
     if (section.parserWarning) warnings.push(`sect${i}: ${section.parserWarning}`);
   }
 
-  copyIllustrations(sections);
+  copyIllustrations(contentDir, join(ILLUSTRATIONS_ROOT, book.id), sections);
 
-  writeFileSync(OUT_FILE, JSON.stringify(sections, null, 2), 'utf-8');
+  const outFile = join(DATA_DIR, `sections.${book.id}.json`);
+  writeFileSync(outFile, JSON.stringify(sections, null, 2), 'utf-8');
+  console.log(`[${book.id}] Parsed ${Object.keys(sections).length} sections -> ${outFile}`);
 
-  console.log(`Parsed ${Object.keys(sections).length} sections -> ${OUT_FILE}`);
-  console.log(`${warnings.length} parser warning(s):`);
-  for (const w of warnings) console.log(`  - ${w}`);
+  return { warnings };
+}
+
+function main() {
+  const bookIntros: Record<string, { html: string }> = {};
+  let totalWarnings = 0;
+
+  for (const book of BOOKS) {
+    const { warnings } = parseBook(book);
+    bookIntros[book.id] = { html: parseStorySoFar(contentDirFor(book)) };
+
+    console.log(`[${book.id}] ${warnings.length} parser warning(s):`);
+    for (const w of warnings) console.log(`  - ${w}`);
+    totalWarnings += warnings.length;
+  }
+
+  const introsFile = join(DATA_DIR, 'book-intros.json');
+  writeFileSync(introsFile, JSON.stringify(bookIntros, null, 2), 'utf-8');
+  console.log(`Wrote book intros -> ${introsFile}`);
+  console.log(`Total parser warnings across all books: ${totalWarnings}`);
 }
 
 main();

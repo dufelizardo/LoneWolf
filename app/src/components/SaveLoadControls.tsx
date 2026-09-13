@@ -1,28 +1,28 @@
 import { useState } from 'react';
 import { getLastCloudCode, loadGameFromCloud, saveGameToCloud } from '../engine/persistence';
-import type { ActionChart } from '../engine/types';
+import type { ActionChart, CampaignProgress, SaveGame } from '../engine/types';
 
 interface Props {
+  campaign: CampaignProgress;
   chart: ActionChart | null;
   canSave: boolean;
   canLoad: boolean;
   onNewGame: () => void;
   onSave: () => void;
   onLoad: () => void;
-  onCloudLoad: (chart: ActionChart) => void;
+  onCloudLoad: (save: SaveGame) => void;
 }
 
-export function SaveLoadControls({ chart, canSave, canLoad, onNewGame, onSave, onLoad, onCloudLoad }: Props) {
+export function SaveLoadControls({ campaign, chart, canSave, canLoad, onNewGame, onSave, onLoad, onCloudLoad }: Props) {
   const [cloudCode, setCloudCode] = useState(() => getLastCloudCode() ?? '');
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const handleCloudSave = async () => {
-    if (!chart) return;
     setBusy(true);
     setStatus(null);
     try {
-      const code = await saveGameToCloud(chart, cloudCode || null);
+      const code = await saveGameToCloud(campaign, chart, cloudCode || null);
       setCloudCode(code);
       setStatus(`Salvo na nuvem. Código: ${code}`);
     } catch {
@@ -70,7 +70,7 @@ export function SaveLoadControls({ chart, canSave, canLoad, onNewGame, onSave, o
         placeholder="Código de save"
         className="cloud-code-input"
       />
-      <button type="button" onClick={handleCloudSave} disabled={!canSave || busy}>
+      <button type="button" onClick={handleCloudSave} disabled={busy}>
         Salvar na Nuvem
       </button>
       <button type="button" onClick={handleCloudLoad} disabled={!cloudCode || busy}>

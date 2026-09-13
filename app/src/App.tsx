@@ -1,57 +1,117 @@
 import { useState } from 'react';
 import './App.css';
+import { BookSelectionScreen } from './screens/BookSelectionScreen';
+import { BookIntroScreen } from './screens/BookIntroScreen';
 import { CharacterCreationScreen } from './screens/CharacterCreationScreen';
 import { GameScreen } from './screens/GameScreen';
 import { GameOverScreen } from './screens/GameOverScreen';
 import { SaveLoadControls } from './components/SaveLoadControls';
-import { hasSave, loadGame, saveGame } from './engine/persistence';
-import type { ActionChart } from './engine/types';
+import { hasSave, loadGame, newCampaign, saveGame } from './engine/persistence';
+import type { ActionChart, CampaignProgress, SaveGame } from './engine/types';
+import { getBook } from './data/books';
 
-type Mode = 'create' | 'playing' | 'gameover';
+type Mode = 'bookSelect' | 'bookIntro' | 'create' | 'playing' | 'gameover';
+export type CreationMode = 'fresh' | 'carryover';
 
 function App() {
+  const [campaign, setCampaign] = useState<CampaignProgress>(() => loadGame()?.campaign ?? newCampaign());
   const [chart, setChart] = useState<ActionChart | null>(null);
-  const [mode, setMode] = useState<Mode>('create');
+  const [mode, setMode] = useState<Mode>('bookSelect');
+  const [activeBookId, setActiveBookId] = useState<string | null>(null);
+  const [creationMode, setCreationMode] = useState<CreationMode>('fresh');
   const [gameOverReason, setGameOverReason] = useState<'died' | 'deadend' | 'ending'>('died');
 
-  const startNewGame = () => {
+  const goToBookSelection = () => {
     setChart(null);
-    setMode('create');
+    setActiveBookId(null);
+    setMode('bookSelect');
   };
 
   const handleGameOver = (reason: 'died' | 'deadend' | 'ending') => {
+    if (reason === 'ending' && chart) {
+      const nextCampaign: CampaignProgress = {
+        completedBooks: { ...campaign.completedBooks, [chart.bookId]: chart },
+      };
+      setCampaign(nextCampaign);
+      saveGame(nextCampaign, chart);
+    }
     setGameOverReason(reason);
     setMode('gameover');
   };
 
-  const handleLoad = () => {
-    const loaded = loadGame();
-    if (loaded) {
-      setChart(loaded);
+  const applyLoadedSave = (save: SaveGame) => {
+    setCampaign(save.campaign);
+    if (save.chart) {
+      setChart(save.chart);
+      setActiveBookId(save.chart.bookId);
       setMode('playing');
+    } else {
+      setChart(null);
+      setActiveBookId(null);
+      setMode('bookSelect');
     }
+  };
+
+  const handleLoad = () => {
+    const save = loadGame();
+    if (save) applyLoadedSave(save);
   };
 
   return (
     <div className="app-shell">
       <header className="app-header">
-        <h1>Lone Wolf: Flight from the Dark</h1>
+        <h1>Lone Wolf</h1>
         <SaveLoadControls
+          campaign={campaign}
           chart={chart}
           canSave={mode === 'playing' && chart !== null}
           canLoad={hasSave()}
-          onNewGame={startNewGame}
-          onSave={() => chart && saveGame(chart)}
+          onNewGame={goToBookSelection}
+          onSave={() => saveGame(campaign, chart)}
           onLoad={handleLoad}
-          onCloudLoad={(loaded) => {
-            setChart(loaded);
-            setMode('playing');
-          }}
+          onCloudLoad={applyLoadedSave}
         />
       </header>
 
-      {mode === 'create' && (
+      {mode === 'bookSelect' && (
+        <BookSelectionScreen
+          campaign={campaign}
+          onSelectBook={(bookId) => {
+            setActiveBookId(bookId);
+            setMode('bookIntro');
+          }}
+        />
+      )}
+
+      {mode === 'bookIntro' && activeBookId && (
+        <BookIntroScreen
+          book={getBook(activeBookId)}
+          previousChart={(() => {
+            const book = getBook(activeBookId);
+            const previousEntry = Object.values(campaign.completedBooks).find((c) => {
+              // previous book = the one whose order is exactly one less than this book's
+              return getBook(c.bookId).order === book.order - 1;
+            });
+            return previousEntry ?? null;
+          })()}
+          onContinue={(mode) => {
+            setCreationMode(mode);
+            setMode('create');
+          }}
+        />
+      )}
+
+      {mode === 'create' && activeBookId && (
         <CharacterCreationScreen
+          book={getBook(activeBookId)}
+          creationMode={creationMode}
+          previousChart={
+            creationMode === 'carryover'
+              ? Object.values(campaign.completedBooks).find(
+                  (c) => getBook(c.bookId).order === getBook(activeBookId).order - 1,
+                ) ?? null
+              : null
+          }
           onReady={(newChart) => {
             setChart(newChart);
             setMode('playing');
@@ -64,7 +124,11 @@ function App() {
       )}
 
       {mode === 'gameover' && chart && (
-        <GameOverScreen reason={gameOverReason} visitedCount={chart.visitedSections.length} onRestart={startNewGame} />
+        <GameOverScreen
+          reason={gameOverReason}
+          visitedCount={chart.visitedSections.length}
+          onRestart={goToBookSelection}
+        />
       )}
     </div>
   );

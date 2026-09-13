@@ -6,6 +6,11 @@ const NO_WEAPON_PENALTY = -4;
 const WEAPONSKILL_BONUS = 2;
 const MINDBLAST_BONUS = 2;
 
+/** Special Items that grant a flat Combat Skill bonus whenever held (e.g. the Book 2 Shield). */
+const SPECIAL_ITEM_COMBAT_BONUS: Record<string, number> = {
+  Shield: 2,
+};
+
 /** Lone Wolf's Combat Skill for this fight, including discipline bonuses and the no-weapon penalty. */
 export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy): number {
   let skill = chart.combatSkill;
@@ -18,6 +23,10 @@ export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy): numbe
 
   if (chart.disciplines.includes('Mindblast') && !enemy.mindblastImmune) {
     skill += MINDBLAST_BONUS;
+  }
+
+  for (const item of chart.specialItems) {
+    skill += SPECIAL_ITEM_COMBAT_BONUS[item] ?? 0;
   }
 
   return skill;

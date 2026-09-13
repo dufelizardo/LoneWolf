@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import sectionsData from '../data/sections.json';
+import sectionsFt from '../data/sections.ft.json';
+import sectionsFa from '../data/sections.fa.json';
 import type { SectionMap } from '../data/section-types';
 import { getFootnote } from '../data/footnotes';
 import { applyHealingRegen } from '../engine/disciplines';
@@ -9,7 +10,10 @@ import { RandomNumberBranch } from '../components/RandomNumberBranch';
 import { CombatModal } from '../components/CombatModal';
 import type { ActionChart } from '../engine/types';
 
-const sections = sectionsData as unknown as SectionMap;
+const SECTIONS_BY_BOOK: Record<string, SectionMap> = {
+  ft: sectionsFt as unknown as SectionMap,
+  fa: sectionsFa as unknown as SectionMap,
+};
 
 const EVADE_KEYWORDS = /\bevad|\bflee|\bescape|\brun away\b/i;
 
@@ -20,6 +24,7 @@ interface Props {
 }
 
 export function GameScreen({ chart, onChartChange, onGameOver }: Props) {
+  const sections = SECTIONS_BY_BOOK[chart.bookId];
   const section = sections[chart.currentSection];
   const [combatStarted, setCombatStarted] = useState(false);
   const [combatResolved, setCombatResolved] = useState(section.combats.length === 0);
@@ -51,7 +56,7 @@ export function GameScreen({ chart, onChartChange, onGameOver }: Props) {
         <div className="section-body" dangerouslySetInnerHTML={{ __html: section.bodyHtml }} />
 
         {section.illustrations.map((file) => (
-          <img key={file} className="section-illustration" src={`/illustrations/${file}`} alt="" />
+          <img key={file} className="section-illustration" src={`/illustrations/${chart.bookId}/${file}`} alt="" />
         ))}
 
         {footnote && <div className="callout callout-info">📖 {footnote.note}</div>}

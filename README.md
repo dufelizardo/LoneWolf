@@ -1,13 +1,20 @@
-# Lone Wolf: Flight from the Dark
+# Lone Wolf
+
+Adaptação web da série de livros-jogo *Lone Wolf* (Joe Dever e Gary Chalk), com progressão entre
+livros: cada livro só é jogável depois que o anterior é concluído (final canônico), e o personagem
+é transferido de um livro para o outro seguindo as regras reais da série (ver ADR-0004).
 
 Pastas neste repositório:
 
-- **`kai/ft/en/`** — conteúdo original do [Project Aon](https://www.projectaon.org/) (edição XHTML aberta
-  do livro-jogo *Flight from the Dark*, de Joe Dever e Gary Chalk). `kai/` agrupa a série Kai/Lone Wolf e
-  `ft/` identifica este livro especificamente, deixando espaço para outros livros da série no futuro. Não
-  é modificado nem redistribuído por este projeto — é lido localmente, em build-time, pelo pipeline de
-  conteúdo em `app/scripts/`. A distribuição deste material segue os termos em
-  `kai/ft/en/xhtml/lw/01fftd/license.htm`.
+- **`kai/<id>/en/`** — conteúdo original do [Project Aon](https://www.projectaon.org/) (edição XHTML
+  aberta), um por livro. `kai/` agrupa a série Kai/Lone Wolf; cada `<id>` é um livro, registrado em
+  `app/src/data/books.ts`:
+  - `kai/ft/en/` — Livro 1, *Flight from the Dark* (`xhtml/lw/01fftd/`).
+  - `kai/fa/en/` — Livro 2, *Fire on the Water* (`xhtml/lw/02fotw/`).
+
+  Não é modificado nem redistribuído por este projeto — é lido localmente, em build-time, pelo
+  pipeline de conteúdo em `app/scripts/`. A distribuição deste material segue os termos no
+  `license.htm` de cada livro.
 - **`app/`** — o jogo web (React + TypeScript + Vite) que transforma esse conteúdo em uma aventura
   jogável, com ficha de personagem completa, combate automático contra a Combat Results Table e
   disciplinas Kai.
@@ -22,8 +29,11 @@ npm install
 npm run dev
 ```
 
-`npm run dev` (e `npm run build`) rodam automaticamente `npm run parse-content`, que lê os 350 arquivos
-`sect*.htm` de `kai/ft/en/xhtml/lw/01fftd/` e gera `app/src/data/sections.json`.
+`npm run dev` (e `npm run build`) rodam automaticamente `npm run parse-content`, que lê os 350
+arquivos `sect*.htm` de cada livro registrado em `app/src/data/books.ts` e gera
+`app/src/data/sections.<id>.json` (um por livro) e `app/src/data/book-intros.json` (a introdução
+"Story So Far" de cada um). Para adicionar um livro novo: soltar o conteúdo em `kai/<id>/en/...`,
+adicionar uma entrada em `books.ts` e rodar o parser de novo.
 
 Para rodar os testes automatizados (motor de jogo + validação do conteúdo parseado):
 
