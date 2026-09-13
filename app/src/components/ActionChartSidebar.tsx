@@ -14,6 +14,7 @@ import {
   removeWeapon,
 } from '../engine/inventory';
 import { eatMeal, useHealingPotion } from '../engine/disciplines';
+import { getBookEquipment } from '../engine/bookEquipment';
 import { getKaiRank } from '../engine/kaiRank';
 import { ALL_WEAPONS, DISCIPLINE_LABELS, MAX_BACKPACK_ITEMS, MAX_WEAPONS, type ActionChart, type WeaponType } from '../engine/types';
 
@@ -27,6 +28,7 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
   const [newWeapon, setNewWeapon] = useState<WeaponType>(ALL_WEAPONS[0]);
   const [newSpecialName, setNewSpecialName] = useState('');
   const [newSpecialEffect, setNewSpecialEffect] = useState('');
+  const healingPotionLabel = getBookEquipment(chart.bookId).healingPotionLabel;
 
   const enduracePct = Math.max(0, Math.min(100, (chart.enduranceCurrent / chart.enduranceMax) * 100));
   const backpackSlotsUsed = chart.backpackItems.length + chart.meals;
@@ -173,7 +175,7 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
         </div>
         {chart.hasHealingPotion && (
           <button type="button" onClick={() => onChange(useHealingPotion(chart))} disabled={chart.hasHealingPotionUsed}>
-            Usar Poção de Cura
+            Usar {healingPotionLabel}
           </button>
         )}
       </section>
@@ -196,7 +198,7 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
             </li>
           ))}
           {chart.hasHealingPotion && (
-            <li>Healing Potion{chart.hasHealingPotionUsed ? ' (usada)' : ''}</li>
+            <li>{healingPotionLabel}{chart.hasHealingPotionUsed ? ' (usada)' : ''}</li>
           )}
         </ul>
         <div className="button-row">

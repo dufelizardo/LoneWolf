@@ -35,11 +35,12 @@ describe.each(BOOKS)('parsed sections for book "$id" ($title)', (book) => {
     }
   });
 
-  it('has at least one dead end and exactly one ending', () => {
+  it('has at least one dead end, and marks the canonical final section as an ending', () => {
     const deadEndCount = Object.values(sections).filter((s) => s.isDeadEnd).length;
     const endingCount = Object.values(sections).filter((s) => s.isEnding).length;
     expect(deadEndCount).toBeGreaterThanOrEqual(1);
-    expect(endingCount).toBe(1);
+    expect(endingCount).toBeGreaterThanOrEqual(1);
+    expect(sections[book.finalSection]?.isEnding).toBe(true);
   });
 });
 

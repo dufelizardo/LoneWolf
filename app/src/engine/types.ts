@@ -43,7 +43,8 @@ export type WeaponType =
   | 'Mace'
   | 'Quarterstaff'
   | 'Spear'
-  | 'Broadsword';
+  | 'Broadsword'
+  | 'Warhammer';
 
 export const ALL_WEAPONS: WeaponType[] = [
   'Axe',
@@ -53,6 +54,7 @@ export const ALL_WEAPONS: WeaponType[] = [
   'Quarterstaff',
   'Spear',
   'Broadsword',
+  'Warhammer',
 ];
 
 export const MAX_WEAPONS = 2;
