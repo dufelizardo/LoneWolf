@@ -84,7 +84,10 @@ dist/index.js` na porta `3000`.
 - **`.github/workflows/publish-image.yml`**: em todo push em `main`, builda e publica a imagem em
   `ghcr.io/dufelizardo/lonewolf` (tags `main`, `latest` e `<sha>` — a tag por branch segue a mesma
   convenção do `mais_saude_publica`), imagem pública, sem segredos adicionais (usa o `GITHUB_TOKEN`
-  padrão do próprio Actions).
+  padrão do próprio Actions). Em seguida, o job `pin-manifests` atualiza `k8s/base/deployment.yaml` e
+  `api-deployment.yaml` pra apontar pra tag `:<sha>` desse build e commita a mudança direto em
+  `main` — é isso que faz o ArgoCD perceber uma diferença real e fazer o rollout sozinho (ver seção
+  de Deploy abaixo).
 
 ## Deploy (Kubernetes + ArgoCD)
 
@@ -129,18 +132,15 @@ curl -X POST http://lonewolf.local/api/saves -H "Content-Type: application/json"
 (`/healthz` só é usado internamente pelas probes do Kubernetes, não é roteado pelo Ingress.)
 
 A partir daí, todo push em `main` gera uma nova imagem `:main`/`:latest`/`:<sha>` via
-`publish-image.yml`, e o ArgoCD reconcilia o Deployment. **Ponto em aberto (confirmado nas ADRs do
-mais_saude_publica — eles têm exatamente a mesma lacuna e também não resolveram)**: como o Deployment
-referencia uma tag móvel (`:main`), o ArgoCD não percebe sozinho que a imagem mudou — `syncPolicy.
-automated.selfHeal` só reage a divergência nos manifests do Git, não a um novo digest por trás da mesma
-tag. Até decidir uma solução definitiva (ex. Argo CD Image Updater, ou passar a usar tags por commit
-nos manifests, gerenciadas via Kustomize `images:`), o jeito mais simples de forçar a atualização após
-um novo `publish-image.yml` é rodar, no cluster:
+`publish-image.yml`, o job `pin-manifests` atualiza os dois `image:` pra `:<sha>` e commita, e o
+ArgoCD reconcilia o Deployment sozinho ao ver essa mudança real no Git — sem SSH, sem restart manual.
 
-```bash
-kubectl rollout restart deployment/lonewolf -n lonewolf
-kubectl rollout restart deployment/lonewolf-api -n lonewolf
-```
+**Resolvido** (era um ponto em aberto — ver ADR-0001/ADR-0003): antes disso, o Deployment referenciava
+só a tag móvel `:main`, e o `syncPolicy.automated.selfHeal` do ArgoCD não percebia sozinho que a
+imagem tinha mudado (só reage a divergência no *texto* dos manifests, não a um novo digest atrás da
+mesma tag) — por isso era preciso rodar `kubectl rollout restart` manualmente após cada deploy. Pinar
+os manifests na tag `:<sha>` de cada build faz o texto do Git mudar de verdade a cada push, o que é o
+gatilho que o ArgoCD precisa.
 
 ## Nota sobre a Combat Results Table
 
