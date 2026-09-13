@@ -53,3 +53,31 @@ export function useCombatPotion(chart: ActionChart): ActionChart {
   if (chart.combatPotionDoses <= 0) return chart;
   return { ...chart, combatPotionDoses: chart.combatPotionDoses - 1 };
 }
+
+const ARCHMASTER_CURING_RESTORE = 20;
+const ARCHMASTER_CURING_DISCIPLINE_COUNT = 9;
+const ARCHMASTER_CURING_TRIGGER_ENDURANCE = 6;
+
+/**
+ * "Archmasters are able to use their healing power to repair serious wounds sustained in battle. If,
+ * whilst in combat, their ENDURANCE is reduced to 6 points or less, they can use their skill to
+ * restore 20 ENDURANCE points. This ability can only be used once every 100 days." (imprvdsc.htm,
+ * Book 12). This app tracks no in-game calendar anywhere, so the 100-day cooldown has no engine
+ * equivalent and is left to the player to self-adjudicate (the button's label spells this out) —
+ * same category as other narrative-only constraints (e.g. Kalte's Hunting-zone restriction).
+ */
+export function canUseArchmasterCuring(chart: ActionChart): boolean {
+  return (
+    chart.magnakaiDisciplines.includes('Curing') &&
+    chart.magnakaiDisciplines.length >= ARCHMASTER_CURING_DISCIPLINE_COUNT &&
+    chart.enduranceCurrent <= ARCHMASTER_CURING_TRIGGER_ENDURANCE
+  );
+}
+
+export function useArchmasterCuring(chart: ActionChart): ActionChart {
+  if (!canUseArchmasterCuring(chart)) return chart;
+  return {
+    ...chart,
+    enduranceCurrent: Math.min(chart.enduranceMax, chart.enduranceCurrent + ARCHMASTER_CURING_RESTORE),
+  };
+}

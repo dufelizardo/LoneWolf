@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { resolveCombatRound } from '../engine/combat';
-import { useCombatPotion } from '../engine/disciplines';
+import { ARCHMASTER_DISCIPLINE_COUNT, psiSurgeMinEndurance, resolveCombatRound } from '../engine/combat';
+import { canUseArchmasterCuring, useArchmasterCuring, useCombatPotion } from '../engine/disciplines';
 import { getBookEquipment } from '../engine/bookEquipment';
 import type { ActionChart, Enemy } from '../engine/types';
 import type { CombatEncounter, Choice } from '../data/section-types';
@@ -17,8 +17,6 @@ function toEnemy(encounter: CombatEncounter): Enemy {
   return { name: encounter.enemyName, combatSkill: encounter.combatSkill, endurance: encounter.endurance };
 }
 
-const PSI_SURGE_MIN_ENDURANCE = 6;
-
 export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onFinished }: Props) {
   const [enemyIndex, setEnemyIndex] = useState(0);
   const [enemy, setEnemy] = useState<Enemy>(() => toEnemy(encounters[0]));
@@ -28,7 +26,8 @@ export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onF
   const [potionActiveThisFight, setPotionActiveThisFight] = useState(false);
 
   const hasPsiSurge = chart.magnakaiDisciplines.includes('PsiSurge');
-  const psiSurgeAvailable = chart.enduranceCurrent > PSI_SURGE_MIN_ENDURANCE;
+  const isArchmasterPsiSurge = hasPsiSurge && chart.magnakaiDisciplines.length >= ARCHMASTER_DISCIPLINE_COUNT;
+  const psiSurgeAvailable = chart.enduranceCurrent > psiSurgeMinEndurance(chart);
   const combatPotionLabel = getBookEquipment(chart.bookId).combatPotionLabel ?? 'Potion of Alether';
 
   const fightRound = () => {
@@ -105,9 +104,16 @@ export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onF
             disabled={!psiSurgeAvailable}
             onChange={(e) => setUsePsiSurge(e.target.checked)}
           />
-          Usar Psi-surge nesta rodada (+4 Combat Skill, -2 Endurance
-          {!psiSurgeAvailable ? ' — indisponível com Endurance ≤ 6' : ''})
+          {isArchmasterPsiSurge
+            ? `Usar Psi-surge nesta rodada (+6 Combat Skill, -1 Endurance${!psiSurgeAvailable ? ' — indisponível com Endurance ≤ 4' : ''})`
+            : `Usar Psi-surge nesta rodada (+4 Combat Skill, -2 Endurance${!psiSurgeAvailable ? ' — indisponível com Endurance ≤ 6' : ''})`}
         </label>
+      )}
+
+      {canUseArchmasterCuring(chart) && (
+        <button type="button" onClick={() => onChartChange(useArchmasterCuring(chart))}>
+          Usar Cura (Archmaster): restaurar 20 Endurance (auto-adjudicar o limite de uma vez a cada 100 dias)
+        </button>
       )}
 
       {log.length === 0 && chart.combatPotionDoses > 0 && !potionActiveThisFight && (

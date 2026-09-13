@@ -290,3 +290,58 @@ pendência.
 Zero seções-quebra-cabeça. Disciplinas Magnakai, `gamerulz.htm`, `cmbtrulz.htm`, `levels.htm` e
 Lore-circles confirmados inalterados em substância. Sem mudança de `SAVE_VERSION` — a melhoria de
 Combat Skill é puramente derivada da contagem de Disciplinas, sem nenhum estado novo pra persistir.
+
+## Atualização — Livro 12
+
+O Livro 12 (*The Masters of Darkness*), sétimo e último livro da fase Magnakai, termina com uma
+vitória narrativa completa (Lone Wolf derrota Darklord Gnaag), mas segue o mesmo padrão de forward-
+link explícito pro Livro 13 ("The Plague Lords of Ruel") que todo livro Magnakai anterior usa — não
+é um encerramento especial, não precisou de nenhum tratamento diferente no motor (`getNextBook('tmd')`
+simplesmente retorna `null` até o Livro 13 existir em `BOOKS`, pela lógica de ordem já existente).
+
+### Rank Archmaster (9 Disciplinas Magnakai): a melhoria mais substancial até agora, e a primeira em Curing
+
+`imprvdsc.htm` do Livro 12 adiciona o rank Archmaster, com melhorias reais em **duas** Disciplinas
+diferentes pela primeira vez (até aqui, cada rank só tinha melhorado Weaponmastery):
+
+- **Psi-surge** ganha uma terceira camada de override, seguindo exatamente o padrão já estabelecido
+  pro Weaponmastery nos Livros 8/11: *"Archmasters may add 6 points to their COMBAT SKILL instead of
+  the usual 4 points. For every round in which Psi-surge is used, Archmasters need only deduct 1
+  ENDURANCE point... they may add 3 points [Mindblast]... cannot use Psi-surge if their ENDURANCE
+  score falls to 4 points or below."* Implementado com 4 constantes novas (`PSI_SURGE_BONUS_ARCHMASTER
+  = 6`, `PSI_SURGE_FREE_BONUS_ARCHMASTER = 3`, `PSI_SURGE_COST_ARCHMASTER = 1`,
+  `PSI_SURGE_MIN_ENDURANCE_ARCHMASTER = 4`) e um limiar (`ARCHMASTER_DISCIPLINE_COUNT = 9`), aplicadas
+  nos três pontos onde Psi-surge já era calculado: o bônus em `getEffectiveCombatSkill`, o custo em
+  `resolveCombatRound`, e o piso de ativação em `psiSurgeCanActivate`. Esse último eu exportei como
+  `psiSurgeMinEndurance(chart)` — o `CombatModal.tsx` tinha uma constante duplicada (`= 6` fixo) pra
+  decidir se o checkbox fica habilitado, o que já era uma mentira pra qualquer Archmaster com
+  Endurance entre 5 e 6 antes desta correção (a UI dizia "indisponível" quando `resolveCombatRound`
+  já deixaria ativar). Corrigido junto, não é uma regressão introduzida por este livro — só nunca
+  tinha sido exercitado porque nenhum livro anterior tinha uma segunda camada de override pra
+  Psi-surge.
+- **Curing** ganha sua primeira melhoria mecânica de qualquer rank: *"If, whilst in combat, their
+  ENDURANCE is reduced to 6 points or less, they can use their skill to restore 20 ENDURANCE points.
+  This ability can only be used once every 100 days."* O limite "uma vez a cada 100 dias" não tem
+  contraparte no motor — este app não rastreia nenhum calendário em nenhum livro, então essa restrição
+  fica pra auto-adjudicação do jogador (documentada no rótulo do botão), mesma categoria de outras
+  restrições narrativas sem estado equivalente (ex.: a zona de caça desabilitada de Kalte no Livro 3).
+  Implementado como `canUseArchmasterCuring`/`useArchmasterCuring` em `disciplines.ts` (mesmo padrão
+  de `useHealingPotion`, mas condicionado a Curing + rank Archmaster + Endurance ≤ 6) e um botão
+  condicional no `CombatModal`, já que a regra é explícita em dizer "whilst in combat".
+- As outras 3 entradas do rank (Animal Control, Huntmastery, Nexus) seguem puramente narrativas.
+
+### Equipamento: combinação nova, mapa + 6-de-11
+
+Depois do Livro 11 remover o mapa automático (sem território real pra mapear na Daziarn), o Livro 12
+volta a conceder um mapa — mas muda o formato de escolha de novo, agora "6 de 11" em vez de "5 de 10"
+(Livros 7-10) ou "6 de 9" (Livro 11). Quarterstaff e Axe voltam a aparecer (ausentes desde o Livro 6),
+e a opção de Refeições vale 4 em vez das 3 usuais. Nenhum item ou arma genuinamente nova — só mais
+uma combinação de count/mapa que os mecanismos genéricos (`chooseCount`, `applyBaseEquipment`) já
+suportavam sem qualquer mudança estrutural.
+
+### Resto do livro
+
+Zero seções-quebra-cabeça. Disciplinas Magnakai, `gamerulz.htm`, `cmbtrulz.htm`, `levels.htm` e
+Lore-circles confirmados inalterados em substância. Sem mudança de `SAVE_VERSION` — ambas as melhorias
+de rank são puramente derivadas da contagem de Disciplinas e da Endurance atual, sem nenhum campo
+novo pra persistir.

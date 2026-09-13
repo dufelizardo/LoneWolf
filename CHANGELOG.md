@@ -4,6 +4,39 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.13.0] — 2026-09-13
+
+Livro 12, *The Masters of Darkness*, adicionado — sétimo e último livro da fase Magnakai. O final é
+uma vitória narrativa completa (Lone Wolf derrota Darklord Gnaag, retorna herói a Sommerlund), mas
+segue o mesmo padrão de encadeamento dos livros anteriores, com forward-link explícito pro Livro 13
+("The Plague Lords of Ruel") — não é um encerramento especial que exija tratamento diferente no motor.
+
+- **Equipamento volta a ter mapa automático**: combinação nova (mapa + escolha 6-de-11), diferente
+  tanto do padrão mapa+5-de-10 dos Livros 7-10 quanto do padrão sem-mapa 6-de-9 do Livro 11.
+  Quarterstaff e Axe voltam a aparecer na lista (ausentes desde o Livro 6), e a opção de Refeições
+  passa a valer 4 em vez de 3.
+- **Rank Archmaster (9 Disciplinas Magnakai) traz as melhorias mais substanciais até agora, em duas
+  Disciplinas diferentes**:
+  - **Psi-surge**: o bônus de combate sobe de +4 para +6 Combat Skill (custo cai de -2 para -1
+    Endurance por rodada), o modo gratuito "Mindblast" sobe de +2 para +3 CS, e o piso mínimo de
+    Endurance pra usar a Disciplina cai de 6 para 4. Implementado como uma terceira camada de
+    override em `combat.ts`, mesma forma da melhoria de Weaponmastery do Livro 11.
+  - **Curing**: nova habilidade de cura em combate — restaura 20 Endurance quando o total cai a 6 ou
+    menos, mas só "uma vez a cada 100 dias" no texto original. Como o motor não rastreia nenhum
+    calendário em nenhum livro, esse limite de dias é deixado pro jogador auto-adjudicar (documentado
+    no próprio botão), mesma categoria de outras restrições narrativas sem contraparte de estado
+    (ex.: a zona de caça desabilitada em Kalte). Novo botão no `CombatModal`, visível só quando a
+    condição (Curing + rank Archmaster + Endurance ≤ 6) é satisfeita.
+  - As outras 3 entradas do rank (Animal Control, Huntmastery, Nexus) seguem puramente narrativas.
+- **Correção de bug**: o toggle de Psi-surge no combate mostrava sempre "Endurance ≤ 6" e usava o
+  limiar de Endurance errado pra decidir se o botão fica habilitado, mesmo pra um personagem
+  Archmaster (cujo limiar real é 4) — corrigido exportando o cálculo correto de `combat.ts` em vez de
+  duplicar a constante na UI.
+
+Zero seções-quebra-cabeça neste livro. Disciplinas Magnakai, regras de combate (fora as melhorias
+acima) e escada de Rank confirmadas inalteradas. Sem mudança de `SAVE_VERSION` — nenhum campo novo em
+`ActionChart`.
+
 ## [0.12.0] — 2026-09-13
 
 Livro 11, *The Prisoners of Time*, adicionado — sexto livro da fase Magnakai ("o penúltimo episódio
