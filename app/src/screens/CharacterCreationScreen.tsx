@@ -33,6 +33,7 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
 
   const equipmentConfig = getBookEquipment(book.id);
   const needsEquipmentChoice = equipmentConfig.chooseOptions !== undefined;
+  const requiredEquipment = equipmentConfig.chooseCount ?? 2;
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
 
   const toggleDiscipline = (discipline: Discipline) => {
@@ -46,13 +47,13 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
   const toggleEquipment = (id: string) => {
     setSelectedEquipment((prev) => {
       if (prev.includes(id)) return prev.filter((x) => x !== id);
-      if (prev.length >= 2) return prev;
+      if (prev.length >= requiredEquipment) return prev;
       return [...prev, id];
     });
   };
 
   const disciplinesReady = selectedDisciplines.length === requiredDisciplines;
-  const equipmentReady = !needsEquipmentChoice || selectedEquipment.length === 2;
+  const equipmentReady = !needsEquipmentChoice || selectedEquipment.length === requiredEquipment;
 
   const confirm = () => {
     if (!disciplinesReady || !equipmentReady) return;
@@ -86,7 +87,10 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
           {baseChart.meals > 0 ? `, ${baseChart.meals} Refeição(ões)` : ''}
           {baseChart.backpackItems.length > 0 ? `, ${baseChart.backpackItems.join(', ')}` : ''}
           {baseChart.specialItems.length > 0 ? `, ${baseChart.specialItems.map((i) => i.name).join(', ')}` : ''}
-          {baseChart.hasHealingPotion ? `, ${equipmentConfig.healingPotionLabel}` : ''}, {baseChart.goldCrowns} Coroas de Ouro
+          {baseChart.healingPotionDoses > 0
+            ? `, ${equipmentConfig.healingPotionLabel}${baseChart.healingPotionDoses > 1 ? ` x${baseChart.healingPotionDoses}` : ''}`
+            : ''}
+          , {baseChart.goldCrowns} Coroas de Ouro
         </p>
       </section>
 
@@ -117,7 +121,9 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
 
       {needsEquipmentChoice && (
         <section>
-          <h3>Escolha exatamente 2 itens de equipamento ({selectedEquipment.length}/2)</h3>
+          <h3>
+            Escolha exatamente {requiredEquipment} itens de equipamento ({selectedEquipment.length}/{requiredEquipment})
+          </h3>
           <ul className="discipline-picker">
             {equipmentConfig.chooseOptions!.map((option) => (
               <li key={option.id}>
@@ -126,7 +132,7 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
                     type="checkbox"
                     checked={selectedEquipment.includes(option.id)}
                     onChange={() => toggleEquipment(option.id)}
-                    disabled={!selectedEquipment.includes(option.id) && selectedEquipment.length >= 2}
+                    disabled={!selectedEquipment.includes(option.id) && selectedEquipment.length >= requiredEquipment}
                   />
                   {option.label}
                 </label>

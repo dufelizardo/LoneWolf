@@ -4,6 +4,32 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.5.0] — 2026-09-13
+
+Livro 4, *The Chasm of Doom*, adicionado à campanha:
+
+- 350 seções, mesma transferência de personagem dos livros anteriores.
+- Nova arma **Dagger**, disponível na escolha de equipamento deste livro.
+- **Equipamento generalizado para "escolha N de uma lista"**: os Livros 2-3 sempre exigiam escolher
+  exatamente 2 itens; o Livro 4 exige escolher exatamente 6 de 9. `BookEquipmentConfig` ganha
+  `chooseCount` (configurável por livro) no lugar do "2" fixo no código.
+- **Poção de Cura vira contador de doses (`healingPotionDoses: number`)** em vez de um par de
+  booleanos: a opção de equipamento deste livro concede **2 Potions of Laumspur** de uma vez (os
+  Livros 1-3 sempre disseram explicitamente "there is only enough for one dose" — conferido no
+  texto original dos três). O modelo antigo só suportava 0 ou 1 dose; o novo suporta qualquer
+  quantidade e elimina os dois patches de carry-over que o Livro 3 precisou (um contador atravessa
+  entre livros sem tratamento especial).
+- Chainmail Waistcoat e Shield reaparecem com os mesmos efeitos já implementados nos Livros 1 e 2
+  (nenhuma mecânica nova).
+- Auto-concedidos: Map of the Southlands e Badge of Rank (Itens Especiais só descritivos).
+- **Achado de arquitetura, sem mudança de código**: este livro restringe a Disciplina Hunting só em
+  duas áreas específicas (não o livro inteiro, como o Livro 3), mas isso não exige nenhum código
+  novo — a penalidade de Refeição sempre foi aplicada manualmente pelo jogador (`applyMissedMealPenalty`
+  nunca é chamada automaticamente em nenhum fluxo do jogo), então o jogador já se orienta pelo
+  próprio texto da seção, como sempre fez.
+- `SAVE_VERSION` 3 → 4 (mudança de formato da `ActionChart`: `hasHealingPotion`/`hasHealingPotionUsed`
+  viram `healingPotionDoses`) — saves anteriores a esta versão deixam de carregar.
+
 ## [0.4.0] — 2026-09-13
 
 Livro 3, *The Caverns of Kalte*, adicionado à campanha:

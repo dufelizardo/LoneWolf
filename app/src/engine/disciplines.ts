@@ -29,10 +29,10 @@ export function applyMissedMealPenalty(chart: ActionChart): ActionChart {
 const HEALING_POTION_RESTORE = 4;
 
 export function useHealingPotion(chart: ActionChart): ActionChart {
-  if (!chart.hasHealingPotion || chart.hasHealingPotionUsed) return chart;
+  if (chart.healingPotionDoses <= 0) return chart;
   return {
     ...chart,
-    hasHealingPotionUsed: true,
+    healingPotionDoses: chart.healingPotionDoses - 1,
     enduranceCurrent: Math.min(chart.enduranceMax, chart.enduranceCurrent + HEALING_POTION_RESTORE),
   };
 }

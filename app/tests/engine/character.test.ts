@@ -149,32 +149,68 @@ describe('chooseEquipmentOptions (book "tck", choose-two)', () => {
     expect(chart.specialItems.map((i) => i.name)).toContain('Map of Kalte');
   });
 
-  it('grants a fresh, unused Potion of Laumspur even if the previous potion was already used', () => {
+  it('adds a fresh potion dose on top of any already carried', () => {
     const chart = createFreshCharacterForBook('tck', () => 0);
-    chart.hasHealingPotion = true;
-    chart.hasHealingPotionUsed = true;
+    chart.healingPotionDoses = 1;
     const equipped = chooseEquipmentOptions(chart, ['potion-of-laumspur', 'axe']);
-    expect(equipped.hasHealingPotion).toBe(true);
-    expect(equipped.hasHealingPotionUsed).toBe(false);
+    expect(equipped.healingPotionDoses).toBe(2);
   });
 });
 
 describe('carryOverCharacterToBook healing potion carry-over (regression)', () => {
-  it('preserves "already used" across books instead of silently refilling it for free', () => {
+  it('preserves the exact dose count across books instead of resetting it', () => {
     const book1Chart = createFreshCharacterForBook('ft', fixedRng(0.3, 0.3, 0.3, 0.3));
-    book1Chart.hasHealingPotion = true;
-    book1Chart.hasHealingPotionUsed = true;
+    book1Chart.healingPotionDoses = 0;
     const carried = carryOverCharacterToBook(book1Chart, 'fa', fixedRng(0));
-    expect(carried.hasHealingPotion).toBe(true);
-    expect(carried.hasHealingPotionUsed).toBe(true);
+    expect(carried.healingPotionDoses).toBe(0);
   });
 
-  it('preserves "still has an unused potion" across books', () => {
+  it('preserves an unused dose across books', () => {
     const book1Chart = createFreshCharacterForBook('ft', fixedRng(0.3, 0.3, 0.3, 0.3));
-    book1Chart.hasHealingPotion = true;
-    book1Chart.hasHealingPotionUsed = false;
+    book1Chart.healingPotionDoses = 1;
     const carried = carryOverCharacterToBook(book1Chart, 'fa', fixedRng(0));
-    expect(carried.hasHealingPotion).toBe(true);
-    expect(carried.hasHealingPotionUsed).toBe(false);
+    expect(carried.healingPotionDoses).toBe(1);
+  });
+});
+
+describe('chooseEquipmentOptions (book "tcd", choose-six)', () => {
+  const sixOptions = [
+    'dagger',
+    'potions-of-laumspur',
+    'special-rations',
+    'shield',
+    'chainmail',
+    'mace',
+  ];
+
+  it('grants the new Dagger weapon', () => {
+    const chart = createFreshCharacterForBook('tcd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, sixOptions);
+    expect(equipped.weapons).toContain('Dagger');
+  });
+
+  it('grants 2 doses of Potion of Laumspur from a single option', () => {
+    const chart = createFreshCharacterForBook('tcd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, sixOptions);
+    expect(equipped.healingPotionDoses).toBe(2);
+  });
+
+  it('grants 5 Meals from the Special Rations option', () => {
+    const chart = createFreshCharacterForBook('tcd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, sixOptions);
+    expect(equipped.meals).toBe(5);
+  });
+
+  it('always starts with the Map of the Southlands and Badge of Rank', () => {
+    const chart = createFreshCharacterForBook('tcd', () => 0);
+    const names = chart.specialItems.map((i) => i.name);
+    expect(names).toContain('Map of the Southlands');
+    expect(names).toContain('Badge of Rank');
+  });
+
+  it('rejects a selection that is not exactly six options', () => {
+    const chart = createFreshCharacterForBook('tcd', () => 0);
+    expect(() => chooseEquipmentOptions(chart, sixOptions.slice(0, 5))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...sixOptions, 'sword'])).toThrow();
   });
 });

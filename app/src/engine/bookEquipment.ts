@@ -12,16 +12,18 @@ export interface BookEquipmentConfig {
   goldRollBonus: number;
   /** Weapon pool this book's Weaponskill discipline may randomly assign. */
   weaponPool: WeaponType[];
-  /** Display name for this book's post-combat healing item (mechanically always +4 Endurance, one dose). */
+  /** Display name for this book's post-combat healing item (mechanically always +4 Endurance per dose). */
   healingPotionLabel: string;
-  /** Some books (e.g. Kalte's icy wastes) explicitly disable Hunting's no-Meal-needed exemption. */
+  /** Some books (e.g. Kalte's icy wastes) explicitly disable Hunting's no-Meal-needed exemption for the whole book. */
   huntingDisabled?: boolean;
   /** Items every character gets regardless of how equipment is chosen (fixed narrative grants). */
   applyBaseEquipment: (chart: ActionChart) => void;
   /** For books with equipmentMode 'random-one': roll 0-9, apply exactly one matching option. */
   randomTable?: Record<number, EquipmentOption>;
-  /** For books with equipmentMode 'choose-two': the player picks exactly two of these. */
+  /** For books with equipmentMode 'choose-two'/'choose-six': the player picks exactly this many of these. */
   chooseOptions?: EquipmentOption[];
+  /** Exact number of chooseOptions the player must pick. Defaults to 2 for backward compatibility. */
+  chooseCount?: number;
 }
 
 function addWeaponIfRoom(chart: ActionChart, weapon: WeaponType) {
@@ -44,10 +46,9 @@ function addSpecialItem(chart: ActionChart, item: SpecialItem) {
   chart.specialItems.push(item);
 }
 
-/** A freshly acquired healing potion is always usable, even if a previous one was already drunk. */
-function grantHealingPotion(chart: ActionChart) {
-  chart.hasHealingPotion = true;
-  chart.hasHealingPotionUsed = false;
+/** Grants healing-potion doses on top of whatever the character already carries. */
+function grantHealingPotion(chart: ActionChart, doses = 1) {
+  chart.healingPotionDoses += doses;
 }
 
 export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
@@ -82,7 +83,7 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
         },
       },
       5: { id: 'mace', label: 'Mace', apply: (c) => addWeaponIfRoom(c, 'Mace') },
-      6: { id: 'healing-potion', label: 'Healing Potion', apply: grantHealingPotion },
+      6: { id: 'healing-potion', label: 'Healing Potion', apply: (c) => grantHealingPotion(c) },
       7: { id: 'quarterstaff', label: 'Quarterstaff', apply: (c) => addWeaponIfRoom(c, 'Quarterstaff') },
       8: { id: 'spear', label: 'Spear', apply: (c) => addWeaponIfRoom(c, 'Spear') },
       9: { id: 'gold-12', label: '12 Gold Crowns', apply: (c) => { c.goldCrowns += 12; } },
@@ -101,6 +102,7 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
           'A golden ring bearing the royal arms of Durenor, given by King Alin — proof of your right to claim the Sommerswerd.',
       });
     },
+    chooseCount: 2,
     chooseOptions: [
       { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
       { id: 'short-sword', label: 'Short Sword', apply: (c) => addWeaponIfRoom(c, 'ShortSword') },
@@ -115,7 +117,7 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
         },
       },
       { id: 'mace', label: 'Mace', apply: (c) => addWeaponIfRoom(c, 'Mace') },
-      { id: 'healing-potion', label: 'Healing Potion', apply: grantHealingPotion },
+      { id: 'healing-potion', label: 'Healing Potion', apply: (c) => grantHealingPotion(c) },
       { id: 'quarterstaff', label: 'Quarterstaff', apply: (c) => addWeaponIfRoom(c, 'Quarterstaff') },
       { id: 'spear', label: 'Spear', apply: (c) => addWeaponIfRoom(c, 'Spear') },
       {
@@ -133,11 +135,12 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
     weaponPool: ALL_WEAPONS,
     healingPotionLabel: 'Potion of Laumspur',
     // "As Kalte is an icy desert you will be unable to use the Kai Discipline of Hunting to obtain
-    // a Meal" (equipmnt.htm) - the usual no-Meal-needed exemption doesn't apply in this book.
+    // a Meal" (equipmnt.htm) - the usual no-Meal-needed exemption doesn't apply anywhere in this book.
     huntingDisabled: true,
     applyBaseEquipment: (c) => {
       addSpecialItem(c, { name: 'Map of Kalte' });
     },
+    chooseCount: 2,
     chooseOptions: [
       { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
       { id: 'short-sword', label: 'Short Sword', apply: (c) => addWeaponIfRoom(c, 'ShortSword') },
@@ -154,10 +157,59 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
       { id: 'mace', label: 'Mace', apply: (c) => addWeaponIfRoom(c, 'Mace') },
       { id: 'warhammer', label: 'Warhammer', apply: (c) => addWeaponIfRoom(c, 'Warhammer') },
       { id: 'axe', label: 'Axe', apply: (c) => addWeaponIfRoom(c, 'Axe') },
-      { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: grantHealingPotion },
+      { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: (c) => grantHealingPotion(c) },
       { id: 'quarterstaff', label: 'Quarterstaff', apply: (c) => addWeaponIfRoom(c, 'Quarterstaff') },
       { id: 'special-rations', label: 'Special Rations', apply: (c) => addMealIfRoom(c) },
       { id: 'broadsword', label: 'Broadsword', apply: (c) => addWeaponIfRoom(c, 'Broadsword') },
+    ],
+  },
+  tcd: {
+    goldRollBonus: 10,
+    weaponPool: ['Warhammer', 'Dagger', 'Sword', 'Spear', 'Mace'],
+    healingPotionLabel: 'Potion of Laumspur',
+    // Hunting is disabled only in two specific zones (Wildlands south of the Pass of Moytura, and
+    // the Maaken Mines), not the whole book — unlike tck's flat huntingDisabled. The story itself
+    // reminds the player at every relevant section ("you are unable to use it here to hunt for
+    // food"), and applyMissedMealPenalty is never invoked automatically anywhere in this app (Meal
+    // penalties have always been applied manually by the player via the Endurance/Meal buttons in
+    // the sidebar) — so this zone restriction needs no engine support, same as every other book.
+    applyBaseEquipment: (c) => {
+      addSpecialItem(c, { name: 'Map of the Southlands' });
+      addSpecialItem(c, { name: 'Badge of Rank' });
+    },
+    chooseCount: 6,
+    chooseOptions: [
+      { id: 'warhammer', label: 'Warhammer', apply: (c) => addWeaponIfRoom(c, 'Warhammer') },
+      { id: 'dagger', label: 'Dagger', apply: (c) => addWeaponIfRoom(c, 'Dagger') },
+      {
+        id: 'potions-of-laumspur',
+        label: '2 Potions of Laumspur',
+        apply: (c) => grantHealingPotion(c, 2),
+      },
+      { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
+      { id: 'spear', label: 'Spear', apply: (c) => addWeaponIfRoom(c, 'Spear') },
+      {
+        id: 'special-rations',
+        label: '5 Special Rations',
+        apply: (c) => { for (let i = 0; i < 5; i++) addMealIfRoom(c); },
+      },
+      { id: 'mace', label: 'Mace', apply: (c) => addWeaponIfRoom(c, 'Mace') },
+      {
+        id: 'chainmail',
+        label: 'Chainmail Waistcoat (+4 Endurance)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Chainmail Waistcoat', knownEffects: '+4 Endurance' });
+          c.enduranceMax += 4;
+          c.enduranceCurrent += 4;
+        },
+      },
+      {
+        id: 'shield',
+        label: 'Shield (+2 Combat Skill in combat)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Shield', knownEffects: '+2 Combat Skill in combat' });
+        },
+      },
     ],
   },
 };
