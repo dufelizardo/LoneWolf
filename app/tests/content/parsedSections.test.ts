@@ -124,3 +124,21 @@ describe('book 8 (The Jungle of Horrors) puzzle sections', () => {
     expect(endings).toEqual([350]);
   });
 });
+
+describe('book 9 (The Cauldron of Fear) puzzle sections', () => {
+  const sections = loadSections('tcf');
+
+  it('flags sect115, sect204 and sect241 as puzzles, each with a real fallback choice', () => {
+    // Same pattern as Book 8: each puzzle also has a normal class="choice" fallback link.
+    for (const num of [115, 204, 241]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isEnding, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350)', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+});

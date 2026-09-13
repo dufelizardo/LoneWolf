@@ -4,6 +4,26 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.10.0] — 2026-09-13
+
+Livro 9, *The Cauldron of Fear*, adicionado — quarto livro da fase Magnakai. O livro Magnakai mais
+simples de implementar até agora: nenhuma regra mecânica nova, só mais conteúdo encaixando nos
+mecanismos já genéricos:
+
+- Equipamento (5 de 10 itens) idêntico em conteúdo aos Livros 7 e 8, só muda o mapa concedido
+  automaticamente (Map of the Republic of Anari, sem risco de colisão com nenhum item nomeado na
+  história deste livro).
+- Três seções-quebra-cabeça (sect115, sect204, sect241), cada uma com uma escolha normal de
+  fallback — mesmo padrão do Livro 8, reaproveitando o mecanismo `hasPuzzle` do Livro 5 sem código
+  novo.
+- "Improved Disciplines" ganha o rank Principalin (6 Disciplinas Magnakai) — lido na íntegra, as 5
+  entradas (Animal Control, Invisibility, Huntmastery, Psi-surge, Nexus) são puramente narrativas,
+  sem nenhum efeito numérico. Diferente do rank Tutelary do Livro 8, nenhuma mudança em `combat.ts`
+  foi necessária.
+- Disciplinas Magnakai, regras de combate, escada de Rank e Lore-circles confirmados inalterados.
+
+Sem mudança de `SAVE_VERSION` — nenhum campo novo em `ActionChart`.
+
 ## [0.9.0] — 2026-09-13
 
 Livro 8, *The Jungle of Horrors*, adicionado — terceiro livro da fase Magnakai:
