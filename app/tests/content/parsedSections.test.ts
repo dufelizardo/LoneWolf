@@ -85,3 +85,23 @@ describe('book 5 (Shadow on the Sand) puzzle sections', () => {
     expect(endings).toEqual([400]);
   });
 });
+
+describe('book 7 (Castle Death) puzzle sections', () => {
+  const sections = loadSections('cd');
+
+  it('flags sect100 and sect306 as puzzles instead of misreading them as endings', () => {
+    // Same <p class="puzzle"> pattern as Book 5 (Shadow on the Sand), linking to a table-of-contents
+    // page instead of a normal sect*.htm choice.
+    for (const num of [100, 306]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isEnding, `sect${num}`).toBe(false);
+      // Both mix the puzzle option with one regular choice.
+      expect(sections[num].choices.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350)', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+});

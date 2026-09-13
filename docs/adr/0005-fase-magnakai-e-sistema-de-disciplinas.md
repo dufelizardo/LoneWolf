@@ -119,3 +119,30 @@ permanente).
   incremento fica pro Livro 7.
 - **"Improved Disciplines"** (`imprvdsc.htm`): o próprio livro diz que os detalhes "will be noted in
   future books" — nada a resolver agora, só uma pendência que os livros seguintes vão trazer.
+
+## Atualização — Livro 7
+
+O Livro 7 (*Castle Death*) chegou exatamente às duas pendências que este ADR tinha deixado
+registradas, e confirma a terceira:
+
+- **Crescimento do `masteredWeapons` implementado.** `discplnz.htm` do Livro 7 repete, byte a byte,
+  a frase do Livro 6 sobre "+1 arma por livro Magnakai completado" — a diferença é que agora existe
+  um livro Magnakai anterior pra crescer a partir. Adicionei `addExtraMasteredWeapon(chart, weapon)`
+  como irmã de `chooseMasteredWeapons` (que continua exigindo exatamente 3, só na entrada na
+  Disciplina), e a tela de criação de personagem passou a distinguir os dois casos: escolher
+  Weaponmastery agora (3 do zero) vs. já ter Weaponmastery de um livro anterior (+1 arma, escolhida
+  entre as ainda não dominadas). Fecha a issue #36/JOGOS-81.
+- **Crescimento de Disciplina Magnakai confirmado, sem código novo.** `gamerulz.htm` do Livro 7
+  declara pela primeira vez, de forma explícita, a regra "+1 Disciplina Magnakai por livro
+  completado" — mas isso já era exatamente o que `addExtraMagnakaiDiscipline` fazia desde o Livro 6
+  (o gatilho `baseChart.magnakaiDisciplines.length === 0` na tela de criação já cobria o caso). Achado
+  confirmado por leitura direta do texto, não por suposição; nenhuma mudança de código necessária.
+- **"Improved Disciplines" vira conteúdo real, e confirma ser puramente narrativo.** O rank
+  "Primate" (rank 4) do Livro 7 já tem as 5 melhorias descritas (Animal Control, Curing, Huntmastery,
+  Psi-surge, Nexus) — lidas na íntegra, nenhuma altera Combat Skill, Endurance ou qualquer efeito já
+  modelado no motor (são flavor de história: repelir animal, atrasar veneno, escalar sem corda, etc).
+  Mesma categoria dos achados anteriores de mecânica manual/narrativa — não exige código.
+
+Nenhuma decisão de arquitetura nova neste livro: a mesma modelagem de dois campos separados
+(`disciplines`/`magnakaiDisciplines`) e o mesmo reset na fronteira de fase seguem valendo sem
+alteração.

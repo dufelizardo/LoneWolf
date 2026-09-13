@@ -132,6 +132,14 @@ export function chooseMasteredWeapons(chart: ActionChart, weapons: WeaponType[])
   return { ...chart, masteredWeapons: [...weapons] };
 }
 
+/** Adds exactly one new weapon to an existing Weaponmastery Checklist — the "+1 weapon per completed Magnakai book" growth, only meaningful once Weaponmastery is already held. */
+export function addExtraMasteredWeapon(chart: ActionChart, weapon: WeaponType): ActionChart {
+  if (chart.masteredWeapons.includes(weapon)) {
+    throw new Error(`Weapon ${weapon} is already mastered`);
+  }
+  return { ...chart, masteredWeapons: [...chart.masteredWeapons, weapon] };
+}
+
 /** Applies the player's chosen equipment options for a choose-based book (count set by chooseCount). */
 export function chooseEquipmentOptions(chart: ActionChart, optionIds: string[]): ActionChart {
   const config = getBookEquipment(chart.bookId);

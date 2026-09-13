@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   addExtraDiscipline,
   addExtraMagnakaiDiscipline,
+  addExtraMasteredWeapon,
   applyDisciplines,
   applyMagnakaiDisciplines,
   carryOverCharacterToBook,
@@ -382,5 +383,86 @@ describe('chooseEquipmentOptions (book "tkt", choose-five)', () => {
     const chart = createFreshCharacterForBook('tkt', () => 0);
     expect(() => chooseEquipmentOptions(chart, fiveOptions.slice(0, 4))).toThrow();
     expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
+  });
+});
+
+describe('addExtraMasteredWeapon', () => {
+  it('adds exactly one new weapon on top of an existing Weaponmastery Checklist', () => {
+    const chart = chooseMasteredWeapons(createFreshCharacterForBook('tkt', () => 0), ['Sword', 'Bow', 'Axe']);
+    const grown = addExtraMasteredWeapon(chart, 'Dagger');
+    expect(grown.masteredWeapons).toEqual(['Sword', 'Bow', 'Axe', 'Dagger']);
+  });
+
+  it('rejects a weapon that is already mastered', () => {
+    const chart = chooseMasteredWeapons(createFreshCharacterForBook('tkt', () => 0), ['Sword', 'Bow', 'Axe']);
+    expect(() => addExtraMasteredWeapon(chart, 'Sword')).toThrow();
+  });
+});
+
+describe('chooseEquipmentOptions (book "cd", choose-five)', () => {
+  const fiveOptions = ['bow', 'quiver', 'meals', 'rope', 'fireseeds'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('cd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('cd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants 3 Meals from the Meals option', () => {
+    const chart = createFreshCharacterForBook('cd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.meals).toBe(3);
+  });
+
+  it('grants Rope as a plain backpack item', () => {
+    const chart = createFreshCharacterForBook('cd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.backpackItems).toContain('Rope');
+  });
+
+  it('grants 3 Fireseeds as separate Special Item entries', () => {
+    const chart = createFreshCharacterForBook('cd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.specialItems.filter((i) => i.name === 'Fireseed')).toHaveLength(3);
+  });
+
+  it('always starts with the Map of Herdos', () => {
+    const chart = createFreshCharacterForBook('cd', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of Herdos');
+  });
+
+  it('rejects a selection that is not exactly five options', () => {
+    const chart = createFreshCharacterForBook('cd', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fiveOptions.slice(0, 4))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
+  });
+});
+
+describe('carryOverCharacterToBook within Magnakai phase, book "tkt" -> "cd" (regression)', () => {
+  it('keeps existing Magnakai Disciplines and mastered weapons, and allows growth by 1 of each', () => {
+    const tktChart = chooseMasteredWeapons(
+      applyMagnakaiDisciplines(createFreshCharacterForBook('tkt', fixedRng(0, 0, 0, 0)), [
+        'Weaponmastery',
+        'Curing',
+        'Huntmastery',
+      ]),
+      ['Sword', 'Bow', 'Axe'],
+    );
+
+    const cdChart = carryOverCharacterToBook(tktChart, 'cd', fixedRng(0));
+    expect(cdChart.magnakaiDisciplines).toEqual(tktChart.magnakaiDisciplines);
+    expect(cdChart.masteredWeapons).toEqual(tktChart.masteredWeapons);
+
+    const withNewDiscipline = addExtraMagnakaiDiscipline(cdChart, 'PsiSurge');
+    expect(withNewDiscipline.magnakaiDisciplines).toHaveLength(4);
+
+    const withNewWeapon = addExtraMasteredWeapon(withNewDiscipline, 'Dagger');
+    expect(withNewWeapon.masteredWeapons).toEqual(['Sword', 'Bow', 'Axe', 'Dagger']);
   });
 });

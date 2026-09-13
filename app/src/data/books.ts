@@ -27,6 +27,7 @@ export const BOOKS: BookMeta[] = [
   { id: 'tcd', code: '04tcod', title: 'The Chasm of Doom', order: 4, equipmentMode: 'choose-six', contentRoot: 'kai', phase: 'kai', sectionCount: 350, finalSection: 350 },
   { id: 'ss', code: '05sots', title: 'Shadow on the Sand', order: 5, equipmentMode: 'choose-four', contentRoot: 'kai', phase: 'kai', sectionCount: 400, finalSection: 400 },
   { id: 'tkt', code: '06tkot', title: 'The Kingdoms of Terror', order: 6, equipmentMode: 'choose-five', contentRoot: 'magnakai', phase: 'magnakai', sectionCount: 350, finalSection: 350 },
+  { id: 'cd', code: '07cd', title: 'Castle Death', order: 7, equipmentMode: 'choose-five', contentRoot: 'magnakai', phase: 'magnakai', sectionCount: 350, finalSection: 350 },
 ];
 
 export function getBook(id: string): BookMeta {

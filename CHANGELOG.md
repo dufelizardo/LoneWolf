@@ -4,6 +4,33 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.8.0] — 2026-09-13
+
+Livro 7, *Castle Death*, adicionado — segundo livro da fase Magnakai (mesma fase do Livro 6, nenhuma
+arquitetura nova):
+
+- **Crescimento do Weaponmastery Checklist implementado**: nova função `addExtraMasteredWeapon`
+  adiciona exatamente 1 arma a um Checklist já existente (distinto da escolha inicial de 3 feita no
+  Livro 6, via `chooseMasteredWeapons`). A tela de criação de personagem agora distingue "escolher 3
+  do zero" de "adicionar 1 arma nova", mostrando apenas as armas ainda não dominadas. Resolve a
+  pendência registrada na ADR-0005 e fecha a issue #36/JOGOS-81 — a mecânica só passava a importar a
+  partir deste livro, já que não havia livro Magnakai anterior pra crescer a partir.
+- **Crescimento de Disciplina Magnakai (+1 por livro) confirmado em jogo**: `gamerulz.htm` deste
+  livro é o primeiro a declarar a regra explicitamente; o mecanismo (`addExtraMagnakaiDiscipline`) já
+  existia desde o Livro 6 e não precisou de nenhuma mudança.
+- **"Improved Disciplines" (rank Primate) confirmado como narrativo, sem efeito mecânico**: as 5
+  melhorias (Animal Control, Curing, Huntmastery, Psi-surge, Nexus) descrevem só flavor de história
+  (repelir animal, atrasar veneno, escalar sem corda, vibrar objeto à distância, resistir a gases) —
+  nenhuma altera Combat Skill, Endurance ou qualquer efeito já modelado no motor.
+- Novo item na escolha de equipamento (5 de 10): **Lantern** (item de mochila comum) e **3
+  Fireseeds** (Item Especial, modelado como 3 entradas separadas do mesmo nome — reaproveita o
+  suporte existente a múltiplas entradas de Item Especial sem precisar de um contador novo).
+- Duas seções-quebra-cabeça (sect100, sect306) reaproveitam sem nenhuma mudança de código o
+  mecanismo `hasPuzzle`/`ManualSectionJump` construído no Livro 5.
+
+Sem mudança de `SAVE_VERSION` — nenhum campo novo em `ActionChart` (primeiro livro da série a não
+precisar de um).
+
 ## [0.7.0] — 2026-09-13
 
 Livro 6, *The Kingdoms of Terror*, adicionado — primeiro livro da fase **Magnakai**, distinta da

@@ -294,6 +294,47 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
       { id: 'axe', label: 'Axe', apply: (c) => addWeaponIfRoom(c, 'Axe') },
     ],
   },
+  cd: {
+    goldRollBonus: 10,
+    // Never actually read for cd — same reasoning as tkt above.
+    weaponPool: ALL_WEAPONS,
+    healingPotionLabel: 'Potion of Laumspur',
+    applyBaseEquipment: (c) => {
+      addSpecialItem(c, { name: 'Map of Herdos' });
+    },
+    chooseCount: 5,
+    chooseOptions: [
+      { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
+      { id: 'bow', label: 'Bow', apply: (c) => addWeaponIfRoom(c, 'Bow') },
+      {
+        id: 'quiver',
+        label: 'Quiver (6 Arrows)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Quiver', knownEffects: 'Holds up to 6 Arrows' });
+          addArrows(c, 6);
+        },
+      },
+      { id: 'rope', label: 'Rope', apply: (c) => addBackpackItemIfRoom(c, 'Rope') },
+      { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: (c) => grantHealingPotion(c) },
+      { id: 'lantern', label: 'Lantern', apply: (c) => addBackpackItemIfRoom(c, 'Lantern') },
+      { id: 'mace', label: 'Mace', apply: (c) => addWeaponIfRoom(c, 'Mace') },
+      {
+        id: 'meals',
+        label: '3 Meals',
+        apply: (c) => { for (let i = 0; i < 3; i++) addMealIfRoom(c); },
+      },
+      { id: 'dagger', label: 'Dagger', apply: (c) => addWeaponIfRoom(c, 'Dagger') },
+      {
+        id: 'fireseeds',
+        label: '3 Fireseeds',
+        apply: (c) => {
+          for (let i = 0; i < 3; i++) {
+            addSpecialItem(c, { name: 'Fireseed', knownEffects: 'Explodes on impact with a hard surface' });
+          }
+        },
+      },
+    ],
+  },
 };
 
 export function getBookEquipment(bookId: string): BookEquipmentConfig {
