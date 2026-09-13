@@ -18,6 +18,11 @@ forçou duas generalizações reais no motor (equipamento "escolha N" configurá
 contador de doses) e revelou que uma terceira mudança aparentemente necessária (restrição zonal de
 Hunting) na verdade não exige nenhum código — ver seção "Atualização — Livro 4" abaixo.
 
+**Atualização:** Livro 5 (*Shadow on the Sand*, último da fase Kai) adicionado. Primeiro livro a
+quebrar uma suposição que sobrevivia desde o Livro 1 (contagem fixa de 350 seções) e o primeiro a
+expor um bug real de classificação de conteúdo no parser (seções-quebra-cabeça lidas como final da
+aventura) — ver seção "Atualização — Livro 5" abaixo.
+
 ## Contexto
 
 O jogo só conhecia um livro (*Flight from the Dark*, id interno `ft`, conteúdo em
@@ -182,6 +187,47 @@ diferente pode exigir um terceiro modo") — só que foi o Livro 4, não o 3, qu
   vai se orientar pelo mesmo aviso que o texto do livro sempre mostrou, exatamente como faz pra
   qualquer outra Refeição do jogo. Ficou só documentado aqui pra ninguém tentar "terminar" essa
   feature achando que falta alguma coisa.
+
+## Atualização — Livro 5 (Shadow on the Sand)
+
+Último livro da fase Kai. Confirma de novo que a arquitetura de registro por livro aguenta conteúdo
+imprevisto sem precisar reescrever nada — mas dessa vez o livro quebrou duas suposições que
+sobreviviam intactas desde o Livro 1:
+
+- **Contagem de seções deixa de ser fixa em 350**: os 4 primeiros livros tinham exatamente 350
+  seções, então `SECTION_COUNT = 350` virou uma constante hardcoded em 4 lugares do pipeline
+  (`parseContent.ts`, duas vezes em `verifyContent.ts`, duas vezes em `parsedSections.test.ts`) —
+  confirmado por grep exaustivo antes de mexer em qualquer coisa. O Livro 5 tem **400 seções**.
+  Generalizado com um campo `sectionCount` em `BookMeta`, igual ao `finalSection` do Livro 3: os 4
+  livros anteriores ganharam `sectionCount: 350` explícito, `ss` usa `400`.
+- **Bug real de conteúdo, não só uma lacuna de dado**: duas seções (`sect58`, `sect331`) são
+  quebra-cabeças do livro original — o jogador decifra um número pela história (uma combinação de
+  cadeado, ou um código de 3 dígitos a partir de um mapa) e "vai direto pra aquela seção". No HTML
+  elas usam `<p class="puzzle">` em vez de `<p class="choice">`, com o link apontando pro índice do
+  livro impresso (`part1.htm`/`part2.htm` — confirmei que é só o sumário do livro em duas partes,
+  "entrada 201" = `sect201.htm` diretamente, não uma tabela de remapeamento) em vez de um
+  `sect*.htm` direto. O parser não extrai nenhuma escolha desses parágrafos, e a regra existente
+  (`isEnding = choices.length === 0 && !isDeadEnd`) classificava as duas como **final da aventura**
+  — um jogador chegando lá veria "fim de missão" no meio da história, sem conseguir continuar. Isso
+  nunca apareceu nos Livros 1-4 porque nenhum deles tinha uma seção com 0 escolhas que não fosse
+  dead-end ou o final real; o Livro 5 expôs uma categoria de conteúdo (quebra-cabeça do leitor) que o
+  parser simplesmente não sabia que existia.
+  - Corrigido com um campo `hasPuzzle: boolean` no `Section`, excluído do cálculo de `isEnding`.
+  - Para o jogador conseguir agir depois de decifrar o número, adicionei um componente novo,
+    `ManualSectionJump` — um campo numérico validado (1 a `sectionCount` do livro) que aparece
+    sempre que sobra alguma seção sem escolha automática pra mostrar (hoje, só as duas
+    seções-quebra-cabeça). Ele **não resolve o quebra-cabeça** — o jogador ainda precisa decifrar o
+    número sozinho pela história/mapa do livro, exatamente como no livro impresso; o app só evita
+    travar a navegação depois disso. `sect58` mistura o quebra-cabeça com 2 escolhas normais (errar
+    a combinação / desistir), então o componente aparece **junto** com a `ChoiceList`, não no lugar
+    dela.
+- **Segundo achado sem mudança de código, mesma categoria do Livro 4**: `equipmnt.htm` deste livro
+  introduz "safekeeping" — deixar Itens Especiais guardados no Monastério Kai antes da aventura,
+  protegendo-os de serem perdidos (mas ficam inutilizáveis nesse livro). Como toda perda de item no
+  app já é aplicada manualmente pelo próprio jogador (removendo o item na Ficha — não existe nenhum
+  evento automático de "perder item aleatoriamente"), a proteção já é auto-arbitrada na prática: quem
+  não quiser arriscar um item simplesmente não o remove quando a história mandar. Mesmo raciocínio já
+  documentado pra restrição zonal de Hunting do Livro 4, que também se repete aqui sem mudança.
 
 ## Consequências
 

@@ -20,6 +20,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -41,6 +42,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -73,6 +75,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -98,6 +101,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -115,6 +119,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -138,6 +143,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -161,6 +167,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -189,6 +196,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -210,6 +218,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -231,6 +240,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -248,6 +258,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -269,6 +280,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -292,6 +304,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -313,6 +326,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -338,6 +352,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -355,6 +370,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -386,6 +402,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -427,6 +444,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -452,6 +470,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -469,6 +488,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -494,6 +514,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": null,
     "parserWarning": "irregular random-branch phrasing, manual choice required"
@@ -517,6 +538,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -555,6 +577,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -576,6 +599,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -593,6 +617,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -614,6 +639,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -635,6 +661,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -656,6 +683,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -679,6 +707,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -702,6 +731,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -719,6 +749,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -740,6 +771,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -757,6 +789,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -782,6 +815,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -799,6 +833,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -820,6 +855,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -852,6 +888,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -873,6 +910,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -892,6 +930,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -909,6 +948,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -932,6 +972,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -961,6 +1002,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -988,6 +1030,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1009,6 +1052,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -1037,6 +1081,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1062,6 +1107,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1083,6 +1129,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1100,6 +1147,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1121,6 +1169,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -1153,6 +1202,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1176,6 +1226,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1197,6 +1248,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1209,6 +1261,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1221,6 +1274,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1244,6 +1298,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1261,6 +1316,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1288,6 +1344,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1309,6 +1366,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1334,6 +1392,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1346,6 +1405,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1363,6 +1423,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1380,6 +1441,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1405,6 +1467,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1426,6 +1489,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1443,6 +1507,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1460,6 +1525,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1477,6 +1543,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1498,6 +1565,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1515,6 +1583,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1542,6 +1611,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1567,6 +1637,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1590,6 +1661,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1607,6 +1679,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1628,6 +1701,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1649,6 +1723,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1668,6 +1743,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1685,6 +1761,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1710,6 +1787,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1727,6 +1805,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1744,6 +1823,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1767,6 +1847,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1784,6 +1865,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1813,6 +1895,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1830,6 +1913,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1851,6 +1935,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1880,6 +1965,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1897,6 +1983,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1918,6 +2005,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -1943,6 +2031,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -1976,6 +2065,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2003,6 +2093,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2020,6 +2111,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2037,6 +2129,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2054,6 +2147,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2075,6 +2169,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2096,6 +2191,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2119,6 +2215,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2136,6 +2233,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2153,6 +2251,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2178,6 +2277,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2195,6 +2295,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2212,6 +2313,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2233,6 +2335,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2254,6 +2357,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2277,6 +2381,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2298,6 +2403,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2315,6 +2421,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2327,6 +2434,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2348,6 +2456,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2365,6 +2474,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2386,6 +2496,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2420,6 +2531,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2441,6 +2553,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2458,6 +2571,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2485,6 +2599,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2502,6 +2617,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2519,6 +2635,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2536,6 +2653,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2557,6 +2675,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2582,6 +2701,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2609,6 +2729,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2626,6 +2747,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2647,6 +2769,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2668,6 +2791,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2693,6 +2817,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2714,6 +2839,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2726,6 +2852,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2747,6 +2874,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2768,6 +2896,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2791,6 +2920,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2822,6 +2952,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2839,6 +2970,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2862,6 +2994,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2883,6 +3016,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2906,6 +3040,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2934,6 +3069,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2951,6 +3087,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2979,6 +3116,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -2996,6 +3134,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3025,6 +3164,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3046,6 +3186,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3073,6 +3214,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3090,6 +3232,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3111,6 +3254,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3128,6 +3272,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3145,6 +3290,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3166,6 +3312,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3191,6 +3338,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3208,6 +3356,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3225,6 +3374,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3246,6 +3396,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3269,6 +3420,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3296,6 +3448,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3308,6 +3461,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3325,6 +3479,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3348,6 +3503,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3369,6 +3525,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3388,6 +3545,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": null,
     "parserWarning": "irregular random-branch phrasing, manual choice required"
@@ -3409,6 +3567,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3430,6 +3589,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -3460,6 +3620,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3481,6 +3642,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3498,6 +3660,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3515,6 +3678,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3532,6 +3696,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3549,6 +3714,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3574,6 +3740,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3591,6 +3758,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3618,6 +3786,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3643,6 +3812,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3660,6 +3830,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3685,6 +3856,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3706,6 +3878,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3723,6 +3896,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3748,6 +3922,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3771,6 +3946,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3788,6 +3964,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3809,6 +3986,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3830,6 +4008,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3867,6 +4046,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3884,6 +4064,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3901,6 +4082,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3922,6 +4104,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3939,6 +4122,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3951,6 +4135,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3968,6 +4153,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -3991,6 +4177,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4008,6 +4195,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": null,
     "parserWarning": "irregular random-branch phrasing, manual choice required"
@@ -4025,6 +4213,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4048,6 +4237,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4075,6 +4265,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4096,6 +4287,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4117,6 +4309,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4138,6 +4331,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4159,6 +4353,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4180,6 +4375,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4197,6 +4393,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4218,6 +4415,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4235,6 +4433,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4258,6 +4457,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4283,6 +4483,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4300,6 +4501,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4321,6 +4523,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4338,6 +4541,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4361,6 +4565,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -4389,6 +4594,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4406,6 +4612,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4433,6 +4640,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4450,6 +4658,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4471,6 +4680,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4496,6 +4706,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4515,6 +4726,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4532,6 +4744,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4549,6 +4762,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4570,6 +4784,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4587,6 +4802,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4610,6 +4826,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4627,6 +4844,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4639,6 +4857,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4666,6 +4885,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4683,6 +4903,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4708,6 +4929,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4729,6 +4951,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4746,6 +4969,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4767,6 +4991,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4788,6 +5013,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -4826,6 +5052,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4847,6 +5074,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4876,6 +5104,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4893,6 +5122,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4924,6 +5154,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4945,6 +5176,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4962,6 +5194,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4974,6 +5207,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -4999,6 +5233,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5018,6 +5253,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5039,6 +5275,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -5073,6 +5310,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5094,6 +5332,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5111,6 +5350,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5128,6 +5368,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5149,6 +5390,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5166,6 +5408,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5183,6 +5426,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5200,6 +5444,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5225,6 +5470,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5246,6 +5492,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5267,6 +5514,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5288,6 +5536,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5311,6 +5560,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5328,6 +5578,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5349,6 +5600,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5387,6 +5639,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5408,6 +5661,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5431,6 +5685,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5448,6 +5703,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5469,6 +5725,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5486,6 +5743,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5498,6 +5756,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5526,6 +5785,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5547,6 +5807,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5568,6 +5829,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5591,6 +5853,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5612,6 +5875,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5629,6 +5893,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5646,6 +5911,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5665,6 +5931,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5682,6 +5949,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5703,6 +5971,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5720,6 +5989,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5732,6 +6002,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5753,6 +6024,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5776,6 +6048,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5793,6 +6066,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5814,6 +6088,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -5842,6 +6117,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5859,6 +6135,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5876,6 +6153,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5899,6 +6177,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -5931,6 +6210,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5952,6 +6232,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5969,6 +6250,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -5992,6 +6274,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6011,6 +6294,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6028,6 +6312,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6040,6 +6325,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6061,6 +6347,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6078,6 +6365,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6095,6 +6383,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6114,6 +6403,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6131,6 +6421,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6143,6 +6434,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6160,6 +6452,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6185,6 +6478,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -6222,6 +6516,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6239,6 +6534,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6256,6 +6552,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6279,6 +6576,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6300,6 +6598,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6317,6 +6616,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6334,6 +6634,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6355,6 +6656,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -6387,6 +6689,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6404,6 +6707,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6421,6 +6725,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6433,6 +6738,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6452,6 +6758,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6473,6 +6780,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6485,6 +6793,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6504,6 +6813,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6529,6 +6839,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6546,6 +6857,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6563,6 +6875,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6584,6 +6897,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -6614,6 +6928,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6631,6 +6946,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6648,6 +6964,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6665,6 +6982,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6682,6 +7000,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6699,6 +7018,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6716,6 +7036,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6737,6 +7058,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6760,6 +7082,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6783,6 +7106,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6800,6 +7124,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6817,6 +7142,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6829,6 +7155,7 @@
     "choices": [],
     "isDeadEnd": true,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6850,6 +7177,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6867,6 +7195,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6888,6 +7217,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6911,6 +7241,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6928,6 +7259,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6945,6 +7277,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6972,6 +7305,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -6989,6 +7323,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7017,6 +7352,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7038,6 +7374,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": true,
     "ranges": [
       {
@@ -7066,6 +7403,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7097,6 +7435,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7120,6 +7459,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7147,6 +7487,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7170,6 +7511,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7187,6 +7529,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7204,6 +7547,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7225,6 +7569,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7242,6 +7587,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7259,6 +7605,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7276,6 +7623,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7293,6 +7641,7 @@
     ],
     "isDeadEnd": false,
     "isEnding": false,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null
@@ -7307,6 +7656,7 @@
     "choices": [],
     "isDeadEnd": false,
     "isEnding": true,
+    "hasPuzzle": false,
     "randomNumberBranch": false,
     "ranges": null,
     "parserWarning": null

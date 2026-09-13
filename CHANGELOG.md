@@ -4,6 +4,32 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.6.0] — 2026-09-13
+
+Livro 5, *Shadow on the Sand*, adicionado à campanha — último livro da fase Kai:
+
+- **400 seções, não 350**: primeira vez que um livro da série quebra a contagem fixa que o pipeline
+  de conteúdo (`parseContent.ts`/`verifyContent.ts`/testes) tinha hardcoded em 4 lugares. Agora
+  `BookMeta` tem um campo `sectionCount` por livro; os 4 livros anteriores ganharam
+  `sectionCount: 350` explícito.
+- Equipamento: escolha de 4 de 7 itens (nenhuma arma ou Item Especial novo — tudo reaproveita Dagger,
+  Sword, Spear, Mace, Shield e Potion of Laumspur de dose única já existentes). Auto-concedido: Map
+  of the Desert Empire.
+- **Bug real de conteúdo corrigido**: duas seções (`sect58`, `sect331`) são quebra-cabeças do livro
+  original ("descubra o número e vá direto pra aquela seção") que usam `<p class="puzzle">` em vez
+  de `<p class="choice">`, com o link apontando pro índice do livro impresso em vez de uma seção
+  diretamente. Isso fazia o parser classificá-las incorretamente como final da aventura (0 escolhas
+  extraídas, mesma regra que gerava `isEnding`). Adicionado `hasPuzzle` ao parser para não
+  confundi-las com um final real, e um novo controle de navegação manual (digitar o número da seção)
+  pra essas duas seções — o jogador ainda precisa decifrar o número sozinho pela história, o app só
+  para de travar a navegação depois disso.
+- Dois achados que não exigiram nenhuma mudança de código, documentados na ADR-0004: a restrição de
+  Hunting em zonas de deserto (mesmo caso do Livro 4 — a penalidade de Refeição já é sempre manual)
+  e a nova mecânica de "guardar Itens Especiais em segurança no Monastério" antes da aventura (já
+  auto-arbitrada pelo jogador, já que perder um item também sempre foi manual no app).
+
+Sem mudança de schema — mesmo `SAVE_VERSION` 4.
+
 ## [0.5.0] — 2026-09-13
 
 Livro 4, *The Chasm of Doom*, adicionado à campanha:

@@ -11,9 +11,9 @@ function loadSections(bookId: string): SectionMap {
 describe.each(BOOKS)('parsed sections for book "$id" ($title)', (book) => {
   const sections = loadSections(book.id);
 
-  it('has exactly 350 sections, all present', () => {
-    expect(Object.keys(sections)).toHaveLength(350);
-    for (let i = 1; i <= 350; i++) {
+  it('has exactly sectionCount sections, all present', () => {
+    expect(Object.keys(sections)).toHaveLength(book.sectionCount);
+    for (let i = 1; i <= book.sectionCount; i++) {
       expect(sections[i]).toBeDefined();
     }
   });
@@ -29,9 +29,9 @@ describe.each(BOOKS)('parsed sections for book "$id" ($title)', (book) => {
     }
   });
 
-  it('every section has choices, or is a dead end, or is the ending', () => {
+  it('every section has choices, or is a dead end, or is the ending, or is a reader-solved puzzle', () => {
     for (const section of Object.values(sections)) {
-      expect(section.choices.length > 0 || section.isDeadEnd || section.isEnding).toBe(true);
+      expect(section.choices.length > 0 || section.isDeadEnd || section.isEnding || section.hasPuzzle).toBe(true);
     }
   });
 
@@ -60,5 +60,28 @@ describe('book 1 (Flight from the Dark) spot-checks', () => {
 
     const deadEndCount = Object.values(sections).filter((s) => s.isDeadEnd).length;
     expect(deadEndCount).toBeGreaterThanOrEqual(16);
+  });
+});
+
+describe('book 5 (Shadow on the Sand) puzzle sections', () => {
+  const sections = loadSections('ss');
+
+  it('flags sect58 and sect331 as puzzles instead of misreading them as endings', () => {
+    // Both use <p class="puzzle"> linking to part1.htm/part2.htm (the printed book's table of
+    // contents) instead of a normal sect*.htm choice, so the parser can't extract a target — without
+    // hasPuzzle they'd be misclassified as isEnding (0 choices, not a dead end).
+    for (const num of [58, 331]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isEnding, `sect${num}`).toBe(false);
+    }
+    // sect331's only path forward is the puzzle (no regular choices at all); sect58 mixes the
+    // puzzle option with two regular choices (wrong combination / give up).
+    expect(sections[331].choices).toHaveLength(0);
+    expect(sections[58].choices.length).toBeGreaterThan(0);
+  });
+
+  it('has exactly one real ending, at the canonical final section (400)', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([400]);
   });
 });

@@ -214,3 +214,36 @@ describe('chooseEquipmentOptions (book "tcd", choose-six)', () => {
     expect(() => chooseEquipmentOptions(chart, [...sixOptions, 'sword'])).toThrow();
   });
 });
+
+describe('chooseEquipmentOptions (book "ss", choose-four)', () => {
+  const fourOptions = ['dagger', 'potion-of-laumspur', 'special-rations', 'shield'];
+
+  it('grants the Dagger weapon', () => {
+    const chart = createFreshCharacterForBook('ss', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.weapons).toContain('Dagger');
+  });
+
+  it('grants a single dose of Potion of Laumspur (unlike Book 4\'s two)', () => {
+    const chart = createFreshCharacterForBook('ss', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.healingPotionDoses).toBe(1);
+  });
+
+  it('grants 2 Meals from the Special Rations option', () => {
+    const chart = createFreshCharacterForBook('ss', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.meals).toBe(2);
+  });
+
+  it('always starts with the Map of the Desert Empire', () => {
+    const chart = createFreshCharacterForBook('ss', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of the Desert Empire');
+  });
+
+  it('rejects a selection that is not exactly four options', () => {
+    const chart = createFreshCharacterForBook('ss', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fourOptions.slice(0, 3))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fourOptions, 'sword'])).toThrow();
+  });
+});

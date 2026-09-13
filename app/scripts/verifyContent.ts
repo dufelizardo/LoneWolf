@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { SectionMap } from '../src/data/section-types.ts';
-import { BOOKS } from '../src/data/books.ts';
+import { BOOKS, type BookMeta } from '../src/data/books.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, '../src/data');
@@ -12,18 +12,19 @@ const check = (cond: boolean, message: string) => {
   if (!cond) failures.push(message);
 };
 
-function verifyBook(bookId: string, sections: SectionMap) {
+function verifyBook(book: BookMeta, sections: SectionMap) {
+  const bookId = book.id;
   const keys = Object.keys(sections).map(Number);
 
-  check(keys.length === 350, `[${bookId}] expected 350 sections, got ${keys.length}`);
-  for (let i = 1; i <= 350; i++) {
+  check(keys.length === book.sectionCount, `[${bookId}] expected ${book.sectionCount} sections, got ${keys.length}`);
+  for (let i = 1; i <= book.sectionCount; i++) {
     check(sections[i] !== undefined, `[${bookId}] missing section ${i}`);
   }
 
   for (const section of Object.values(sections)) {
     check(
-      section.choices.length > 0 || section.isDeadEnd || section.isEnding,
-      `[${bookId}] section ${section.number} has no choices and is not deadend/ending`,
+      section.choices.length > 0 || section.isDeadEnd || section.isEnding || section.hasPuzzle,
+      `[${bookId}] section ${section.number} has no choices and is not deadend/ending/puzzle`,
     );
     for (const choice of section.choices) {
       check(
@@ -50,7 +51,7 @@ function verifyBook(bookId: string, sections: SectionMap) {
 for (const book of BOOKS) {
   const file = join(DATA_DIR, `sections.${book.id}.json`);
   const sections: SectionMap = JSON.parse(readFileSync(file, 'utf-8'));
-  verifyBook(book.id, sections);
+  verifyBook(book, sections);
 
   // Fixed spot checks specific to Book 1 (Flight from the Dark), from the original implementation plan.
   if (book.id === 'ft') {
