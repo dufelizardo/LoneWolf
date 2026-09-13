@@ -102,6 +102,34 @@ describe('getEffectiveCombatSkill', () => {
     const lowEndurance: ActionChart = { ...baseChart, magnakaiDisciplines: ['PsiSurge'], enduranceCurrent: 6 };
     expect(getEffectiveCombatSkill(lowEndurance, enemy, { usePsiSurge: true })).toBe(baseChart.combatSkill + 2);
   });
+
+  it('applies the reduced -2 unarmed penalty only for a Weaponmastery holder at Tutelary rank (5+ Magnakai Disciplines)', () => {
+    const unarmed: ActionChart = { ...baseChart, equippedWeapon: null };
+
+    // No Magnakai Disciplines at all: usual -4.
+    expect(getEffectiveCombatSkill(unarmed, enemy)).toBe(baseChart.combatSkill - 4);
+
+    // Weaponmastery held, but only at Primate rank (4 disciplines): still -4.
+    const primateWeaponmaster: ActionChart = {
+      ...unarmed,
+      magnakaiDisciplines: ['Weaponmastery', 'Curing', 'Huntmastery', 'Divination'],
+    };
+    expect(getEffectiveCombatSkill(primateWeaponmaster, enemy)).toBe(baseChart.combatSkill - 4);
+
+    // 5 disciplines (Tutelary rank) but without Weaponmastery: still -4.
+    const tutelaryWithoutWeaponmastery: ActionChart = {
+      ...unarmed,
+      magnakaiDisciplines: ['Curing', 'Huntmastery', 'Divination', 'Nexus', 'PsiScreen'],
+    };
+    expect(getEffectiveCombatSkill(tutelaryWithoutWeaponmastery, enemy)).toBe(baseChart.combatSkill - 4);
+
+    // Weaponmastery held at Tutelary rank (5 disciplines): reduced to -2.
+    const tutelaryWeaponmaster: ActionChart = {
+      ...unarmed,
+      magnakaiDisciplines: ['Weaponmastery', 'Curing', 'Huntmastery', 'Divination', 'Nexus'],
+    };
+    expect(getEffectiveCombatSkill(tutelaryWeaponmaster, enemy)).toBe(baseChart.combatSkill - 2);
+  });
 });
 
 describe('resolveCombatRound', () => {

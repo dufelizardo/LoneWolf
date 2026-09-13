@@ -466,3 +466,48 @@ describe('carryOverCharacterToBook within Magnakai phase, book "tkt" -> "cd" (re
     expect(withNewWeapon.masteredWeapons).toEqual(['Sword', 'Bow', 'Axe', 'Dagger']);
   });
 });
+
+describe('chooseEquipmentOptions (book "tjh", choose-five)', () => {
+  const fiveOptions = ['bow', 'quiver', 'meals', 'rope', 'fireseeds'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('tjh', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('tjh', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants 3 Meals from the Meals option', () => {
+    const chart = createFreshCharacterForBook('tjh', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.meals).toBe(3);
+  });
+
+  it('grants Rope as a plain backpack item', () => {
+    const chart = createFreshCharacterForBook('tjh', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.backpackItems).toContain('Rope');
+  });
+
+  it('grants 3 Fireseeds as separate Special Item entries', () => {
+    const chart = createFreshCharacterForBook('tjh', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.specialItems.filter((i) => i.name === 'Fireseed')).toHaveLength(3);
+  });
+
+  it('always starts with the Map of the Danarg Swamp', () => {
+    const chart = createFreshCharacterForBook('tjh', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of the Danarg Swamp');
+  });
+
+  it('rejects a selection that is not exactly five options', () => {
+    const chart = createFreshCharacterForBook('tjh', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fiveOptions.slice(0, 4))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
+  });
+});

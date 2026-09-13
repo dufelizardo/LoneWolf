@@ -4,6 +4,25 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.9.0] — 2026-09-13
+
+Livro 8, *The Jungle of Horrors*, adicionado — terceiro livro da fase Magnakai:
+
+- **Primeira melhoria de rank com efeito numérico real**: `imprvdsc.htm` deste livro introduz o rank
+  Tutelary (5 Disciplinas Magnakai, alcançável neste livro por quem completou os Livros 6 e 7). A
+  entrada de Weaponmastery no rank Tutelary reduz a penalidade de combate desarmado de -4 para -2
+  Combat Skill — as outras 4 entradas do rank (Invisibility, Pathsmanship, Psi-screen, Divination)
+  seguem puramente narrativas, mesmo padrão do rank Primate do Livro 7.
+- Quatro seções-quebra-cabeça (sect112, sect126, sect141, sect338) reaproveitam sem nenhuma mudança
+  de código o mecanismo `hasPuzzle` do Livro 5 — diferente do Livro 7, cada uma delas também tem uma
+  escolha normal de fallback, então nenhuma é lida como final (0 escolhas).
+- Equipamento (5 de 10 itens) idêntico em conteúdo ao do Livro 7, só muda o mapa concedido
+  automaticamente (Map of the Danarg Swamp) — nomeado distinto do "Map of Tharro", um item narrativo
+  separado encontrado durante a aventura.
+- Disciplinas Magnakai, regras de combate, escada de Rank e Lore-circles confirmados inalterados.
+
+Sem mudança de `SAVE_VERSION` — nenhum campo novo em `ActionChart`.
+
 ## [0.8.0] — 2026-09-13
 
 Livro 7, *Castle Death*, adicionado — segundo livro da fase Magnakai (mesma fase do Livro 6, nenhuma

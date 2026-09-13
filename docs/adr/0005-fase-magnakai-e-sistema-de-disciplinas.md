@@ -146,3 +146,32 @@ registradas, e confirma a terceira:
 Nenhuma decisão de arquitetura nova neste livro: a mesma modelagem de dois campos separados
 (`disciplines`/`magnakaiDisciplines`) e o mesmo reset na fronteira de fase seguem valendo sem
 alteração.
+
+## Atualização — Livro 8
+
+O Livro 8 (*The Jungle of Horrors*) traz a primeira melhoria de "Improved Disciplines" com efeito
+numérico real, não só narrativo:
+
+- **Rank Tutelary (5 Disciplinas Magnakai) reduz a penalidade de combate desarmado.**
+  `imprvdsc.htm` do Livro 8 declara, pra quem já possui Weaponmastery e chegou ao rank Tutelary: *"When
+  entering combat without a weapon, you will lose only 2 points from your COMBAT SKILL, instead of
+  the usual 4 points."* Isso é alcançável justamente neste livro (3 disciplinas iniciais + 2 de
+  crescimento dos Livros 6-7 = 5). Implementado em `combat.ts` como uma segunda constante
+  (`NO_WEAPON_PENALTY_TUTELARY = -2`), escolhida no lugar da penalidade padrão (`-4`) quando
+  `magnakaiDisciplines.includes('Weaponmastery') && magnakaiDisciplines.length >= 5`. `kaiRank.ts` já
+  tinha `Tutelary` na escada (`MAGNAKAI_RANKS[4]`) desde o começo da fase Magnakai — só nunca tinha
+  sido alcançável/exercitado antes deste livro.
+- As outras 4 entradas do rank Tutelary (Invisibility, Pathsmanship, Psi-screen, Divination) lidas na
+  íntegra seguem puramente narrativas, sem números — mesma categoria do rank Primate do Livro 7.
+- Quatro seções-quebra-cabeça (sect112, sect126, sect141, sect338) confirmam que o mecanismo
+  `hasPuzzle` do Livro 5 também cobre o caso em que a seção tem uma escolha normal de fallback além do
+  quebra-cabeça (diferente do padrão do Livro 7, onde as seções-quebra-cabeça também tinham
+  fallback, mas o Livro 5 tinha uma seção só-quebra-cabeça sem fallback nenhum) — nenhuma mudança de
+  parser foi necessária em nenhum dos três casos.
+- Disciplinas Magnakai, regras de combate (fora a penalidade acima), escada de Rank e Lore-circles
+  confirmados inalterados (diffs mostram só cosméticos de título/copyright).
+
+Nenhuma decisão de arquitetura nova: é a primeira vez que uma melhoria de rank sai do território
+"narrativo/sem código" e se torna uma regra numérica de verdade, mas o encaixe (uma condição a mais
+dentro de `getEffectiveCombatSkill`) confirma que o modelo de campos separados + funções de
+consulta simples segue suficiente sem precisar de nenhuma extensão estrutural.

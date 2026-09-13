@@ -3,6 +3,12 @@ import { rollRandomNumber, type Rng } from './rng';
 import type { ActionChart, Enemy } from './types';
 
 const NO_WEAPON_PENALTY = -4;
+// "Tutelaries are able to use defensive combat skills to great effect when fighting unarmed. When
+// entering combat without a weapon, you will lose only 2 points from your COMBAT SKILL, instead of
+// the usual 4 points." (imprvdsc.htm, Book 8) - only once Weaponmastery is held at Tutelary rank
+// (5 Magnakai Disciplines), first reachable in Book 8.
+const NO_WEAPON_PENALTY_TUTELARY = -2;
+const TUTELARY_DISCIPLINE_COUNT = 5;
 const WEAPONSKILL_BONUS = 2;
 const MINDBLAST_BONUS = 2;
 const WEAPONMASTERY_BONUS = 3;
@@ -30,7 +36,10 @@ export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy, option
   let skill = chart.combatSkill;
 
   if (!chart.equippedWeapon) {
-    skill += NO_WEAPON_PENALTY;
+    const isTutelaryWeaponmaster =
+      chart.magnakaiDisciplines.includes('Weaponmastery') &&
+      chart.magnakaiDisciplines.length >= TUTELARY_DISCIPLINE_COUNT;
+    skill += isTutelaryWeaponmaster ? NO_WEAPON_PENALTY_TUTELARY : NO_WEAPON_PENALTY;
   } else if (chart.disciplines.includes('Weaponskill') && chart.weaponskillWeapon === chart.equippedWeapon) {
     skill += WEAPONSKILL_BONUS;
   } else if (chart.masteredWeapons.includes(chart.equippedWeapon)) {
