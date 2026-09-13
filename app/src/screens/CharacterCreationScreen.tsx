@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   addExtraDiscipline,
   addExtraMagnakaiDiscipline,
+  addExtraMasteredWeapon,
   applyDisciplines,
   applyMagnakaiDisciplines,
   carryOverCharacterToBook,
@@ -57,9 +58,16 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
   );
   const [selectedMagnakaiDisciplines, setSelectedMagnakaiDisciplines] = useState<MagnakaiDiscipline[]>([]);
 
-  // Weaponmastery grants 3 mastered weapons, chosen separately from — and not implying possession
-  // of — any carried weapon. Only relevant if the player picks Weaponmastery among their Disciplines.
-  const needsMasteredWeapons = isMagnakaiPhase && selectedMagnakaiDisciplines.includes('Weaponmastery');
+  // Weaponmastery grants 3 mastered weapons on first pick, chosen separately from — and not implying
+  // possession of — any carried weapon. A character who already held Weaponmastery from a previous
+  // Magnakai book instead grows the checklist by exactly 1 weapon per completed book (Book 7+).
+  const alreadyHasWeaponmastery = baseChart.magnakaiDisciplines.includes('Weaponmastery');
+  const gainingWeaponmasteryNow = selectedMagnakaiDisciplines.includes('Weaponmastery');
+  const needsFreshMasteredWeapons = gainingWeaponmasteryNow;
+  const needsWeaponGrowth = alreadyHasWeaponmastery;
+  const needsMasteredWeapons = needsFreshMasteredWeapons || needsWeaponGrowth;
+  const requiredMasteredWeapons = needsFreshMasteredWeapons ? 3 : 1;
+  const availableWeaponsForMastery = ALL_WEAPONS.filter((w) => !baseChart.masteredWeapons.includes(w));
   const [selectedMasteredWeapons, setSelectedMasteredWeapons] = useState<WeaponType[]>([]);
 
   const equipmentConfig = getBookEquipment(book.id);
@@ -86,7 +94,7 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
   const toggleMasteredWeapon = (weapon: WeaponType) => {
     setSelectedMasteredWeapons((prev) => {
       if (prev.includes(weapon)) return prev.filter((w) => w !== weapon);
-      if (prev.length >= 3) return prev;
+      if (prev.length >= requiredMasteredWeapons) return prev;
       return [...prev, weapon];
     });
   };
@@ -102,7 +110,7 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
   const disciplinesReady = isMagnakaiPhase
     ? selectedMagnakaiDisciplines.length === requiredMagnakaiDisciplines
     : selectedDisciplines.length === requiredDisciplines;
-  const masteredWeaponsReady = !needsMasteredWeapons || selectedMasteredWeapons.length === 3;
+  const masteredWeaponsReady = !needsMasteredWeapons || selectedMasteredWeapons.length === requiredMasteredWeapons;
   const equipmentReady = !needsEquipmentChoice || selectedEquipment.length === requiredEquipment;
 
   const previewRank = isMagnakaiPhase
@@ -117,8 +125,10 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
       chart = magnakaiFirstEntry
         ? applyMagnakaiDisciplines(baseChart, selectedMagnakaiDisciplines)
         : addExtraMagnakaiDiscipline(baseChart, selectedMagnakaiDisciplines[0]);
-      if (needsMasteredWeapons) {
+      if (needsFreshMasteredWeapons) {
         chart = chooseMasteredWeapons(chart, selectedMasteredWeapons);
+      } else if (needsWeaponGrowth) {
+        chart = addExtraMasteredWeapon(chart, selectedMasteredWeapons[0]);
       }
     } else {
       chart = isCarryOver
@@ -214,21 +224,25 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
       {needsMasteredWeapons && (
         <section>
           <h3>
-            Escolha exatamente 3 armas para Maestria (Weaponmastery) ({selectedMasteredWeapons.length}/3)
+            {needsFreshMasteredWeapons
+              ? `Escolha exatamente 3 armas para Maestria (Weaponmastery) (${selectedMasteredWeapons.length}/3)`
+              : `Escolha 1 arma nova para adicionar à Maestria (Weaponmastery) (${selectedMasteredWeapons.length}/1)`}
           </h3>
           <p className="item-detail">
             Ser hábil com uma arma não significa começar a aventura carregando ela — isso é escolhido
             separadamente no equipamento abaixo.
           </p>
           <ul className="discipline-picker">
-            {ALL_WEAPONS.map((w) => (
+            {availableWeaponsForMastery.map((w) => (
               <li key={w}>
                 <label>
                   <input
                     type="checkbox"
                     checked={selectedMasteredWeapons.includes(w)}
                     onChange={() => toggleMasteredWeapon(w)}
-                    disabled={!selectedMasteredWeapons.includes(w) && selectedMasteredWeapons.length >= 3}
+                    disabled={
+                      !selectedMasteredWeapons.includes(w) && selectedMasteredWeapons.length >= requiredMasteredWeapons
+                    }
                   />
                   {w}
                 </label>
