@@ -1,14 +1,18 @@
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { ensureSchema } from './db.js';
 import { savesRouter } from './routes/saves.js';
 
 const PORT = Number(process.env.PORT ?? 3000);
+const PACKAGE_JSON_PATH = fileURLToPath(new URL('../package.json', import.meta.url));
+const VERSION = (JSON.parse(readFileSync(PACKAGE_JSON_PATH, 'utf-8')) as { version: string }).version;
 
 const app = express();
 app.use(express.json());
 
 app.get('/healthz', (_req, res) => {
-  res.status(200).send('ok');
+  res.status(200).json({ status: 'ok', version: VERSION });
 });
 
 app.use('/api/saves', savesRouter);

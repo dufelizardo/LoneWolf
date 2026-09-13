@@ -24,6 +24,12 @@
   margin: 0;
 }
 
+.app-version {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text);
+}
+
 .save-load-controls {
   display: flex;
   gap: 8px;
