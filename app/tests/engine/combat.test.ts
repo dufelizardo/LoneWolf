@@ -78,6 +78,30 @@ describe('getEffectiveCombatSkill', () => {
     const withShield: ActionChart = { ...baseChart, specialItems: [...baseChart.specialItems, { name: 'Shield' }] };
     expect(getEffectiveCombatSkill(withShield, enemy)).toBe(baseChart.combatSkill + 2);
   });
+
+  it('applies +3 Weaponmastery bonus only when wielding a mastered weapon', () => {
+    const withMastery: ActionChart = { ...baseChart, masteredWeapons: ['Axe', 'Bow', 'Sword'] };
+    expect(getEffectiveCombatSkill(withMastery, enemy)).toBe(baseChart.combatSkill + 3);
+
+    const unmasteredWeapon: ActionChart = { ...withMastery, equippedWeapon: 'Mace', weapons: ['Mace'] };
+    expect(getEffectiveCombatSkill(unmasteredWeapon, enemy)).toBe(baseChart.combatSkill);
+  });
+
+  it('applies the free +2 Psi-surge/Mindblast bonus when usePsiSurge is not requested', () => {
+    const withPsiSurge: ActionChart = { ...baseChart, magnakaiDisciplines: ['PsiSurge'] };
+    expect(getEffectiveCombatSkill(withPsiSurge, enemy)).toBe(baseChart.combatSkill + 2);
+    expect(getEffectiveCombatSkill(withPsiSurge, { ...enemy, mindblastImmune: true })).toBe(baseChart.combatSkill);
+  });
+
+  it('applies the costed +4 Psi-surge bonus when usePsiSurge is requested and Endurance allows it', () => {
+    const withPsiSurge: ActionChart = { ...baseChart, magnakaiDisciplines: ['PsiSurge'], enduranceCurrent: 10 };
+    expect(getEffectiveCombatSkill(withPsiSurge, enemy, { usePsiSurge: true })).toBe(baseChart.combatSkill + 4);
+  });
+
+  it('falls back to the free +2 bonus when usePsiSurge is requested but Endurance is too low', () => {
+    const lowEndurance: ActionChart = { ...baseChart, magnakaiDisciplines: ['PsiSurge'], enduranceCurrent: 6 };
+    expect(getEffectiveCombatSkill(lowEndurance, enemy, { usePsiSurge: true })).toBe(baseChart.combatSkill + 2);
+  });
 });
 
 describe('resolveCombatRound', () => {
@@ -105,5 +129,57 @@ describe('resolveCombatRound', () => {
     const result = resolveCombatRound(chart, enemy, fixedRng(0.99));
     expect(result.enemy.endurance).toBe(0);
     expect(result.enemyKilled).toBe(true);
+  });
+
+  it('applies Psi-screen to fully block Mindforce damage, same as Mindshield', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('tkt', fixedRng(0, 0, 0)),
+      magnakaiDisciplines: ['PsiScreen'],
+      equippedWeapon: 'Axe',
+      weapons: ['Axe'],
+    };
+    const enemy: Enemy = { name: 'Mindblasting Foe', combatSkill: 30, endurance: 10, attacksWithMindblast: true };
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.9));
+    expect(result.playerLoss).toBe(0);
+  });
+
+  it('deducts an extra 2 Endurance when Psi-surge is actively used this round', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('tkt', fixedRng(0, 0, 0)),
+      magnakaiDisciplines: ['PsiSurge'],
+      enduranceCurrent: 20,
+      equippedWeapon: 'Axe',
+      weapons: ['Axe'],
+    };
+    const enemy: Enemy = { name: 'Giak', combatSkill: 10, endurance: 10 };
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.5), { usePsiSurge: true });
+    expect(result.psiSurgeCost).toBe(2);
+    expect(result.chart.enduranceCurrent).toBe(20 - result.playerLoss - 2);
+  });
+
+  it('does not charge the Psi-surge cost when it was not used this round', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('tkt', fixedRng(0, 0, 0)),
+      magnakaiDisciplines: ['PsiSurge'],
+      enduranceCurrent: 20,
+      equippedWeapon: 'Axe',
+      weapons: ['Axe'],
+    };
+    const enemy: Enemy = { name: 'Giak', combatSkill: 10, endurance: 10 };
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.5));
+    expect(result.psiSurgeCost).toBe(0);
+  });
+
+  it('does not charge the Psi-surge cost when Endurance is too low to activate it', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('tkt', fixedRng(0, 0, 0)),
+      magnakaiDisciplines: ['PsiSurge'],
+      enduranceCurrent: 6,
+      equippedWeapon: 'Axe',
+      weapons: ['Axe'],
+    };
+    const enemy: Enemy = { name: 'Giak', combatSkill: 10, endurance: 10 };
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.5), { usePsiSurge: true });
+    expect(result.psiSurgeCost).toBe(0);
   });
 });

@@ -1,6 +1,7 @@
 import { rollRandomNumber, type Rng } from './rng';
 import { getBookEquipment, type EquipmentOption } from './bookEquipment';
-import { MAX_GOLD_CROWNS, type ActionChart, type Discipline, type WeaponType } from './types';
+import { getBook } from '../data/books';
+import { MAX_GOLD_CROWNS, type ActionChart, type Discipline, type MagnakaiDiscipline, type WeaponType } from './types';
 
 /** Creates a fresh character with rolled stats, before Kai Discipline selection. */
 export function createFreshCharacterForBook(bookId: string, rng: Rng = Math.random): ActionChart {
@@ -15,6 +16,8 @@ export function createFreshCharacterForBook(bookId: string, rng: Rng = Math.rand
     enduranceCurrent: enduranceRoll,
     disciplines: [],
     weaponskillWeapon: null,
+    magnakaiDisciplines: [],
+    masteredWeapons: [],
     weapons: [],
     equippedWeapon: null,
     backpackItems: [],
@@ -22,6 +25,7 @@ export function createFreshCharacterForBook(bookId: string, rng: Rng = Math.rand
     specialItems: [],
     goldCrowns: rollRandomNumber(rng) + config.goldRollBonus,
     healingPotionDoses: 0,
+    arrows: 0,
     currentSection: 1,
     visitedSections: [],
     isAlive: true,
@@ -40,17 +44,27 @@ export function createFreshCharacterForBook(bookId: string, rng: Rng = Math.rand
 /**
  * Carries a completed character forward into the next book: keeps Combat Skill, Endurance,
  * Disciplines, Weapons and Special Items, adds this book's gold roll on top of what they had, and
- * grants this book's fixed narrative items. Equipment choice (for 'choose-two' books) and the one
- * extra Kai Discipline are separate steps applied afterwards (chooseEquipmentOptions / addDiscipline).
+ * grants this book's fixed narrative items. Equipment choice and the one extra Discipline are
+ * separate steps applied afterwards (chooseEquipmentOptions / addExtraDiscipline).
+ *
+ * Crossing from the Kai phase into the Magnakai phase (Book 6+) clears `disciplines`/
+ * `weaponskillWeapon` — the two Discipline systems are unrelated (no conversion table exists in the
+ * source material) and are never meant to coexist, so old Kai bonuses must not keep silently firing
+ * in combat.ts/disciplines.ts forever. `magnakaiDisciplines`/`masteredWeapons`/`arrows` pass through
+ * `...previous` untouched like every other field, naturally starting at `[]`/`[]`/`0` the first time.
  */
 export function carryOverCharacterToBook(previous: ActionChart, bookId: string, rng: Rng = Math.random): ActionChart {
   const config = getBookEquipment(bookId);
   const goldRoll = rollRandomNumber(rng) + config.goldRollBonus;
+  const crossingIntoMagnakai = getBook(bookId).phase === 'magnakai' && getBook(previous.bookId).phase !== 'magnakai';
 
   const chart: ActionChart = {
     ...previous,
     bookId,
-    disciplines: [...previous.disciplines],
+    disciplines: crossingIntoMagnakai ? [] : [...previous.disciplines],
+    weaponskillWeapon: crossingIntoMagnakai ? null : previous.weaponskillWeapon,
+    magnakaiDisciplines: [...previous.magnakaiDisciplines],
+    masteredWeapons: [...previous.masteredWeapons],
     weapons: [...previous.weapons],
     backpackItems: [...previous.backpackItems],
     specialItems: [...previous.specialItems],
@@ -88,6 +102,34 @@ function assignDisciplines(chart: ActionChart, disciplines: Discipline[], rng: R
     next.weaponskillWeapon = pool[index] as WeaponType;
   }
   return next;
+}
+
+/** Applies the player's chosen Magnakai Disciplines for a character entering the phase for the first time (exactly 3). */
+export function applyMagnakaiDisciplines(chart: ActionChart, disciplines: MagnakaiDiscipline[]): ActionChart {
+  if (disciplines.length !== 3) {
+    throw new Error(`Expected exactly 3 Magnakai Disciplines, got ${disciplines.length}`);
+  }
+  return { ...chart, magnakaiDisciplines: [...disciplines] };
+}
+
+/** Adds exactly one new Magnakai Discipline to a carried-over character (3 -> 4, etc). */
+export function addExtraMagnakaiDiscipline(chart: ActionChart, discipline: MagnakaiDiscipline): ActionChart {
+  if (chart.magnakaiDisciplines.includes(discipline)) {
+    throw new Error(`Character already has the ${discipline} discipline`);
+  }
+  return { ...chart, magnakaiDisciplines: [...chart.magnakaiDisciplines, discipline] };
+}
+
+/**
+ * Sets the Weaponmastery discipline's chosen weapons (exactly 3). Separate from `weapons` — the
+ * source text is explicit that being skilled with a weapon doesn't mean starting the adventure
+ * carrying it.
+ */
+export function chooseMasteredWeapons(chart: ActionChart, weapons: WeaponType[]): ActionChart {
+  if (weapons.length !== 3) {
+    throw new Error(`Expected exactly 3 mastered weapons, got ${weapons.length}`);
+  }
+  return { ...chart, masteredWeapons: [...weapons] };
 }
 
 /** Applies the player's chosen equipment options for a choose-based book (count set by chooseCount). */

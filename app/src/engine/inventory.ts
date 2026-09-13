@@ -19,6 +19,11 @@ export function adjustGold(chart: ActionChart, delta: number): ActionChart {
   return { ...chart, goldCrowns };
 }
 
+/** Arrows are never auto-decremented by combat — the player ticks them off manually, same as Meals. */
+export function adjustArrows(chart: ActionChart, delta: number): ActionChart {
+  return { ...chart, arrows: Math.max(0, chart.arrows + delta) };
+}
+
 export function addBackpackItem(chart: ActionChart, item: string): ActionChart {
   if (backpackSlotsUsed(chart) >= MAX_BACKPACK_ITEMS) return chart;
   return { ...chart, backpackItems: [...chart.backpackItems, item] };

@@ -4,6 +4,38 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.7.0] — 2026-09-13
+
+Livro 6, *The Kingdoms of Terror*, adicionado — primeiro livro da fase **Magnakai**, distinta da
+fase Kai (Livros 1-5):
+
+- **Novo diretório-raiz de conteúdo**: `magnakai/`, irmão de `kai/`. O pipeline de conteúdo
+  (`parseContent.ts`) passa a resolver a raiz por livro (`BookMeta.contentRoot`) em vez de um
+  único diretório hardcoded.
+- **Sistema de Disciplinas inteiramente novo**: as 10 Disciplinas Magnakai (Weaponmastery, Animal
+  Control, Curing, Invisibility, Huntmastery, Pathsmanship, Psi-surge, Psi-screen, Nexus,
+  Divination) substituem as 10 Disciplinas Kai — **não existe tabela de conversão** entre elas
+  (confirmado no texto original: o personagem simplesmente escolhe 3 livremente). Um personagem
+  que cruza de Kai pra Magnakai tem suas Disciplinas Kai antigas zeradas (`disciplines: []`), já
+  que as duas nunca coexistem de verdade.
+- **Nova arma Bow** e novo Item Especial **Quiver** (6 Flechas, contador manual `arrows`, mesmo
+  padrão de auto-controle já usado pra Refeições — nunca bloqueado automaticamente em combate).
+- **Weaponmastery**: até 3 armas "dominadas" (+3 Combat Skill), escolhidas separadamente das armas
+  carregadas — ser hábil com uma arma não significa começar com ela.
+- **Psi-surge**: primeiro mecanismo de combate do motor com custo e escolha por rodada — +4 Combat
+  Skill por -2 Endurance (indisponível com Endurance ≤ 6), ou o modo gratuito "Mindblast" (+2 CS,
+  sem custo). Novo controle na tela de combate pra ativar por rodada.
+- **Psi-screen**: bloqueia 100% da perda de Endurance por ataque de Mindforce, mesmo efeito do
+  Mindshield antigo.
+- **Nova escada de Rank** (Kai Master → ... → Kai Grand Master), totalmente separada da escada Kai,
+  começando em "Kai Master Superior" (rank 3) com as 3 Disciplinas iniciais.
+- Fora de escopo por ora (documentado, não bloqueia jogabilidade): bônus de sinergia dos
+  Lore-circles, e o crescimento de +1 arma dominada por livro completado (só relevante a partir do
+  Livro 7).
+
+`SAVE_VERSION` 4 → 5 (`ActionChart` ganha `magnakaiDisciplines`, `masteredWeapons`, `arrows`) —
+saves anteriores a esta versão deixam de carregar.
+
 ## [0.6.0] — 2026-09-13
 
 Livro 5, *Shadow on the Sand*, adicionado à campanha — último livro da fase Kai:

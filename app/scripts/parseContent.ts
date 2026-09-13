@@ -3,15 +3,18 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as cheerio from 'cheerio';
 import type { Section, Choice, CombatEncounter, RandomRange, SectionMap } from '../src/data/section-types.ts';
-import { BOOKS, type BookMeta } from '../src/data/books.ts';
+import { BOOKS, type BookMeta, type ContentRoot } from '../src/data/books.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const KAI_ROOT = process.env.LW_KAI_ROOT ?? join(__dirname, '../../kai');
+const CONTENT_ROOTS: Record<ContentRoot, string> = {
+  kai: process.env.LW_KAI_ROOT ?? join(__dirname, '../../kai'),
+  magnakai: process.env.LW_MAGNAKAI_ROOT ?? join(__dirname, '../../magnakai'),
+};
 const DATA_DIR = join(__dirname, '../src/data');
 const ILLUSTRATIONS_ROOT = join(__dirname, '../public/illustrations');
 
 function contentDirFor(book: BookMeta): string {
-  return join(KAI_ROOT, book.id, 'en', 'xhtml', 'lw', book.code);
+  return join(CONTENT_ROOTS[book.contentRoot], book.id, 'en', 'xhtml', 'lw', book.code);
 }
 
 const ALLOWED_TAGS = new Set(['p', 'span', 'figure', 'img', 'em', 'strong', 'br', 'a']);

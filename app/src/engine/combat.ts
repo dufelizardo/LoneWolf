@@ -5,24 +5,44 @@ import type { ActionChart, Enemy } from './types';
 const NO_WEAPON_PENALTY = -4;
 const WEAPONSKILL_BONUS = 2;
 const MINDBLAST_BONUS = 2;
+const WEAPONMASTERY_BONUS = 3;
+const PSI_SURGE_BONUS = 4;
+const PSI_SURGE_FREE_BONUS = 2; // the free "Mindblast" sub-mode of Psi-surge
+const PSI_SURGE_COST = 2; // Endurance, only when the costed mode actually activates
+const PSI_SURGE_MIN_ENDURANCE = 6; // "Psi-surge cannot be used if your ENDURANCE falls to 6 points or below"
 
 /** Special Items that grant a flat Combat Skill bonus whenever held (e.g. the Book 2 Shield). */
 const SPECIAL_ITEM_COMBAT_BONUS: Record<string, number> = {
   Shield: 2,
 };
 
+export interface CombatRoundOptions {
+  /** Player's choice to activate the costed +4 CS mode this round, instead of the free +2 CS Mindblast sub-mode. Only relevant with the Psi-surge discipline; ignored otherwise. */
+  usePsiSurge?: boolean;
+}
+
+function psiSurgeCanActivate(chart: ActionChart, options: CombatRoundOptions): boolean {
+  return !!options.usePsiSurge && chart.enduranceCurrent > PSI_SURGE_MIN_ENDURANCE;
+}
+
 /** Lone Wolf's Combat Skill for this fight, including discipline bonuses and the no-weapon penalty. */
-export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy): number {
+export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy, options: CombatRoundOptions = {}): number {
   let skill = chart.combatSkill;
 
   if (!chart.equippedWeapon) {
     skill += NO_WEAPON_PENALTY;
   } else if (chart.disciplines.includes('Weaponskill') && chart.weaponskillWeapon === chart.equippedWeapon) {
     skill += WEAPONSKILL_BONUS;
+  } else if (chart.masteredWeapons.includes(chart.equippedWeapon)) {
+    skill += WEAPONMASTERY_BONUS;
   }
 
   if (chart.disciplines.includes('Mindblast') && !enemy.mindblastImmune) {
     skill += MINDBLAST_BONUS;
+  }
+
+  if (chart.magnakaiDisciplines.includes('PsiSurge') && !enemy.mindblastImmune) {
+    skill += psiSurgeCanActivate(chart, options) ? PSI_SURGE_BONUS : PSI_SURGE_FREE_BONUS;
   }
 
   for (const item of chart.specialItems) {
@@ -39,36 +59,53 @@ export interface CombatRoundResult {
   ratio: number;
   enemyLoss: number;
   playerLoss: number;
+  /** Extra Endurance spent this round for the costed Psi-surge mode, already reflected in playerLoss/chart. */
+  psiSurgeCost: number;
   playerKilled: boolean;
   enemyKilled: boolean;
   log: string;
 }
 
 /** Resolves a single round of combat between the player and one enemy. */
-export function resolveCombatRound(chart: ActionChart, enemy: Enemy, rng: Rng = Math.random): CombatRoundResult {
-  const effectiveSkill = getEffectiveCombatSkill(chart, enemy);
+export function resolveCombatRound(
+  chart: ActionChart,
+  enemy: Enemy,
+  rng: Rng = Math.random,
+  options: CombatRoundOptions = {},
+): CombatRoundResult {
+  const effectiveSkill = getEffectiveCombatSkill(chart, enemy, options);
   const ratio = effectiveSkill - enemy.combatSkill;
   const roll = rollRandomNumber(rng);
   const result = getCombatResult(ratio, roll);
 
-  let enemyLoss = result.enemyLoss === 'K' ? enemy.endurance : result.enemyLoss;
+  const enemyLoss = result.enemyLoss === 'K' ? enemy.endurance : result.enemyLoss;
   let playerLoss = result.playerLoss === 'K' ? chart.enduranceCurrent : result.playerLoss;
 
   if (chart.disciplines.includes('Mindshield') && enemy.attacksWithMindblast) {
     playerLoss = 0;
   }
+  if (chart.magnakaiDisciplines.includes('PsiScreen') && enemy.attacksWithMindblast) {
+    playerLoss = 0;
+  }
+
+  const psiSurgeActive =
+    chart.magnakaiDisciplines.includes('PsiSurge') && !enemy.mindblastImmune && psiSurgeCanActivate(chart, options);
+  const psiSurgeCost = psiSurgeActive ? PSI_SURGE_COST : 0;
+  // Self-inflicted, not enemy damage — applies even when Mindshield/Psi-screen zeroed the combat loss above.
+  const totalPlayerLoss = playerLoss + psiSurgeCost;
 
   const nextEnemy: Enemy = { ...enemy, endurance: Math.max(0, enemy.endurance - enemyLoss) };
   const nextChart: ActionChart = {
     ...chart,
-    enduranceCurrent: Math.max(0, chart.enduranceCurrent - playerLoss),
+    enduranceCurrent: Math.max(0, chart.enduranceCurrent - totalPlayerLoss),
   };
   nextChart.isAlive = nextChart.enduranceCurrent > 0;
 
   const enemyKilled = nextEnemy.endurance <= 0;
   const playerKilled = nextChart.enduranceCurrent <= 0;
 
-  const log = `Combat Ratio ${ratio >= 0 ? '+' : ''}${ratio}, rolled ${roll}: ${enemy.name} loses ${enemyLoss} Endurance, Lone Wolf loses ${playerLoss} Endurance.`;
+  const psiSurgeNote = psiSurgeCost > 0 ? ` (plus ${psiSurgeCost} for using Psi-surge)` : '';
+  const log = `Combat Ratio ${ratio >= 0 ? '+' : ''}${ratio}, rolled ${roll}: ${enemy.name} loses ${enemyLoss} Endurance, Lone Wolf loses ${playerLoss} Endurance${psiSurgeNote}.`;
 
   return {
     chart: nextChart,
@@ -77,6 +114,7 @@ export function resolveCombatRound(chart: ActionChart, enemy: Enemy, rng: Rng = 
     ratio,
     enemyLoss,
     playerLoss,
+    psiSurgeCost,
     playerKilled,
     enemyKilled,
     log,
