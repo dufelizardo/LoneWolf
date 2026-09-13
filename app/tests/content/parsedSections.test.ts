@@ -105,3 +105,22 @@ describe('book 7 (Castle Death) puzzle sections', () => {
     expect(endings).toEqual([350]);
   });
 });
+
+describe('book 8 (The Jungle of Horrors) puzzle sections', () => {
+  const sections = loadSections('tjh');
+
+  it('flags sect112, sect126, sect141 and sect338 as puzzles, each with a real fallback choice', () => {
+    // Unlike Book 5/7's puzzle sections, each of these also has a normal class="choice" fallback
+    // link for players who can't/won't solve the riddle, so none of them are ever zero-choice.
+    for (const num of [112, 126, 141, 338]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isEnding, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350)', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+});
