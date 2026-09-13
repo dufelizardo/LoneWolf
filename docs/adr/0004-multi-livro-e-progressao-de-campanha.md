@@ -2,7 +2,11 @@
 
 ## Status
 
-**Aceita, em implementação.**
+**Implementada.** Livro 2 (*Fire on the Water*) jogável de ponta a ponta: pipeline por livro,
+tela de seleção/introdução, transferência de personagem (disciplina extra, equipamento
+`choose-two`, item Escudo) validados via Playwright — desbloqueio ao concluir a seção 350 do
+Livro 1, ficha corretamente herdada + somada na entrada do Livro 2. Mergeado em `main`
+(PR #2) e publicado via `publish-image.yml`.
 
 ## Contexto
 
