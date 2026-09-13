@@ -4,6 +4,29 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.11.0] — 2026-09-13
+
+Livro 10, *The Dungeons of Torgar*, adicionado — quinto livro da fase Magnakai. Primeiro livro
+Magnakai a exigir um campo novo em `ActionChart` desde o Livro 6:
+
+- **Nova Poção de Alether**: substitui "3 Fireseeds" como 10º item de equipamento (mudança
+  intencional, confirmada via `errata.htm` — harmonização com a Collector's Edition). Concede +2
+  Combat Skill durante uma luta inteira, dose única, bebida antes do combate começar. Implementada
+  como novo campo `combatPotionDoses` (`SAVE_VERSION` 5→6), consumida via `useCombatPotion` e um
+  novo checkbox "pré-luta" no `CombatModal` — diferente do toggle por rodada do Psi-surge, este fica
+  ativo pra luta inteira depois de marcado uma única vez.
+- **Improved Disciplines ganha o rank Mentora (7 Disciplinas Magnakai)**: a entrada de Weaponmastery
+  tem uma regra numérica real (+2 à rolagem da Random Number Table ao usar arco ou arma de
+  arremesso), mas essa regra **estende uma mecânica-base que nunca foi implementada em nenhum livro
+  Magnakai anterior** (a regra original de Weaponmastery+Bow do Livro 6, +3 à mesma rolagem) — segue
+  fora de escopo, mesma categoria de auto-adjudicação manual já usada pra Refeições/Flechas. As
+  outras 4 entradas do rank Mentora são puramente narrativas.
+- Zero seções-quebra-cabeça neste livro (diferente dos Livros 8/9).
+- Disciplinas Magnakai, regras de combate, escada de Rank e Lore-circles confirmados inalterados.
+
+`SAVE_VERSION` 5 → 6 (`ActionChart` ganha `combatPotionDoses`) — saves anteriores a esta versão
+deixam de carregar.
+
 ## [0.10.0] — 2026-09-13
 
 Livro 9, *The Cauldron of Fear*, adicionado — quarto livro da fase Magnakai. O livro Magnakai mais

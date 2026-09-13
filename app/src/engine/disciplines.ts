@@ -42,3 +42,14 @@ export function useHealingPotion(chart: ActionChart): ActionChart {
     enduranceCurrent: Math.min(chart.enduranceMax, chart.enduranceCurrent + HEALING_POTION_RESTORE),
   };
 }
+
+/**
+ * Drinks a dose of Potion of Alether (Book 10+): only decrements the dose count. Unlike
+ * useHealingPotion, the +2 Combat Skill effect isn't instantaneous — it lasts the whole fight the
+ * potion was drunk for, so applying it is CombatModal/combat.ts's job (via CombatRoundOptions),
+ * not this function's.
+ */
+export function useCombatPotion(chart: ActionChart): ActionChart {
+  if (chart.combatPotionDoses <= 0) return chart;
+  return { ...chart, combatPotionDoses: chart.combatPotionDoses - 1 };
+}

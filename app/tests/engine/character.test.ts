@@ -556,3 +556,48 @@ describe('chooseEquipmentOptions (book "tcf", choose-five)', () => {
     expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
   });
 });
+
+describe('chooseEquipmentOptions (book "tdt", choose-five)', () => {
+  const fiveOptions = ['bow', 'quiver', 'meals', 'rope', 'potion-of-alether'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('tdt', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('tdt', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants 3 Meals from the Meals option', () => {
+    const chart = createFreshCharacterForBook('tdt', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.meals).toBe(3);
+  });
+
+  it('grants Rope as a plain backpack item', () => {
+    const chart = createFreshCharacterForBook('tdt', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.backpackItems).toContain('Rope');
+  });
+
+  it('grants exactly 1 dose of Potion of Alether', () => {
+    const chart = createFreshCharacterForBook('tdt', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.combatPotionDoses).toBe(1);
+  });
+
+  it('always starts with the Map of Ghatan', () => {
+    const chart = createFreshCharacterForBook('tdt', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of Ghatan');
+  });
+
+  it('rejects a selection that is not exactly five options', () => {
+    const chart = createFreshCharacterForBook('tdt', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fiveOptions.slice(0, 4))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
+  });
+});

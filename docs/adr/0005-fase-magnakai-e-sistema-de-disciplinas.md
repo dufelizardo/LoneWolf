@@ -196,3 +196,52 @@ zero mudança de código de regras:
 Nenhuma decisão de arquitetura nova, e nenhuma extensão de `combat.ts`/`disciplines.ts` — o livro
 inteiro coube nos mecanismos genéricos por-livro (`books.ts`, `bookEquipment.ts`,
 `SECTIONS_BY_BOOK`) já validados desde o Livro 6.
+
+## Atualização — Livro 10
+
+O Livro 10 (*The Dungeons of Torgar*) foi o primeiro livro Magnakai desde o Livro 6 a exigir um
+campo novo em `ActionChart` — a sequência de livros puramente-aditivos-em-dados (7-9) acabou aqui:
+
+### Poção de Alether: `combatPotionDoses` + toggle "pré-luta" no `CombatModal`
+
+O 10º item de equipamento deixa de ser "3 Fireseeds" (idêntico nos Livros 7-9) e passa a ser a
+**Potion of Alether**: *"will increase your COMBAT SKILL by +2 points when swallowed immediately
+prior to a combat. It lasts for the duration of one combat only. There is enough for one dose."*
+Confirmado via `errata.htm` que é intencional (harmonização com a Collector's Edition).
+
+Isso é fundamentalmente diferente da Poção de Cura existente (`healingPotionDoses` +
+`useHealingPotion`): a Poção de Cura tem efeito **instantâneo** ao ser usada (+4 Endurance na hora);
+a de Alether tem um efeito que **persiste por uma luta inteira**, mas só é "comprada" uma vez.
+Decisão de design: `useCombatPotion(chart)` (em `disciplines.ts`) só decrementa o dose — não aplica
+nenhum efeito imediato, ao contrário de `useHealingPotion`. O bônus de +2 CS é aplicado em
+`combat.ts` via um novo `CombatRoundOptions.useCombatPotion?: boolean`, mas ao contrário do
+`usePsiSurge` (que é re-escolhido e re-pago a cada rodada), o `CombatModal` mantém esse flag `true`
+em estado local (`potionActiveThisFight`) por toda a duração daquele combate assim que o jogador
+marca o checkbox antes da primeira rodada — o dose só é gasto uma vez (na primeira rodada), não a
+cada rodada. Essa é a primeira mecânica de combate do motor com essa forma "comprada uma vez, ativa
+até o fim da luta", distinta tanto do "sempre ativo enquanto o item está no inventário" (Shield) 
+quanto do "escolhido e pago a cada rodada" (Psi-surge).
+
+`SAVE_VERSION` 5 → 6 (`ActionChart` ganha `combatPotionDoses`) — primeira mudança de save desde a
+4→5 do Livro 6.
+
+### Bônus de Weaponmastery+Bow/Mentora à Random Number Table: confirmado fora de escopo
+
+O rank Mentora (7 Disciplinas Magnakai) tem uma entrada de Weaponmastery com regra numérica real:
+*"When using a bow or thrown weapon and instructed to pick a number from the Random Number Table,
+add 2 to the number picked if you are a Mentora with the Magnakai Discipline of Weaponmastery."*
+Mas essa regra **estende** uma regra-base que já existe desde `discplnz.htm` do Livro 6 ("If you
+have the Magnakai Discipline of Weaponmastery with Bow, you may add 3... from the Random Number
+Table") e que **nunca foi implementada em nenhum dos 4 livros Magnakai anteriores** — confirmado por
+grep que não existe nenhuma lógica de bônus-a-rolagem em `combat.ts`/`character.ts`, e que
+`RandomNumberBranch.tsx` (o único lugar onde `rollRandomNumber` aparece pro jogador) resolve a
+rolagem automaticamente contra faixas pré-calculadas da história, sem nenhum campo pro jogador
+declarar um bônus. Decisão: manter esse comportamento — é o jogador que aplica o bônus mentalmente
+quando a história pede uma rolagem, mesma categoria de auto-adjudicação manual já usada pra
+Refeições e Flechas. Isso é uma pendência real desde o Livro 6, não algo que o Livro 10 introduziu;
+registrado aqui só porque foi o livro que motivou a investigação a fundo.
+
+### Resto do livro
+
+Zero seções-quebra-cabeça (diferente dos Livros 8/9). Disciplinas Magnakai, `gamerulz.htm`,
+`cmbtrulz.htm`, `levels.htm` e Lore-circles confirmados inalterados em substância.

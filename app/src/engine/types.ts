@@ -132,6 +132,8 @@ export interface ActionChart {
   goldCrowns: number;
   /** Number of unused healing-potion doses currently carried (0 = none). Each dose restores a fixed amount once used. */
   healingPotionDoses: number;
+  /** Number of unused Potion of Alether doses (Book 10+): +2 Combat Skill for one whole combat when drunk, consumed via useCombatPotion before the fight rather than instantly like healingPotionDoses. */
+  combatPotionDoses: number;
   /** Arrows remaining for a Bow (from a Quiver). Never auto-decremented or checked by combat.ts — self-tracked by the player, same manual-adjudication pattern as Meals/huntingDisabled. */
   arrows: number;
   currentSection: number;
@@ -149,7 +151,7 @@ export interface Enemy {
   mindblastImmune?: boolean;
 }
 
-export const SAVE_VERSION = 5;
+export const SAVE_VERSION = 6;
 
 /** The ActionChart snapshot as it stood the moment a book's canonical ending was reached. */
 export interface CampaignProgress {
