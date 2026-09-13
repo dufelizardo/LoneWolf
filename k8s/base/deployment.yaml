@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lonewolf
+  labels:
+    app: lonewolf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lonewolf
+  template:
+    metadata:
+      labels:
+        app: lonewolf
+    spec:
+      containers:
+        - name: lonewolf
+          image: ghcr.io/dufelizardo/lonewolf:main
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

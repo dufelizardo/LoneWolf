@@ -27,6 +27,71 @@ Para rodar os testes automatizados (motor de jogo + validação do conteúdo par
 npm test
 ```
 
+## Container / Docker
+
+```bash
+cd app
+docker build -t lonewolf:local .
+docker run --rm -p 8080:8080 lonewolf:local
+# abrir http://localhost:8080
+```
+
+O `Dockerfile` é multi-stage: builda o app com Node e serve os arquivos estáticos gerados via Nginx
+(`nginx.conf`), escutando na porta `8080`.
+
+## CI/CD
+
+- **`.github/workflows/ci.yml`**: em todo push/PR para `main`, instala dependências, roda o parser de
+  conteúdo, o build de produção, os testes (Vitest) e um build Docker de verificação.
+- **`.github/workflows/publish-image.yml`**: em todo push em `main`, builda e publica a imagem em
+  `ghcr.io/dufelizardo/lonewolf` (tags `main`, `latest` e `<sha>` — a tag por branch segue a mesma
+  convenção do `mais_saude_publica`), imagem pública, sem segredos adicionais (usa o `GITHUB_TOKEN`
+  padrão do próprio Actions).
+
+## Deploy (Kubernetes + ArgoCD)
+
+O deploy segue o mesmo modelo GitOps do projeto
+[`mais_saude_publica`](https://github.com/dufelizardo/mais_saude_publica): sem SSH, sem Docker Compose —
+o ArgoCD, rodando dentro do cluster K3s, observa este repositório e aplica os manifests em `k8s/base/`
+sozinho (`syncPolicy.automated: {prune: true, selfHeal: true}`).
+
+Os manifests (`k8s/base/deployment.yaml`, `service.yaml`, `ingress.yaml`, `kustomization.yaml`) e o
+`k8s/argocd-app.yaml` (o recurso `Application` do ArgoCD) já estão neste repositório. **Esta sessão não
+tem acesso à rede local do servidor (`projetos-server`, 192.168.0.50) nem ao cluster K3s** — os passos
+abaixo precisam ser executados por quem tiver acesso a essa máquina/cluster:
+
+```bash
+# 0. Se este for o primeiro Application do ArgoCD Core aplicado neste cluster,
+#    confirme que o AppProject "default" existe — o ArgoCD Core não cria um
+#    sozinho, e sem ele o Application trava em Sync Status "Unknown"
+#    (mesmo problema documentado na ADR-0012 do mais_saude_publica; se o cluster
+#    já roda o mais_saude_publica, isso já deve estar resolvido).
+kubectl get appproject default -n argocd
+
+# 1. Registrar a aplicação no ArgoCD (uma vez só)
+kubectl apply -f k8s/argocd-app.yaml
+
+# 2. Resolver o domínio local (mesmo padrão do *.mais-saude.local),
+#    usando o IP do Traefik/MetalLB (192.168.0.200 neste cluster)
+echo "192.168.0.200 lonewolf.local" | sudo tee -a /etc/hosts
+
+# 3. Acessar
+curl http://lonewolf.local
+```
+
+A partir daí, todo push em `main` gera uma nova imagem `:main`/`:latest`/`:<sha>` via
+`publish-image.yml`, e o ArgoCD reconcilia o Deployment. **Ponto em aberto (confirmado nas ADRs do
+mais_saude_publica — eles têm exatamente a mesma lacuna e também não resolveram)**: como o Deployment
+referencia uma tag móvel (`:main`), o ArgoCD não percebe sozinho que a imagem mudou — `syncPolicy.
+automated.selfHeal` só reage a divergência nos manifests do Git, não a um novo digest por trás da mesma
+tag. Até decidir uma solução definitiva (ex. Argo CD Image Updater, ou passar a usar tags por commit
+nos manifests, gerenciadas via Kustomize `images:`), o jeito mais simples de forçar a atualização após
+um novo `publish-image.yml` é rodar, no cluster:
+
+```bash
+kubectl rollout restart deployment/lonewolf -n lonewolf
+```
+
 ## Nota sobre a Combat Results Table
 
 A tabela real do livro (`en/xhtml/lw/01fftd/crtneg.png` / `crtpos.png`) só existe como imagem. O arquivo
