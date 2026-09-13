@@ -1,0 +1,21 @@
+# Architecture Decision Records (ADR)
+
+Este diretório guarda os registros de decisões de arquitetura do projeto — o "porquê" por trás de escolhas que têm trade-offs relevantes e não são óbvias a partir do código sozinho.
+
+Cada ADR é um arquivo `NNNN-titulo-curto.md`, numerado sequencialmente, seguindo o formato leve de Michael Nygard:
+
+- **Status** — Proposta, Aceita, Rejeitada, Substituída (por qual ADR) ou Obsoleta.
+- **Contexto** — o problema, restrição ou situação que motivou a decisão.
+- **Decisão** — o que foi decidido.
+- **Trade-offs considerados** — as alternativas avaliadas e por que a escolhida venceu.
+- **Consequências** — o que essa decisão traz de bom, e o que ela deixa como dívida ou pendência conhecida.
+
+Crie um novo ADR quando uma decisão envolver trade-offs (não para escolhas triviais ou reversíveis a baixo custo), especialmente quando a decisão contraria a alternativa "óbvia" e alguém no futuro provavelmente vai perguntar "por que não fizeram X em vez disso?".
+
+## Índice
+
+| ADR | Título | Status |
+|---|---|---|
+| [0001](./0001-deploy-no-homelab-k3s-compartilhado.md) | Deploy do LoneWolf no home-lab K3s compartilhado com o mais_saude_publica | Aceita |
+
+Ver também o projeto irmão [`mais_saude_publica`](https://github.com/dufelizardo/mais_saude_publica/tree/main/docs/adr), cujas ADRs de infraestrutura (especialmente a 0012) são referenciadas aqui e continuam sendo a fonte de verdade para decisões sobre o cluster K3s compartilhado.
