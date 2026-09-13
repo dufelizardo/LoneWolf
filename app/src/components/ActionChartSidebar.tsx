@@ -5,12 +5,17 @@ import {
   adjustGold,
   addBackpackItem,
   addMeal,
+  addSpecialItem,
+  addWeapon,
+  equipWeapon,
   removeBackpackItem,
   removeMeal,
+  removeSpecialItem,
+  removeWeapon,
 } from '../engine/inventory';
 import { eatMeal, useHealingPotion } from '../engine/disciplines';
 import { getKaiRank } from '../engine/kaiRank';
-import { DISCIPLINE_LABELS, MAX_BACKPACK_ITEMS, type ActionChart } from '../engine/types';
+import { ALL_WEAPONS, DISCIPLINE_LABELS, MAX_BACKPACK_ITEMS, MAX_WEAPONS, type ActionChart, type WeaponType } from '../engine/types';
 
 interface Props {
   chart: ActionChart;
@@ -19,6 +24,9 @@ interface Props {
 
 export function ActionChartSidebar({ chart, onChange }: Props) {
   const [newItem, setNewItem] = useState('');
+  const [newWeapon, setNewWeapon] = useState<WeaponType>(ALL_WEAPONS[0]);
+  const [newSpecialName, setNewSpecialName] = useState('');
+  const [newSpecialEffect, setNewSpecialEffect] = useState('');
 
   const enduracePct = Math.max(0, Math.min(100, (chart.enduranceCurrent / chart.enduranceMax) * 100));
   const backpackSlotsUsed = chart.backpackItems.length + chart.meals;
@@ -78,15 +86,42 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
       </section>
 
       <section>
-        <h3>Armas ({chart.weapons.length}/2)</h3>
+        <h3>
+          Armas ({chart.weapons.length}/{MAX_WEAPONS})
+        </h3>
         <ul className="plain-list">
           {chart.weapons.map((w) => (
             <li key={w}>
               {w}
-              {chart.equippedWeapon === w ? ' (equipada)' : ''}
+              {chart.equippedWeapon === w ? (
+                ' (equipada)'
+              ) : (
+                <button type="button" className="link-button" onClick={() => onChange(equipWeapon(chart, w))}>
+                  equipar
+                </button>
+              )}{' '}
+              <button type="button" className="link-button" onClick={() => onChange(removeWeapon(chart, w))}>
+                remover
+              </button>
             </li>
           ))}
         </ul>
+        <div className="button-row">
+          <select value={newWeapon} onChange={(e) => setNewWeapon(e.target.value as WeaponType)}>
+            {ALL_WEAPONS.map((w) => (
+              <option key={w} value={w}>
+                {w}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={() => onChange(addWeapon(chart, newWeapon))}
+            disabled={chart.weapons.length >= MAX_WEAPONS}
+          >
+            Adicionar
+          </button>
+        </div>
       </section>
 
       <section>
@@ -148,7 +183,14 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
         <ul className="plain-list special-items-list">
           {chart.specialItems.map((item, i) => (
             <li key={`${item.name}-${i}`}>
-              <strong>{item.name}</strong>
+              <strong>{item.name}</strong>{' '}
+              <button
+                type="button"
+                className="link-button"
+                onClick={() => onChange(removeSpecialItem(chart, item.name))}
+              >
+                remover
+              </button>
               {item.knownEffects && <div className="item-detail">Efeito: {item.knownEffects}</div>}
               {item.description && <div className="item-detail">{item.description}</div>}
             </li>
@@ -157,6 +199,36 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
             <li>Healing Potion{chart.hasHealingPotionUsed ? ' (usada)' : ''}</li>
           )}
         </ul>
+        <div className="button-row">
+          <input
+            type="text"
+            value={newSpecialName}
+            onChange={(e) => setNewSpecialName(e.target.value)}
+            placeholder="Nome do item"
+          />
+          <input
+            type="text"
+            value={newSpecialEffect}
+            onChange={(e) => setNewSpecialEffect(e.target.value)}
+            placeholder="Efeito conhecido (opcional)"
+          />
+          <button
+            type="button"
+            onClick={() => {
+              if (!newSpecialName.trim()) return;
+              onChange(
+                addSpecialItem(chart, {
+                  name: newSpecialName.trim(),
+                  knownEffects: newSpecialEffect.trim() || undefined,
+                }),
+              );
+              setNewSpecialName('');
+              setNewSpecialEffect('');
+            }}
+          >
+            Adicionar
+          </button>
+        </div>
       </section>
 
       <section className="stat-block">

@@ -326,7 +326,8 @@
   color: var(--text);
 }
 
-.action-chart input[type='text'] {
+.action-chart input[type='text'],
+.action-chart select {
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 6px 8px;

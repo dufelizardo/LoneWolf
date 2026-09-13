@@ -4,6 +4,21 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.3.0] — 2026-09-13
+
+Armas e Itens Especiais deixam de ser só leitura na Ficha de Aventura:
+
+- **Armas**: agora dá pra adicionar uma arma achada na aventura (lista suspensa com todas as armas
+  conhecidas), trocar qual arma está equipada quando se carrega duas, e remover uma (perdida, trocada,
+  vendida — venda de ouro continua manual, com os botões +/- de Ouro já existentes).
+- **Itens Especiais**: agora dá pra adicionar um item descoberto (nome + efeito conhecido opcional)
+  e remover um.
+- Corrigido um bug: `addWeapon` permitia adicionar a mesma arma duas vezes, o que deixava as duas
+  cópias marcadas como "(equipada)" ao mesmo tempo (só existe um `equippedWeapon`, não por
+  instância). Agora adicionar uma arma já carregada não faz nada.
+
+Sem mudança de schema — mesmo `SAVE_VERSION` 3.
+
 ## [0.2.0] — 2026-09-13
 
 Fecha lacunas da Ficha de Aventura (Action Chart) identificadas ao comparar com o chart real do
