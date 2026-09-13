@@ -652,3 +652,50 @@ describe('chooseEquipmentOptions (book "tpt", choose-six)', () => {
     expect(() => chooseEquipmentOptions(chart, [...sixOptions, 'dagger'])).toThrow();
   });
 });
+
+describe('chooseEquipmentOptions (book "tmd", choose-six)', () => {
+  const sixOptions = ['sword', 'bow', 'quiver', 'rope', 'meals', 'quarterstaff'];
+
+  it('grants Sword and Bow weapons (Quarterstaff picked too, but MAX_WEAPONS caps carried weapons at 2)', () => {
+    const chart = createFreshCharacterForBook('tmd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, sixOptions);
+    expect(equipped.weapons).toContain('Sword');
+    expect(equipped.weapons).toContain('Bow');
+    expect(equipped.weapons).not.toContain('Quarterstaff');
+  });
+
+  it('grants the Quarterstaff option when there is room for it', () => {
+    const chart = createFreshCharacterForBook('tmd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, ['sword', 'quarterstaff', 'quiver', 'rope', 'meals', 'dagger']);
+    expect(equipped.weapons).toContain('Quarterstaff');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('tmd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, sixOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants 4 Meals from the Meals option (not the usual 3)', () => {
+    const chart = createFreshCharacterForBook('tmd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, sixOptions);
+    expect(equipped.meals).toBe(4);
+  });
+
+  it('grants an Axe weapon via the axe option', () => {
+    const chart = createFreshCharacterForBook('tmd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, ['axe', 'quiver', 'rope', 'potion-of-laumspur', 'meals', 'lantern']);
+    expect(equipped.weapons).toContain('Axe');
+  });
+
+  it('always starts with the Map of the Darklands', () => {
+    const chart = createFreshCharacterForBook('tmd', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of the Darklands');
+  });
+
+  it('rejects a selection that is not exactly six options', () => {
+    const chart = createFreshCharacterForBook('tmd', () => 0);
+    expect(() => chooseEquipmentOptions(chart, sixOptions.slice(0, 5))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...sixOptions, 'dagger'])).toThrow();
+  });
+});

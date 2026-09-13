@@ -24,6 +24,17 @@ const PSI_SURGE_BONUS = 4;
 const PSI_SURGE_FREE_BONUS = 2; // the free "Mindblast" sub-mode of Psi-surge
 const PSI_SURGE_COST = 2; // Endurance, only when the costed mode actually activates
 const PSI_SURGE_MIN_ENDURANCE = 6; // "Psi-surge cannot be used if your ENDURANCE falls to 6 points or below"
+// "Archmasters may add 6 points to their COMBAT SKILL instead of the usual 4 points. For every round
+// in which Psi-surge is used, Archmasters need only deduct 1 ENDURANCE point. When using the weaker
+// psychic attack - Mindblast - they may add 3 points to their COMBAT SKILL without loss of ENDURANCE
+// points. Archmasters cannot use Psi-surge if their ENDURANCE score falls to 4 points or below."
+// (imprvdsc.htm, Book 12) - a further override of Psi-surge's bonus/cost/floor, once held at
+// Archmaster rank (9 Magnakai Disciplines), first reachable in Book 12.
+const PSI_SURGE_BONUS_ARCHMASTER = 6;
+const PSI_SURGE_FREE_BONUS_ARCHMASTER = 3;
+const PSI_SURGE_COST_ARCHMASTER = 1;
+const PSI_SURGE_MIN_ENDURANCE_ARCHMASTER = 4;
+export const ARCHMASTER_DISCIPLINE_COUNT = 9;
 // "This potion of strength will increase your COMBAT SKILL by +2 points when swallowed immediately
 // prior to a combat. It lasts for the duration of one combat only." (equipmnt.htm, Book 10). The
 // dose itself is spent via useCombatPotion (disciplines.ts) before the fight starts; this flag is
@@ -43,8 +54,17 @@ export interface CombatRoundOptions {
   useCombatPotion?: boolean;
 }
 
+function isArchmaster(chart: ActionChart): boolean {
+  return chart.magnakaiDisciplines.length >= ARCHMASTER_DISCIPLINE_COUNT;
+}
+
+/** The Endurance floor below which Psi-surge can't be activated - lower for Archmaster rank. Exported so the UI can match combat.ts's actual rule instead of hardcoding the base value. */
+export function psiSurgeMinEndurance(chart: ActionChart): number {
+  return isArchmaster(chart) ? PSI_SURGE_MIN_ENDURANCE_ARCHMASTER : PSI_SURGE_MIN_ENDURANCE;
+}
+
 function psiSurgeCanActivate(chart: ActionChart, options: CombatRoundOptions): boolean {
-  return !!options.usePsiSurge && chart.enduranceCurrent > PSI_SURGE_MIN_ENDURANCE;
+  return !!options.usePsiSurge && chart.enduranceCurrent > psiSurgeMinEndurance(chart);
 }
 
 /** Lone Wolf's Combat Skill for this fight, including discipline bonuses and the no-weapon penalty. */
@@ -73,7 +93,12 @@ export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy, option
   }
 
   if (chart.magnakaiDisciplines.includes('PsiSurge') && !enemy.mindblastImmune) {
-    skill += psiSurgeCanActivate(chart, options) ? PSI_SURGE_BONUS : PSI_SURGE_FREE_BONUS;
+    const archmaster = isArchmaster(chart);
+    if (psiSurgeCanActivate(chart, options)) {
+      skill += archmaster ? PSI_SURGE_BONUS_ARCHMASTER : PSI_SURGE_BONUS;
+    } else {
+      skill += archmaster ? PSI_SURGE_FREE_BONUS_ARCHMASTER : PSI_SURGE_FREE_BONUS;
+    }
   }
 
   if (options.useCombatPotion) {
@@ -125,7 +150,7 @@ export function resolveCombatRound(
 
   const psiSurgeActive =
     chart.magnakaiDisciplines.includes('PsiSurge') && !enemy.mindblastImmune && psiSurgeCanActivate(chart, options);
-  const psiSurgeCost = psiSurgeActive ? PSI_SURGE_COST : 0;
+  const psiSurgeCost = psiSurgeActive ? (isArchmaster(chart) ? PSI_SURGE_COST_ARCHMASTER : PSI_SURGE_COST) : 0;
   // Self-inflicted, not enemy damage — applies even when Mindshield/Psi-screen zeroed the combat loss above.
   const totalPlayerLoss = playerLoss + psiSurgeCost;
 

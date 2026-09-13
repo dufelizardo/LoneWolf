@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   applyHealingRegen,
   applyMissedMealPenalty,
+  canUseArchmasterCuring,
   eatMeal,
+  useArchmasterCuring,
   useCombatPotion,
   useHealingPotion,
 } from '../../src/engine/disciplines';
@@ -127,5 +129,62 @@ describe('useCombatPotion', () => {
     expect(afterSecond.combatPotionDoses).toBe(0);
     const afterThird = useCombatPotion(afterSecond);
     expect(afterThird.combatPotionDoses).toBe(0);
+  });
+});
+
+describe('canUseArchmasterCuring / useArchmasterCuring', () => {
+  const archmasterDisciplines = [
+    'Curing', 'Weaponmastery', 'Huntmastery', 'Divination', 'Nexus', 'PsiScreen', 'Pathsmanship', 'AnimalControl',
+    'Invisibility',
+  ] as const;
+
+  it('is available with Curing at Archmaster rank (9+ disciplines) and Endurance <= 6', () => {
+    const chart = chartFor('tmd', { magnakaiDisciplines: [...archmasterDisciplines], enduranceCurrent: 6 });
+    expect(canUseArchmasterCuring(chart)).toBe(true);
+  });
+
+  it('is unavailable above the Endurance 6 trigger threshold', () => {
+    const chart = chartFor('tmd', { magnakaiDisciplines: [...archmasterDisciplines], enduranceCurrent: 7 });
+    expect(canUseArchmasterCuring(chart)).toBe(false);
+  });
+
+  it('is unavailable at Scion-kai rank (8 disciplines), even with Curing and low Endurance', () => {
+    const chart = chartFor('tmd', {
+      magnakaiDisciplines: archmasterDisciplines.slice(0, 8),
+      enduranceCurrent: 6,
+    });
+    expect(canUseArchmasterCuring(chart)).toBe(false);
+  });
+
+  it('is unavailable at Archmaster rank without Curing', () => {
+    const chart = chartFor('tmd', {
+      magnakaiDisciplines: [
+        'Weaponmastery', 'Huntmastery', 'Divination', 'Nexus', 'PsiScreen', 'Pathsmanship', 'AnimalControl',
+        'Invisibility', 'PsiSurge',
+      ],
+      enduranceCurrent: 6,
+    });
+    expect(canUseArchmasterCuring(chart)).toBe(false);
+  });
+
+  it('restores 20 Endurance capped at enduranceMax', () => {
+    const chart = chartFor('tmd', {
+      magnakaiDisciplines: [...archmasterDisciplines],
+      enduranceCurrent: 6,
+      enduranceMax: 20,
+    });
+    expect(useArchmasterCuring(chart).enduranceCurrent).toBe(20);
+
+    const nearCap = chartFor('tmd', {
+      magnakaiDisciplines: [...archmasterDisciplines],
+      enduranceCurrent: 5,
+      enduranceMax: 10,
+    });
+    expect(useArchmasterCuring(nearCap).enduranceCurrent).toBe(10);
+  });
+
+  it('is a no-op when the conditions are not met', () => {
+    const chart = chartFor('tmd', { magnakaiDisciplines: [...archmasterDisciplines], enduranceCurrent: 10 });
+    expect(useArchmasterCuring(chart).enduranceCurrent).toBe(10);
   });
 });

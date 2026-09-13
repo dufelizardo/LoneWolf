@@ -185,6 +185,27 @@ describe('getEffectiveCombatSkill', () => {
     };
     expect(getEffectiveCombatSkill(scionKaiWithoutWeaponmastery, enemy)).toBe(baseChart.combatSkill - 4);
   });
+
+  it('upgrades Psi-surge to +6/+3 (instead of +4/+2) at Archmaster rank (9+ Magnakai Disciplines)', () => {
+    const scionKaiPsiSurge: ActionChart = {
+      ...baseChart,
+      magnakaiDisciplines: [
+        'PsiSurge', 'Curing', 'Huntmastery', 'Divination', 'Nexus', 'PsiScreen', 'Pathsmanship', 'AnimalControl',
+      ],
+    };
+    expect(getEffectiveCombatSkill(scionKaiPsiSurge, enemy)).toBe(baseChart.combatSkill + 2);
+    expect(getEffectiveCombatSkill(scionKaiPsiSurge, enemy, { usePsiSurge: true })).toBe(baseChart.combatSkill + 4);
+
+    const archmasterPsiSurge: ActionChart = {
+      ...baseChart,
+      magnakaiDisciplines: [
+        'PsiSurge', 'Curing', 'Huntmastery', 'Divination', 'Nexus', 'PsiScreen', 'Pathsmanship', 'AnimalControl',
+        'Invisibility',
+      ],
+    };
+    expect(getEffectiveCombatSkill(archmasterPsiSurge, enemy)).toBe(baseChart.combatSkill + 3);
+    expect(getEffectiveCombatSkill(archmasterPsiSurge, enemy, { usePsiSurge: true })).toBe(baseChart.combatSkill + 6);
+  });
 });
 
 describe('resolveCombatRound', () => {
@@ -264,5 +285,37 @@ describe('resolveCombatRound', () => {
     const enemy: Enemy = { name: 'Giak', combatSkill: 10, endurance: 10 };
     const result = resolveCombatRound(chart, enemy, fixedRng(0.5), { usePsiSurge: true });
     expect(result.psiSurgeCost).toBe(0);
+  });
+
+  it('deducts only 1 Endurance for Psi-surge (instead of 2) at Archmaster rank (9+ Magnakai Disciplines)', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('tkt', fixedRng(0, 0, 0)),
+      magnakaiDisciplines: [
+        'PsiSurge', 'Curing', 'Huntmastery', 'Divination', 'Nexus', 'PsiScreen', 'Pathsmanship', 'AnimalControl',
+        'Invisibility',
+      ],
+      enduranceCurrent: 20,
+      equippedWeapon: 'Axe',
+      weapons: ['Axe'],
+    };
+    const enemy: Enemy = { name: 'Giak', combatSkill: 10, endurance: 10 };
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.5), { usePsiSurge: true });
+    expect(result.psiSurgeCost).toBe(1);
+  });
+
+  it('allows an Archmaster to activate Psi-surge down to Endurance 5 (base rank would refuse at 6)', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('tkt', fixedRng(0, 0, 0)),
+      magnakaiDisciplines: [
+        'PsiSurge', 'Curing', 'Huntmastery', 'Divination', 'Nexus', 'PsiScreen', 'Pathsmanship', 'AnimalControl',
+        'Invisibility',
+      ],
+      enduranceCurrent: 5,
+      equippedWeapon: 'Axe',
+      weapons: ['Axe'],
+    };
+    const enemy: Enemy = { name: 'Giak', combatSkill: 10, endurance: 10 };
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.5), { usePsiSurge: true });
+    expect(result.psiSurgeCost).toBe(1);
   });
 });
