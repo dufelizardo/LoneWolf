@@ -56,6 +56,7 @@ export function removeSpecialItem(chart: ActionChart, name: string): ActionChart
 
 export function addWeapon(chart: ActionChart, weapon: WeaponType): ActionChart {
   if (chart.weapons.length >= MAX_WEAPONS) return chart;
+  if (chart.weapons.includes(weapon)) return chart;
   const weapons = [...chart.weapons, weapon];
   const equippedWeapon = chart.equippedWeapon ?? weapon;
   return { ...chart, weapons, equippedWeapon };
