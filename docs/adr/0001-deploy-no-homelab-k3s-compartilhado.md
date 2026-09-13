@@ -2,11 +2,17 @@
 
 ## Status
 
-**Aceita.** Manifests do Kubernetes, Dockerfiles e pipelines de CI/CD (`ci.yml`, `publish-image.yml`)
-já estão neste repositório e prontos. Falta executar o bootstrap manual no cluster — registrar o
-`Application` do ArgoCD, criar o Secret do Postgres, adicionar a entrada no `hosts` — ver a seção
-"Deploy (Kubernetes + ArgoCD)" do `README.md`. Depende de acesso à máquina `projetos-server`
-(`192.168.0.50`), fora do alcance desta sessão de desenvolvimento.
+**Implementada.** Concluída em 2026-09-12: namespace `lonewolf` criado, Secret do Postgres
+configurado, `Application` do ArgoCD registrado e sincronizado, os 3 pods (`lonewolf`,
+`lonewolf-api`, `lonewolf-postgres`) saudáveis. Validado ponta a ponta contra
+`http://lonewolf.local` (via IP do Traefik, `192.168.0.200`): frontend responde HTTP 200,
+`POST /api/saves` gera código e persiste, `GET /api/saves/:code` devolve o save salvo
+corretamente.
+
+Observação do rollout: o pod `lonewolf-api` reiniciou 2 vezes antes de estabilizar — mesmo tipo de
+sintoma da "Lição aprendida" da ADR-0012 do mais_saude_publica (probe atuando antes da dependência
+— aqui o Postgres — estar pronta), só que sem causar crash-loop permanente. Fica registrado como
+candidato a hardening (`startupProbe` na API), não bloqueou o rollout.
 
 ## Contexto
 
