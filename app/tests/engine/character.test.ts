@@ -133,3 +133,48 @@ describe('chooseEquipmentOptions (book "fa", choose-two)', () => {
     expect(() => chooseEquipmentOptions(chart, ['shield', 'mace', 'spear'])).toThrow();
   });
 });
+
+describe('chooseEquipmentOptions (book "tck", choose-two)', () => {
+  it('supports the new Warhammer and Padded Leather Waistcoat options', () => {
+    const chart = createFreshCharacterForBook('tck', () => 0);
+    const equipped = chooseEquipmentOptions(chart, ['warhammer', 'padded-leather-waistcoat']);
+    expect(equipped.weapons).toContain('Warhammer');
+    const waistcoat = equipped.specialItems.find((i) => i.name === 'Padded Leather Waistcoat');
+    expect(waistcoat?.knownEffects).toBe('+2 Endurance');
+    expect(equipped.enduranceMax).toBe(chart.enduranceMax + 2);
+  });
+
+  it('always starts with the Map of Kalte', () => {
+    const chart = createFreshCharacterForBook('tck', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of Kalte');
+  });
+
+  it('grants a fresh, unused Potion of Laumspur even if the previous potion was already used', () => {
+    const chart = createFreshCharacterForBook('tck', () => 0);
+    chart.hasHealingPotion = true;
+    chart.hasHealingPotionUsed = true;
+    const equipped = chooseEquipmentOptions(chart, ['potion-of-laumspur', 'axe']);
+    expect(equipped.hasHealingPotion).toBe(true);
+    expect(equipped.hasHealingPotionUsed).toBe(false);
+  });
+});
+
+describe('carryOverCharacterToBook healing potion carry-over (regression)', () => {
+  it('preserves "already used" across books instead of silently refilling it for free', () => {
+    const book1Chart = createFreshCharacterForBook('ft', fixedRng(0.3, 0.3, 0.3, 0.3));
+    book1Chart.hasHealingPotion = true;
+    book1Chart.hasHealingPotionUsed = true;
+    const carried = carryOverCharacterToBook(book1Chart, 'fa', fixedRng(0));
+    expect(carried.hasHealingPotion).toBe(true);
+    expect(carried.hasHealingPotionUsed).toBe(true);
+  });
+
+  it('preserves "still has an unused potion" across books', () => {
+    const book1Chart = createFreshCharacterForBook('ft', fixedRng(0.3, 0.3, 0.3, 0.3));
+    book1Chart.hasHealingPotion = true;
+    book1Chart.hasHealingPotionUsed = false;
+    const carried = carryOverCharacterToBook(book1Chart, 'fa', fixedRng(0));
+    expect(carried.hasHealingPotion).toBe(true);
+    expect(carried.hasHealingPotionUsed).toBe(false);
+  });
+});

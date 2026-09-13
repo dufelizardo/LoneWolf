@@ -1,3 +1,4 @@
+import { getBookEquipment } from './bookEquipment';
 import type { ActionChart } from './types';
 
 const HEALING_REGEN_PER_SECTION = 1;
@@ -20,7 +21,8 @@ export function eatMeal(chart: ActionChart): ActionChart {
 
 /** Call when the story requires a Meal and the player has none (and lacks Hunting). */
 export function applyMissedMealPenalty(chart: ActionChart): ActionChart {
-  if (chart.disciplines.includes('Hunting')) return chart;
+  const huntingExempts = chart.disciplines.includes('Hunting') && !getBookEquipment(chart.bookId).huntingDisabled;
+  if (huntingExempts) return chart;
   return { ...chart, enduranceCurrent: Math.max(0, chart.enduranceCurrent - NO_MEAL_PENALTY) };
 }
 

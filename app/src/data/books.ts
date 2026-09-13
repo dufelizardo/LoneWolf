@@ -6,11 +6,14 @@ export interface BookMeta {
   title: string;
   order: number;
   equipmentMode: EquipmentMode;
+  /** The section number of this book's one canonical (mission-success) ending. */
+  finalSection: number;
 }
 
 export const BOOKS: BookMeta[] = [
-  { id: 'ft', code: '01fftd', title: 'Flight from the Dark', order: 1, equipmentMode: 'random-one' },
-  { id: 'fa', code: '02fotw', title: 'Fire on the Water', order: 2, equipmentMode: 'choose-two' },
+  { id: 'ft', code: '01fftd', title: 'Flight from the Dark', order: 1, equipmentMode: 'random-one', finalSection: 350 },
+  { id: 'fa', code: '02fotw', title: 'Fire on the Water', order: 2, equipmentMode: 'choose-two', finalSection: 350 },
+  { id: 'tck', code: '03tcok', title: 'The Caverns of Kalte', order: 3, equipmentMode: 'choose-two', finalSection: 350 },
 ];
 
 export function getBook(id: string): BookMeta {

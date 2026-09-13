@@ -4,6 +4,31 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.4.0] — 2026-09-13
+
+Livro 3, *The Caverns of Kalte*, adicionado à campanha:
+
+- 350 seções, mesmo padrão de transferência de personagem dos livros anteriores (+1 Disciplina Kai,
+  ouro somado, armas/itens especiais mantidos).
+- Nova arma **Warhammer** (`ALL_WEAPONS`) e novo Item Especial **Padded Leather Waistcoat** (+2
+  Endurance), disponíveis na escolha de equipamento (`choose-two`) deste livro.
+- **Potion of Laumspur** (mecanicamente igual à Healing Potion) e **Special Rations** (igual a uma
+  Refeição) — mesmos efeitos dos livros anteriores, só com nome próprio deste livro; a Ficha de
+  Aventura agora exibe o nome correto por livro em vez do texto fixo "Healing Potion".
+- **Regra nova**: neste livro a Disciplina Hunting não isenta de precisar de uma Refeição ("Kalte é
+  um deserto gelado", conforme `equipmnt.htm`) — a penalidade de -3 Endurance por falta de Refeição
+  agora se aplica mesmo com Hunting, só neste livro.
+- Corrigidos dois bugs na Poção de Cura encontrados durante a implementação: (1) transferir
+  personagem entre livros reabastecia de graça uma poção já usada; (2) escolher uma poção de cura
+  nova deixava-a marcada como "já usada" se a anterior já tivesse sido usada. Agora o estado de uso
+  é preservado corretamente entre livros, e uma poção nova sempre vem utilizável.
+- Corrigido um terceiro bug descoberto pelo próprio conteúdo do livro: a seção 61 é um final onde
+  a missão falha mas o personagem sobrevive (o único caso da série, segundo a nota de rodapé do
+  próprio livro) — antes, qualquer seção marcada como final desbloqueava o próximo livro; agora só
+  o final canônico (seção 350) conta como conclusão da campanha.
+
+Sem mudança de schema — mesmo `SAVE_VERSION` 3.
+
 ## [0.3.0] — 2026-09-13
 
 Armas e Itens Especiais deixam de ser só leitura na Ficha de Aventura:
