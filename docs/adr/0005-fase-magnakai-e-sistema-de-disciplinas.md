@@ -175,3 +175,24 @@ Nenhuma decisão de arquitetura nova: é a primeira vez que uma melhoria de rank
 "narrativo/sem código" e se torna uma regra numérica de verdade, mas o encaixe (uma condição a mais
 dentro de `getEffectiveCombatSkill`) confirma que o modelo de campos separados + funções de
 consulta simples segue suficiente sem precisar de nenhuma extensão estrutural.
+
+## Atualização — Livro 9
+
+O Livro 9 (*The Cauldron of Fear*) foi o primeiro livro Magnakai **puramente aditivo em dados** —
+zero mudança de código de regras:
+
+- **Rank Principalin (6 Disciplinas Magnakai) confirmado puramente narrativo.** Li `imprvdsc.htm` na
+  íntegra: as 5 entradas (Animal Control, Invisibility, Huntmastery, Psi-surge, Nexus) descrevem só
+  flavor de história (chamar animal, mascarar som, visão telescópica, confundir inimigo, apagar
+  fogo) — nenhuma menciona Combat Skill, Endurance ou qualquer efeito já modelado no motor, ao
+  contrário da entrada de Weaponmastery no rank Tutelary do Livro 8. Nenhuma mudança em `combat.ts`.
+- Três seções-quebra-cabeça (sect115, sect204, sect241) repetem o padrão do Livro 8 — cada uma com
+  uma escolha normal de fallback além do quebra-cabeça — confirmando de novo que `hasPuzzle` cobre
+  esse formato sem nenhuma mudança de parser.
+- Equipamento, disciplinas, regras de combate, escada de Rank e Lore-circles confirmados idênticos
+  em substância aos do Livro 8 (diffs mostram só cosméticos de título/crédito de ilustrador/link de
+  livro seguinte).
+
+Nenhuma decisão de arquitetura nova, e nenhuma extensão de `combat.ts`/`disciplines.ts` — o livro
+inteiro coube nos mecanismos genéricos por-livro (`books.ts`, `bookEquipment.ts`,
+`SECTIONS_BY_BOOK`) já validados desde o Livro 6.
