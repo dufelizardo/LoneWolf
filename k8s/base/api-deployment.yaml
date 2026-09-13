@@ -34,16 +34,26 @@ spec:
                 secretKeyRef:
                   name: lonewolf-postgres-secret
                   key: POSTGRES_PASSWORD
+          # Segura readiness/liveness até a API responder - o processo pode levar até ~20s pra
+          # subir na pior hipótese (retry com backoff em ensureSchemaWithRetry() esperando o
+          # Postgres aceitar conexões, ver api/src/index.ts). 10x3s = 30s de folga antes de
+          # liveness/readiness passarem a valer.
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            failureThreshold: 10
+            periodSeconds: 3
           readinessProbe:
             httpGet:
               path: /healthz
               port: 3000
-            initialDelaySeconds: 3
+            periodSeconds: 5
           livenessProbe:
             httpGet:
               path: /healthz
               port: 3000
-            initialDelaySeconds: 5
+            periodSeconds: 10
           resources:
             requests:
               cpu: 50m

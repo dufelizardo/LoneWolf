@@ -10,7 +10,7 @@
  *
  * This gives correct, playable, internally-consistent combat behaviour, but individual interior
  * cells may differ by a point or two from the printed book. For tournament-exact numbers, compare
- * this file against `en/xhtml/lw/01fftd/crtneg.png` and `crtpos.png` and adjust the constants below.
+ * this file against `kai/ft/en/xhtml/lw/01fftd/crtneg.png` and `crtpos.png` and adjust the constants below.
  */
 
 export interface CombatResultCell {

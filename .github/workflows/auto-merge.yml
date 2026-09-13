@@ -1,0 +1,53 @@
+name: Auto-merge de promoção
+
+# Automatiza o merge da PR developer -> main assim que os checks obrigatórios (test-app,
+# test-api, do ci.yml) terminarem com sucesso. Só dispara para PRs vindas de developer.
+#
+# Usa o secret WOLK_KEY (Personal Access Token do dono do repositorio) em vez do
+# github.token padrao: um merge feito com o token padrao das Actions NAO conta como push "de
+# verdade" pro GitHub (protecao contra loop infinito de workflow disparando workflow) - então
+# publish-image.yml (que só dispara em push de verdade na main) nunca rodaria depois do merge, e
+# o deploy nunca aconteceria. Merge feito com o PAT resolve isso.
+#
+# Diferente do mais_saude_publica, aqui não tem regra de aprovação obrigatória pra terceiros
+# (projeto solo), então o merge é "gh pr merge --merge" simples, sem --admin - o PAT só precisa
+# de "Contents: Read and write" e "Pull requests: Read and write", sem "Administration".
+on:
+  pull_request:
+    types: [opened, reopened]
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    if: github.head_ref == 'developer'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Esperar os checks obrigatórios e mergear
+        env:
+          GH_TOKEN: ${{ secrets.WOLK_KEY }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          pr="${{ github.event.pull_request.number }}"
+          for i in $(seq 1 90); do
+            data=$(gh pr view "$pr" --json statusCheckRollup)
+            pending=$(echo "$data" | jq '[.statusCheckRollup[] | select(.__typename=="CheckRun" and .name != "auto-merge" and (.conclusion==null or .conclusion==""))] | length')
+            failed=$(echo "$data" | jq '[.statusCheckRollup[] | select(.__typename=="CheckRun" and .name != "auto-merge" and (.conclusion=="FAILURE" or .conclusion=="CANCELLED" or .conclusion=="TIMED_OUT" or .conclusion=="ACTION_REQUIRED"))] | length')
+            if [ "$failed" -gt 0 ]; then
+              echo "Um check obrigatório falhou - não vou mergear."
+              exit 1
+            fi
+            if [ "$pending" -eq 0 ]; then
+              echo "Todos os checks concluídos - mergeando."
+              gh pr merge "$pr" --merge
+              exit 0
+            fi
+            echo "Tentativa $i: ainda esperando checks terminarem..."
+            sleep 20
+          done
+          echo "Checks não terminaram a tempo (30 min)."
+          exit 1
