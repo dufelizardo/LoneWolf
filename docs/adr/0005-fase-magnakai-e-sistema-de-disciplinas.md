@@ -245,3 +245,48 @@ registrado aqui só porque foi o livro que motivou a investigação a fundo.
 
 Zero seções-quebra-cabeça (diferente dos Livros 8/9). Disciplinas Magnakai, `gamerulz.htm`,
 `cmbtrulz.htm`, `levels.htm` e Lore-circles confirmados inalterados em substância.
+
+## Atualização — Livro 11
+
+O Livro 11 (*The Prisoners of Time*) — "o penúltimo episódio da saga Magnakai" segundo o próprio
+texto — trouxe duas mudanças reais, uma de dados e uma de regra:
+
+### Equipamento muda de forma (6-de-9, sem mapa)
+
+Diferente dos Livros 7-10 (sempre "escolha 5 de 10", com um mapa concedido automaticamente),
+`equipmnt.htm` do Livro 11 muda pra **"escolha 6 de 9"** (removendo Potion of Alether e 3 Fireseeds
+da lista) e **não concede nenhum mapa** — confirmado por grep que não há nenhuma menção de "map of"
+em `equipmnt.htm`, e explicado pela história: a queda pelo Shadow Gate do Livro 10 joga Lone Wolf
+direto na Daziarn, um plano sobrenatural, não um território real pra mapear. `errata.htm` não
+documenta nenhuma dessas mudanças como correção de digitalização — confirma que é o texto original.
+Reaproveitado sem nenhuma mudança estrutural: `equipmentMode: 'choose-six'` já existia (usado desde
+o Livro 4), e `applyBaseEquipment` simplesmente não chama `addSpecialItem` desta vez.
+
+### Rank Scion-kai (8 Disciplinas Magnakai): segunda melhoria numérica de Weaponmastery, desta vez dupla
+
+`imprvdsc.htm` do Livro 11 adiciona o rank Scion-kai, e sua entrada de Weaponmastery tem duas regras
+numéricas simultâneas: *"Scion-kai may add 4 points (instead of the usual 3 points) to their COMBAT
+SKILL [when armed with a mastered weapon]. Also, when in combat without a weapon they lose only 1
+point from their COMBAT SKILL [instead of 2]."* Isso estende as DUAS regras já implementadas no
+Livro 8 (penalidade desarmado) e desde o início da fase (bônus de arma dominada) com uma terceira
+camada de rank. Implementado em `combat.ts` com duas constantes novas
+(`WEAPONMASTERY_BONUS_SCION_KAI = 4`, `NO_WEAPON_PENALTY_SCION_KAI = -1`) e um novo limiar
+(`SCION_KAI_DISCIPLINE_COUNT = 8`), checado **antes** do limiar de Tutelary em ambos os ramos (armado
+e desarmado) — a ordem de checagem importa porque os limiares são cumulativos (8 disciplinas também
+passa por >=5), mas o valor de Scion-kai deve vencer. `kaiRank.ts` já tinha `Scion-kai` na escada
+(`MAGNAKAI_RANKS[7]`) desde o início da fase — só nunca tinha sido alcançável/exercitado antes deste
+livro (exige 5 crescimentos de +1 disciplina, alcançáveis só depois de completar 5 livros Magnakai
+anteriores).
+
+As outras 4 entradas do rank Scion-kai (Invisibility, Pathsmanship, Psi-screen, Divination) lidas na
+íntegra seguem puramente narrativas — mesmo padrão de todos os ranks anteriores.
+
+Reconfirmado, ainda fora de escopo: o bônus de Weaponmastery+Bow à Random Number Table (ver
+atualização do Livro 10) segue sem nenhuma implementação, e o Livro 11 não adiciona nada novo a essa
+pendência.
+
+### Resto do livro
+
+Zero seções-quebra-cabeça. Disciplinas Magnakai, `gamerulz.htm`, `cmbtrulz.htm`, `levels.htm` e
+Lore-circles confirmados inalterados em substância. Sem mudança de `SAVE_VERSION` — a melhoria de
+Combat Skill é puramente derivada da contagem de Disciplinas, sem nenhum estado novo pra persistir.

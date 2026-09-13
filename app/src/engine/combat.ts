@@ -9,6 +9,14 @@ const NO_WEAPON_PENALTY = -4;
 // (5 Magnakai Disciplines), first reachable in Book 8.
 const NO_WEAPON_PENALTY_TUTELARY = -2;
 const TUTELARY_DISCIPLINE_COUNT = 5;
+// "When entering combat with a weapon they have mastered, Scion-kai may add 4 points (instead of
+// the usual 3 points) to their COMBAT SKILL. Also, when in combat without a weapon they lose only 1
+// point from their COMBAT SKILL." (imprvdsc.htm, Book 11) - a further override of both the base
+// Weaponmastery bonus and the Tutelary unarmed penalty, once Weaponmastery is held at Scion-kai rank
+// (8 Magnakai Disciplines), first reachable in Book 11.
+const NO_WEAPON_PENALTY_SCION_KAI = -1;
+const WEAPONMASTERY_BONUS_SCION_KAI = 4;
+const SCION_KAI_DISCIPLINE_COUNT = 8;
 const WEAPONSKILL_BONUS = 2;
 const MINDBLAST_BONUS = 2;
 const WEAPONMASTERY_BONUS = 3;
@@ -43,15 +51,21 @@ function psiSurgeCanActivate(chart: ActionChart, options: CombatRoundOptions): b
 export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy, options: CombatRoundOptions = {}): number {
   let skill = chart.combatSkill;
 
+  const hasWeaponmastery = chart.magnakaiDisciplines.includes('Weaponmastery');
+  const magnakaiDisciplineCount = chart.magnakaiDisciplines.length;
+
   if (!chart.equippedWeapon) {
-    const isTutelaryWeaponmaster =
-      chart.magnakaiDisciplines.includes('Weaponmastery') &&
-      chart.magnakaiDisciplines.length >= TUTELARY_DISCIPLINE_COUNT;
-    skill += isTutelaryWeaponmaster ? NO_WEAPON_PENALTY_TUTELARY : NO_WEAPON_PENALTY;
+    if (hasWeaponmastery && magnakaiDisciplineCount >= SCION_KAI_DISCIPLINE_COUNT) {
+      skill += NO_WEAPON_PENALTY_SCION_KAI;
+    } else if (hasWeaponmastery && magnakaiDisciplineCount >= TUTELARY_DISCIPLINE_COUNT) {
+      skill += NO_WEAPON_PENALTY_TUTELARY;
+    } else {
+      skill += NO_WEAPON_PENALTY;
+    }
   } else if (chart.disciplines.includes('Weaponskill') && chart.weaponskillWeapon === chart.equippedWeapon) {
     skill += WEAPONSKILL_BONUS;
   } else if (chart.masteredWeapons.includes(chart.equippedWeapon)) {
-    skill += WEAPONMASTERY_BONUS;
+    skill += magnakaiDisciplineCount >= SCION_KAI_DISCIPLINE_COUNT ? WEAPONMASTERY_BONUS_SCION_KAI : WEAPONMASTERY_BONUS;
   }
 
   if (chart.disciplines.includes('Mindblast') && !enemy.mindblastImmune) {

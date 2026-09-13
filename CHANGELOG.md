@@ -4,6 +4,32 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.12.0] — 2026-09-13
+
+Livro 11, *The Prisoners of Time*, adicionado — sexto livro da fase Magnakai ("o penúltimo episódio
+da saga Magnakai", segundo o próprio texto):
+
+- **Tela de seleção de livros**: lista de livros agora em grade de 3 colunas (2 em telas médias, 1
+  em telas estreitas) em vez de uma coluna só — necessário porque a lista só cresce a cada livro
+  novo.
+- **Equipamento muda de forma real**: escolha passa de 5-de-10 pra **6-de-9** (usa o `equipmentMode`
+  `choose-six` já existente, reaproveitado do Livro 4). Os itens "Potion of Alether" e "3 Fireseeds"
+  somem da lista (confirmado via `errata.htm` que isso NÃO é uma mudança documentada — é o texto
+  original, mais enxuto). **Nenhum mapa é concedido automaticamente** — único livro Magnakai até
+  agora sem essa concessão, porque a história joga Lone Wolf direto num plano sobrenatural (a
+  Daziarn) em vez de um território normal pra atravessar; o personagem começa só com 2 Refeições e
+  Coroas de Ouro.
+- **Rank Scion-kai (8 Disciplinas Magnakai) traz a melhoria mais forte até agora**: a entrada de
+  Weaponmastery tem DUAS regras numéricas reais — o bônus de arma dominada sobe de +3 para +4 Combat
+  Skill, e a penalidade de combate desarmado cai ainda mais, de -2 (Tutelary) para -1. Ambas
+  implementadas em `combat.ts` como uma terceira camada acima da já existente lógica de Tutelary
+  (Livro 8). As outras 4 entradas do rank seguem puramente narrativas.
+- Zero seções-quebra-cabeça neste livro. Disciplinas Magnakai, regras de combate (fora a melhoria de
+  Weaponmastery acima), escada de Rank e Lore-circles confirmados inalterados.
+
+Sem mudança de `SAVE_VERSION` — nenhum campo novo em `ActionChart` (a mudança de Combat Skill é
+puramente derivada, sem estado novo pra persistir).
+
 ## [0.11.0] — 2026-09-13
 
 Livro 10, *The Dungeons of Torgar*, adicionado — quinto livro da fase Magnakai. Primeiro livro
