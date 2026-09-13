@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getCombatResult } from '../../src/data/crt';
 import { getEffectiveCombatSkill, resolveCombatRound } from '../../src/engine/combat';
-import { createCharacter } from '../../src/engine/character';
+import { createFreshCharacterForBook } from '../../src/engine/character';
 import type { ActionChart, Enemy } from '../../src/engine/types';
 
 function fixedRng(...values: number[]): () => number {
@@ -44,7 +44,7 @@ describe('getCombatResult', () => {
 
 describe('getEffectiveCombatSkill', () => {
   const baseChart: ActionChart = {
-    ...createCharacter(fixedRng(0, 0, 0)),
+    ...createFreshCharacterForBook('ft', fixedRng(0, 0, 0)),
     disciplines: [],
     equippedWeapon: 'Axe',
     weapons: ['Axe'],
@@ -73,12 +73,17 @@ describe('getEffectiveCombatSkill', () => {
     expect(getEffectiveCombatSkill(withMindblast, enemy)).toBe(baseChart.combatSkill + 2);
     expect(getEffectiveCombatSkill(withMindblast, { ...enemy, mindblastImmune: true })).toBe(baseChart.combatSkill);
   });
+
+  it('applies +2 Combat Skill while holding a Shield (Book 2 special item)', () => {
+    const withShield: ActionChart = { ...baseChart, specialItems: [...baseChart.specialItems, 'Shield'] };
+    expect(getEffectiveCombatSkill(withShield, enemy)).toBe(baseChart.combatSkill + 2);
+  });
 });
 
 describe('resolveCombatRound', () => {
   it('applies Mindshield to fully block Mindblast damage', () => {
     const chart: ActionChart = {
-      ...createCharacter(fixedRng(0, 0, 0)),
+      ...createFreshCharacterForBook('ft', fixedRng(0, 0, 0)),
       disciplines: ['Mindshield'],
       equippedWeapon: 'Axe',
       weapons: ['Axe'],
@@ -90,7 +95,7 @@ describe('resolveCombatRound', () => {
 
   it('reduces both endurances and flags kills at zero', () => {
     const chart: ActionChart = {
-      ...createCharacter(fixedRng(0, 0, 0)),
+      ...createFreshCharacterForBook('ft', fixedRng(0, 0, 0)),
       combatSkill: 20,
       enduranceCurrent: 5,
       equippedWeapon: 'Axe',

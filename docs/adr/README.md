@@ -19,5 +19,6 @@ Crie um novo ADR quando uma decisão envolver trade-offs (não para escolhas tri
 | [0001](./0001-deploy-no-homelab-k3s-compartilhado.md) | Deploy do LoneWolf no home-lab K3s compartilhado com o mais_saude_publica | Implementada |
 | [0002](./0002-save-na-nuvem-sem-autenticacao.md) | Save na nuvem via API + Postgres, sem autenticação | Aceita |
 | [0003](./0003-pipeline-developer-main-auto-merge.md) | Pipeline developer→main com gate de CI e auto-merge via PAT | Aceita |
+| [0004](./0004-multi-livro-e-progressao-de-campanha.md) | Múltiplos livros da série e progressão de campanha | Aceita, em implementação |
 
 Ver também o projeto irmão [`mais_saude_publica`](https://github.com/dufelizardo/mais_saude_publica/tree/main/docs/adr), cujas ADRs de infraestrutura (especialmente a 0012) são referenciadas aqui e continuam sendo a fonte de verdade para decisões sobre o cluster K3s compartilhado.

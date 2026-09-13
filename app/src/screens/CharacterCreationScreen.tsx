@@ -1,34 +1,76 @@
 import { useState } from 'react';
-import { applyDisciplines, createCharacter } from '../engine/character';
+import {
+  addExtraDiscipline,
+  applyDisciplines,
+  carryOverCharacterToBook,
+  chooseEquipmentOptions,
+  createFreshCharacterForBook,
+} from '../engine/character';
+import { getBookEquipment } from '../engine/bookEquipment';
 import { ALL_DISCIPLINES, DISCIPLINE_LABELS, type ActionChart, type Discipline } from '../engine/types';
-
-const REQUIRED_DISCIPLINES = 5;
+import type { BookMeta } from '../data/books';
+import type { CreationMode } from '../App';
 
 interface Props {
+  book: BookMeta;
+  creationMode: CreationMode;
+  previousChart: ActionChart | null;
   onReady: (chart: ActionChart) => void;
 }
 
-export function CharacterCreationScreen({ onReady }: Props) {
-  const [baseChart] = useState<ActionChart>(() => createCharacter());
-  const [selected, setSelected] = useState<Discipline[]>([]);
+export function CharacterCreationScreen({ book, creationMode, previousChart, onReady }: Props) {
+  const isCarryOver = creationMode === 'carryover' && previousChart !== null;
+  const requiredDisciplines = isCarryOver ? 1 : 5;
+  const availableDisciplines = isCarryOver
+    ? ALL_DISCIPLINES.filter((d) => !previousChart!.disciplines.includes(d))
+    : ALL_DISCIPLINES;
 
-  const toggle = (discipline: Discipline) => {
-    setSelected((prev) => {
+  const [baseChart] = useState<ActionChart>(() =>
+    isCarryOver ? carryOverCharacterToBook(previousChart!, book.id) : createFreshCharacterForBook(book.id),
+  );
+  const [selectedDisciplines, setSelectedDisciplines] = useState<Discipline[]>([]);
+
+  const equipmentConfig = getBookEquipment(book.id);
+  const needsEquipmentChoice = equipmentConfig.chooseOptions !== undefined;
+  const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
+
+  const toggleDiscipline = (discipline: Discipline) => {
+    setSelectedDisciplines((prev) => {
       if (prev.includes(discipline)) return prev.filter((d) => d !== discipline);
-      if (prev.length >= REQUIRED_DISCIPLINES) return prev;
+      if (prev.length >= requiredDisciplines) return prev;
       return [...prev, discipline];
     });
   };
 
+  const toggleEquipment = (id: string) => {
+    setSelectedEquipment((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      if (prev.length >= 2) return prev;
+      return [...prev, id];
+    });
+  };
+
+  const disciplinesReady = selectedDisciplines.length === requiredDisciplines;
+  const equipmentReady = !needsEquipmentChoice || selectedEquipment.length === 2;
+
   const confirm = () => {
-    if (selected.length !== REQUIRED_DISCIPLINES) return;
-    onReady(applyDisciplines(baseChart, selected));
+    if (!disciplinesReady || !equipmentReady) return;
+
+    let chart = isCarryOver
+      ? addExtraDiscipline(baseChart, selectedDisciplines[0])
+      : applyDisciplines(baseChart, selectedDisciplines);
+
+    if (needsEquipmentChoice) {
+      chart = chooseEquipmentOptions(chart, selectedEquipment);
+    }
+
+    onReady(chart);
   };
 
   return (
     <div className="creation-screen">
-      <h1>Flight from the Dark</h1>
-      <h2>Criação do Kai Lord</h2>
+      <h1>{book.title}</h1>
+      <h2>{isCarryOver ? 'Transferir personagem' : 'Criação do Kai Lord'}</h2>
 
       <section className="stat-block">
         <p>
@@ -38,25 +80,27 @@ export function CharacterCreationScreen({ onReady }: Props) {
           <strong>ENDURANCE:</strong> {baseChart.enduranceCurrent}
         </p>
         <p>
-          <strong>Equipamento inicial:</strong> {baseChart.weapons.join(', ')}, {baseChart.backpackItems.join(', ')},{' '}
-          {baseChart.specialItems.join(', ')}
+          <strong>Equipamento{isCarryOver ? ' herdado' : ' inicial'}:</strong>{' '}
+          {baseChart.weapons.join(', ') || '(nenhuma arma)'}, {baseChart.backpackItems.join(', ') || '(mochila vazia)'}
+          , {baseChart.specialItems.join(', ')}
           {baseChart.hasHealingPotion ? ', Healing Potion' : ''}, {baseChart.goldCrowns} Coroas de Ouro
         </p>
       </section>
 
       <section>
         <h3>
-          Escolha exatamente {REQUIRED_DISCIPLINES} Disciplinas Kai ({selected.length}/{REQUIRED_DISCIPLINES})
+          Escolha exatamente {requiredDisciplines} Disciplina{requiredDisciplines > 1 ? 's' : ''} Kai nova
+          {requiredDisciplines > 1 ? 's' : ''} ({selectedDisciplines.length}/{requiredDisciplines})
         </h3>
         <ul className="discipline-picker">
-          {ALL_DISCIPLINES.map((d) => (
+          {availableDisciplines.map((d) => (
             <li key={d}>
               <label>
                 <input
                   type="checkbox"
-                  checked={selected.includes(d)}
-                  onChange={() => toggle(d)}
-                  disabled={!selected.includes(d) && selected.length >= REQUIRED_DISCIPLINES}
+                  checked={selectedDisciplines.includes(d)}
+                  onChange={() => toggleDiscipline(d)}
+                  disabled={!selectedDisciplines.includes(d) && selectedDisciplines.length >= requiredDisciplines}
                 />
                 {DISCIPLINE_LABELS[d]}
               </label>
@@ -65,7 +109,28 @@ export function CharacterCreationScreen({ onReady }: Props) {
         </ul>
       </section>
 
-      <button type="button" className="primary-button" disabled={selected.length !== REQUIRED_DISCIPLINES} onClick={confirm}>
+      {needsEquipmentChoice && (
+        <section>
+          <h3>Escolha exatamente 2 itens de equipamento ({selectedEquipment.length}/2)</h3>
+          <ul className="discipline-picker">
+            {equipmentConfig.chooseOptions!.map((option) => (
+              <li key={option.id}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={selectedEquipment.includes(option.id)}
+                    onChange={() => toggleEquipment(option.id)}
+                    disabled={!selectedEquipment.includes(option.id) && selectedEquipment.length >= 2}
+                  />
+                  {option.label}
+                </label>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <button type="button" className="primary-button" disabled={!disciplinesReady || !equipmentReady} onClick={confirm}>
         Começar Aventura
       </button>
     </div>

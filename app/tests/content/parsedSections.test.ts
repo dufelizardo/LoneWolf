@@ -2,12 +2,15 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { SectionMap } from '../../src/data/section-types';
+import { BOOKS } from '../../src/data/books';
 
-const sections: SectionMap = JSON.parse(
-  readFileSync(join(__dirname, '../../src/data/sections.json'), 'utf-8'),
-);
+function loadSections(bookId: string): SectionMap {
+  return JSON.parse(readFileSync(join(__dirname, `../../src/data/sections.${bookId}.json`), 'utf-8'));
+}
 
-describe('parsed sections.json', () => {
+describe.each(BOOKS)('parsed sections for book "$id" ($title)', (book) => {
+  const sections = loadSections(book.id);
+
   it('has exactly 350 sections, all present', () => {
     expect(Object.keys(sections)).toHaveLength(350);
     for (let i = 1; i <= 350; i++) {
@@ -31,6 +34,17 @@ describe('parsed sections.json', () => {
       expect(section.choices.length > 0 || section.isDeadEnd || section.isEnding).toBe(true);
     }
   });
+
+  it('has at least one dead end and exactly one ending', () => {
+    const deadEndCount = Object.values(sections).filter((s) => s.isDeadEnd).length;
+    const endingCount = Object.values(sections).filter((s) => s.isEnding).length;
+    expect(deadEndCount).toBeGreaterThanOrEqual(1);
+    expect(endingCount).toBe(1);
+  });
+});
+
+describe('book 1 (Flight from the Dark) spot-checks', () => {
+  const sections = loadSections('ft');
 
   it('matches known spot-checks from the implementation plan', () => {
     expect(sections[112].combats).toHaveLength(2);

@@ -39,18 +39,28 @@ export const DISCIPLINE_LABELS: Record<Discipline, string> = {
 export type WeaponType =
   | 'Axe'
   | 'Sword'
+  | 'ShortSword'
   | 'Mace'
   | 'Quarterstaff'
   | 'Spear'
   | 'Broadsword';
 
-export const ALL_WEAPONS: WeaponType[] = ['Axe', 'Sword', 'Mace', 'Quarterstaff', 'Spear', 'Broadsword'];
+export const ALL_WEAPONS: WeaponType[] = [
+  'Axe',
+  'Sword',
+  'ShortSword',
+  'Mace',
+  'Quarterstaff',
+  'Spear',
+  'Broadsword',
+];
 
 export const MAX_WEAPONS = 2;
 export const MAX_BACKPACK_ITEMS = 8;
 export const MAX_GOLD_CROWNS = 50;
 
 export interface ActionChart {
+  bookId: string;
   combatSkill: number;
   enduranceMax: number;
   enduranceCurrent: number;
@@ -78,9 +88,19 @@ export interface Enemy {
   mindblastImmune?: boolean;
 }
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
+
+/** The ActionChart snapshot as it stood the moment a book's canonical ending was reached. */
+export interface CampaignProgress {
+  completedBooks: Record<string, ActionChart>;
+}
+
+export function createEmptyCampaign(): CampaignProgress {
+  return { completedBooks: {} };
+}
 
 export interface SaveGame {
   saveVersion: number;
-  chart: ActionChart;
+  campaign: CampaignProgress;
+  chart: ActionChart | null;
 }
