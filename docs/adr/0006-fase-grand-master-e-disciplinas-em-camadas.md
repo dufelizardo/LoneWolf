@@ -179,3 +179,57 @@ contagens.
   número diferente; se um livro futuro especificar uma regra diferente pra Kai-screen, revisar aqui.
 - **`SAVE_VERSION` 6 → 7** (`ActionChart` ganha `grandMasterDisciplines` e `grandMasteredWeapons`) —
   saves anteriores a esta versão deixam de carregar.
+
+## Atualização — Livro 14
+
+O Livro 14 (*The Captives of Kaag*) confirmou duas coisas que este ADR já previa, e trouxe uma
+pendência nova de design (não de dados).
+
+### `contentDirName`: pasta fonte com nome colidente, resolvido sem tocar no conteúdo
+
+A pasta de conteúdo deste livro é `grand_master/tck/` — coincidentemente o mesmo nome já usado pro
+Livro 3 (`tck`, fase Kai). Como `parseContent.ts`'s `contentDirFor` usava `book.id` diretamente como
+nome de pasta, isso forçaria escolher entre (a) usar `id: 'tck'` de novo, colidindo com o Livro 3 no
+registro `BOOKS` (dois livros com o mesmo id — inválido), ou (b) renomear a pasta fonte (arriscado,
+já que é conteúdo externo que pode ser resincronizado). Escolhi uma terceira opção: um novo campo
+opcional `contentDirName?: string` em `BookMeta`, usado só quando o nome da pasta real diverge do id
+escolhido pro registro:
+
+```ts
+{ id: 'tcok', code: '14tcok', ..., contentDirName: 'tck' }
+```
+
+`contentDirFor` passou a usar `book.contentDirName ?? book.id` — todo outro livro (cuja pasta já bate
+com o id) continua funcionando sem nenhuma mudança de comportamento.
+
+### Confirmado: a whitelist de Itens Especiais é uma regra de fronteira única, não recorrente
+
+`gamerulz.htm` do Livro 14 deixa isso explícito: *"only the following Special Items may be carried
+over **from the Lone Wolf Kai (Books 1–5) and Magnakai (Books 6–12) series** to the Lone Wolf Grand
+Master series (Books 13-onwards)"* — a restrição é sobre entrar na série Grand Master, não sobre
+cada livro dentro dela. Isso já funcionava certo sem nenhuma mudança de código: `crossingIntoGrandMaster`
+em `carryOverCharacterToBook` só fica `true` quando a fase anterior não era `'grand_master'`, então
+uma transferência Livro 13→14 (ambos já `grand_master`) não filtra nada — confirmado com um teste de
+regressão dedicado.
+
+### Pendência nova: ataque simultâneo a múltiplos inimigos (Kai-surge, rank Kai Grand Guardian)
+
+`imprvdsc.htm` do Livro 14 finalmente tem conteúdo real pro rank Kai Grand Guardian (5 Disciplinas) —
+mas, ao contrário dos ranks anteriores que sempre tiveram no máximo UMA entrada com número real (a de
+Weaponmastery, nos ranks Tutelary/Scion-kai/Mentora/Archmaster), aqui a única entrada com regra
+mecânica de verdade não é um número de Combat Skill/Endurance: *"Kai Grand Guardians who possess
+mastery of this Discipline [Kai-surge] are able to attack up to three enemies in psychic combat
+simultaneously."* Isso é uma mudança estrutural de fluxo de combate — o motor resolve hoje contra um
+inimigo por vez, ciclando sequencialmente pelo array de `encounters` (`CombatModal.tsx`). O texto não
+especifica os detalhes de resolução simultânea (todos os 3 inimigos causam dano de volta na mesma
+rodada? o Combat Ratio é calculado uma vez contra os 3, ou uma vez por inimigo?), então implementar
+agora exigiria inventar uma regra. Decisão: registrar como pendência real de design, mesma categoria
+do bônus de Weaponmastery+Bow (pendente desde o Livro 6 por falta de um gancho de UI adequado) — não
+implementado agora, sem gambiarra.
+
+As outras 5 entradas do rank Kai Grand Guardian (Animal Mastery, Assimilance, Grand Huntmastery,
+Kai-screen, Magi-magic) são puramente narrativas — mesmo padrão dos ranks Primate/Principalin.
+
+Nenhuma mudança de código em `combat.ts`/`disciplines.ts` neste livro além do necessário pro registro
+básico (`books.ts`/`bookEquipment.ts`) — as regras de Disciplinas, crescimento e combate seguem
+idênticas ao Livro 13.

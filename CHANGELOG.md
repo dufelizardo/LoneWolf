@@ -4,6 +4,32 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.15.0] — 2026-09-14
+
+Livro 14, *The Captives of Kaag*, adicionado — segundo livro da fase Grand Master. O livro mais
+simples de implementar até agora em código novo: regras de disciplina, equipamento, combate e
+crescimento seguem idênticas ao Livro 13.
+
+- **Nota de nomenclatura**: a pasta de conteúdo deste livro se chama, por coincidência,
+  `grand_master/tck/` — o mesmo nome já usado internamente pro Livro 3 (`tck`, fase Kai, um livro
+  totalmente diferente). Para evitar a colisão, este livro usa o id `tcok` no registro do app, com um
+  novo campo opcional `contentDirName` em `BookMeta` apontando o parser pra pasta real (`tck`) sem
+  precisar mexer no conteúdo fonte.
+- **Improved Grand Master Disciplines ganha conteúdo real pro rank Kai Grand Guardian (5
+  Disciplinas)**: lido na íntegra, 5 das 6 entradas são puramente narrativas. A entrada de Kai-surge
+  tem uma regra real — atacar até 3 inimigos simultaneamente em combate psíquico — mas é uma mudança
+  estrutural de fluxo de combate (não um número de Combat Skill/Endurance), e o motor atual resolve
+  combate contra um inimigo por vez. Como o texto não especifica os detalhes de resolução
+  simultânea, essa regra fica registrada como pendência real (mesma categoria do bônus de
+  Weaponmastery+Bow, pendente desde o Livro 6), não implementada agora.
+- **Confirmado**: a lista fechada de Itens Especiais transferíveis (10 nomes) é uma regra de
+  transição única — só vale na fronteira Magnakai→Grand Master, não se repete entre livros Grand
+  Master seguintes. Já funcionava certo sem nenhuma mudança de código.
+- Zero mudanças em `combat.ts`/`disciplines.ts` — mesmas Disciplinas, mesmos números, mesma escada
+  de rank do Livro 13.
+
+Sem mudança de `SAVE_VERSION` — nenhum campo novo em `ActionChart`.
+
 ## [0.14.0] — 2026-09-14
 
 Livro 13, *The Plague Lords of Ruel*, adicionado — primeiro livro da nova fase **Grand Master**,

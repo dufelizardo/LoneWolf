@@ -15,7 +15,7 @@ const DATA_DIR = join(__dirname, '../src/data');
 const ILLUSTRATIONS_ROOT = join(__dirname, '../public/illustrations');
 
 function contentDirFor(book: BookMeta): string {
-  return join(CONTENT_ROOTS[book.contentRoot], book.id, 'en', 'xhtml', 'lw', book.code);
+  return join(CONTENT_ROOTS[book.contentRoot], book.contentDirName ?? book.id, 'en', 'xhtml', 'lw', book.code);
 }
 
 const ALLOWED_TAGS = new Set(['p', 'span', 'figure', 'img', 'em', 'strong', 'br', 'a']);

@@ -756,6 +756,81 @@ describe('chooseEquipmentOptions (book "tplr", choose-five)', () => {
   });
 });
 
+describe('chooseEquipmentOptions (book "tcok", choose-five)', () => {
+  const fiveOptions = ['bow', 'quiver', 'meals', 'rope', 'potion-of-laumspur'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('tcok', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('tcok', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants 4 Meals from the Meals option', () => {
+    const chart = createFreshCharacterForBook('tcok', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.meals).toBe(4);
+  });
+
+  it('grants a Potion of Laumspur dose', () => {
+    const chart = createFreshCharacterForBook('tcok', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.healingPotionDoses).toBe(1);
+  });
+
+  it('always starts with the Map of the Darklands', () => {
+    const chart = createFreshCharacterForBook('tcok', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of the Darklands');
+  });
+
+  it('rolls gold with a +20 bonus, same as tplr', () => {
+    const chart = createFreshCharacterForBook('tcok', () => 0);
+    expect(chart.goldCrowns).toBe(20);
+  });
+
+  it('allows carrying up to 10 Backpack Items instead of the usual 8', () => {
+    const chart = createFreshCharacterForBook('tcok', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.meals + equipped.backpackItems.length).toBeLessThanOrEqual(10);
+    expect(equipped.backpackItems).toContain('Rope');
+  });
+
+  it('rejects a selection that is not exactly five options', () => {
+    const chart = createFreshCharacterForBook('tcok', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fiveOptions.slice(0, 4))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
+  });
+});
+
+describe('carryOverCharacterToBook within the Grand Master phase, book "tplr" -> "tcok" (regression)', () => {
+  it('does NOT re-apply the Special Item carry-over whitelist (it only gates the Magnakai->Grand Master boundary)', () => {
+    const chart = {
+      ...createFreshCharacterForBook('tplr', fixedRng(0, 0, 0, 0)),
+      specialItems: [{ name: 'Some Ordinary Grand Master Find' }, { name: 'Sommerswerd' }],
+    };
+    const carried = carryOverCharacterToBook(chart, 'tcok', fixedRng(0));
+    const names = carried.specialItems.map((i) => i.name);
+    expect(names).toContain('Some Ordinary Grand Master Find');
+    expect(names).toContain('Sommerswerd');
+  });
+
+  it('keeps grandMasterDisciplines and grandMasteredWeapons across the transfer', () => {
+    const chart = {
+      ...createFreshCharacterForBook('tplr', fixedRng(0, 0, 0, 0)),
+      grandMasterDisciplines: ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis'] as const,
+      grandMasteredWeapons: ['Sword', 'Bow'] as const,
+    };
+    const carried = carryOverCharacterToBook(chart, 'tcok', fixedRng(0));
+    expect(carried.grandMasterDisciplines).toEqual(chart.grandMasterDisciplines);
+    expect(carried.grandMasteredWeapons).toEqual(chart.grandMasteredWeapons);
+  });
+});
+
 describe('applyGrandMasterDisciplines', () => {
   it('rejects anything other than exactly 4 disciplines', () => {
     const chart = createFreshCharacterForBook('tplr', fixedRng(0, 0, 0, 0));
