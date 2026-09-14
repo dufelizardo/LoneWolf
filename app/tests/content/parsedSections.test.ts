@@ -193,3 +193,25 @@ describe('book 15 (The Darke Crusade) puzzle sections', () => {
     expect(endings).toEqual([350]);
   });
 });
+
+describe('book 16 (The Legacy of Vashna) puzzle sections', () => {
+  const sections = loadSections('tlv');
+
+  it('flags sect164, sect189 and sect235 as puzzles, each with a real fallback choice', () => {
+    for (const num of [164, 189, 235]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isEnding, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350), forward-linking to Book 17', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+
+  it('has exactly the 7 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([43, 96, 134, 141, 160, 313, 322]);
+  });
+});

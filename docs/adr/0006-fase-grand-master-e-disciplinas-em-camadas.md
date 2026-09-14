@@ -253,3 +253,37 @@ informação nova pra resolver a issue #61/JOGOS-92; continua deliberadamente n�
 
 Nenhuma mudança de código em `combat.ts`/`disciplines.ts` — mesmas Disciplinas, mesmos números, mesma
 escada de rank dos livros anteriores.
+
+## Atualização — Livro 16
+
+O Livro 16 (*The Legacy of Vashna*) traz a **primeira mudança mecânica real na fase Grand Master desde
+o Livro 13**: `imprvdsc.htm` ganha o rank **Sun Lord (7 Disciplinas)**, e — ao contrário de todo o
+conteúdo puramente narrativo dos ranks Kai Grand Guardian (5) e Sun Knight (6) — duas das seis
+entradas têm números de verdade:
+
+- **Grand Weaponmastery**: *"the metal edge of any non-magical weapon [ignites]... it inflicts an
+  additional 1 ENDURANCE point loss upon an enemy in every successful round of combat. This ability
+  cannot be used with a wholly wooden weapon such as a quarterstaff."* Implementado em `combat.ts`
+  (`GRAND_WEAPONMASTERY_FIRE_BONUS = 1`) como bônus passivo somado ao `enemyLoss` em toda rodada
+  bem-sucedida, condicionado a `grandMasterDisciplines.length >= 7`, arma equipada presente em
+  `grandMasteredWeapons`, e não ser `Quarterstaff` (a única arma "wholly wooden" do motor).
+- **Kai-surge ganha "Kai-blast"**: *"can cause an enemy to lose between 2 and 18 ENDURANCE points in
+  one attack... picking two numbers from the Random Number Table. These numbers should be added
+  together (a '0' = 1)... use of a Kai-blast will reduce a Sun Lord's ENDURANCE points total by 4. It
+  cannot be used in conjunction with any other form of psychic attack."* O texto **não esclarece** se
+  o inimigo ainda ataca de volta na mesma rodada. **Decisão de design tomada explicitamente com o
+  usuário** (diferente da pendência do Kai-surge de 3 inimigos, onde a ambiguidade era grande demais
+  pra decidir sem inventar regra): Kai-blast **substitui a rodada inteira** — sem Combat Ratio, sem
+  rolagem de CRT, sem contra-ataque do inimigo naquela rodada; só o dano direto (2-18) e o custo fixo
+  de 4 Endurance. Implementado como um ramo separado em `resolveCombatRound` (`options.useKaiBlast`),
+  condicionado a `canUseKaiBlast(chart)` (`KaiSurge` + `grandMasterDisciplines.length >= 7`), com
+  toggle mutuamente exclusivo ao de Psi-surge/Kai-surge em `CombatModal.tsx`.
+- As outras quatro entradas do rank Sun Lord (Assimilance, Grand Huntmastery, Telegnosis, Magi-magic)
+  seguem puramente narrativas — mesmo padrão dos ranks anteriores.
+
+**Pendência do Kai-surge de 3 inimigos simultâneos (issue #61/JOGOS-92) segue sem nenhuma menção** no
+Livro 16 — não resolvida, não implementada.
+
+Sem mudança de `SAVE_VERSION` — Kai-blast é inteiramente derivado de `grandMasterDisciplines`/
+contagem, igual ao padrão já usado por Psi-surge/Kai-surge, sem novo campo persistente no
+`ActionChart`.

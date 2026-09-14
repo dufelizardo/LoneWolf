@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getCombatResult } from '../../src/data/crt';
-import { getEffectiveCombatSkill, resolveCombatRound } from '../../src/engine/combat';
+import { canUseKaiBlast, getEffectiveCombatSkill, resolveCombatRound } from '../../src/engine/combat';
 import { createFreshCharacterForBook } from '../../src/engine/character';
 import type { ActionChart, Enemy } from '../../src/engine/types';
 
@@ -380,5 +380,100 @@ describe('resolveCombatRound', () => {
     const enemy: Enemy = { name: 'Mindblasting Foe', combatSkill: 30, endurance: 10, attacksWithMindblast: true };
     const result = resolveCombatRound(chart, enemy, fixedRng(0.9));
     expect(result.playerLoss).toBe(0);
+  });
+});
+
+describe('Sun Lord Grand Weaponmastery fire bonus (Book 16)', () => {
+  function chartWith(grandMasterDisciplines: ActionChart['grandMasterDisciplines'], equippedWeapon: ActionChart['equippedWeapon']): ActionChart {
+    return {
+      ...createFreshCharacterForBook('tlv', fixedRng(0, 0, 0)),
+      combatSkill: 10,
+      grandMasterDisciplines,
+      grandMasteredWeapons: ['Axe', 'Quarterstaff'],
+      equippedWeapon,
+      weapons: equippedWeapon ? [equippedWeapon] : [],
+    };
+  }
+
+  const enemy: Enemy = { name: 'Giak', combatSkill: 5, endurance: 20 };
+
+  it('adds +1 Endurance loss on a successful round at Sun Lord rank (7 Disciplines) with a Grand-mastered weapon', () => {
+    const chart = chartWith(['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'KaiScreen', 'GrandNexus', 'MagiMagic'], 'Axe');
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.5));
+    expect(result.enemyLoss).toBe(13); // 12 base (ratio 10, roll 5) + 1 fire bonus
+  });
+
+  it('does not add the fire bonus below Sun Lord rank (only 6 Disciplines, Sun Knight)', () => {
+    const chart = chartWith(['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'KaiScreen', 'GrandNexus'], 'Axe');
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.5));
+    expect(result.enemyLoss).toBe(12);
+  });
+
+  it('does not add the fire bonus with a wholly wooden Quarterstaff', () => {
+    const chart = chartWith(['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'KaiScreen', 'GrandNexus', 'MagiMagic'], 'Quarterstaff');
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.5));
+    expect(result.enemyLoss).toBe(12);
+  });
+});
+
+describe('canUseKaiBlast (Book 16, Sun Lord rank)', () => {
+  it('requires both KaiSurge and 7+ Grand Master Disciplines', () => {
+    const withoutKaiSurge: ActionChart = {
+      ...createFreshCharacterForBook('tlv', fixedRng(0, 0, 0)),
+      grandMasterDisciplines: ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'KaiScreen', 'GrandNexus', 'MagiMagic'],
+    };
+    expect(canUseKaiBlast(withoutKaiSurge)).toBe(false);
+
+    const tooFewDisciplines: ActionChart = {
+      ...createFreshCharacterForBook('tlv', fixedRng(0, 0, 0)),
+      grandMasterDisciplines: ['KaiSurge', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'KaiScreen', 'GrandNexus'],
+    };
+    expect(canUseKaiBlast(tooFewDisciplines)).toBe(false);
+
+    const sunLordWithKaiSurge: ActionChart = {
+      ...createFreshCharacterForBook('tlv', fixedRng(0, 0, 0)),
+      grandMasterDisciplines: ['KaiSurge', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'KaiScreen', 'GrandNexus', 'MagiMagic'],
+    };
+    expect(canUseKaiBlast(sunLordWithKaiSurge)).toBe(true);
+  });
+});
+
+describe('resolveCombatRound with Kai-blast (Book 16, Sun Lord rank)', () => {
+  const chart: ActionChart = {
+    ...createFreshCharacterForBook('tlv', fixedRng(0, 0, 0)),
+    grandMasterDisciplines: ['KaiSurge', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'KaiScreen', 'GrandNexus', 'MagiMagic'],
+    enduranceCurrent: 20,
+    equippedWeapon: 'Axe',
+    weapons: ['Axe'],
+  };
+  const enemy: Enemy = { name: 'Giak', combatSkill: 100, endurance: 20 };
+
+  it('sums two Random Number Table draws for direct Endurance damage (2-18), treating 0 as 1', () => {
+    const result = resolveCombatRound(chart, enemy, fixedRng(0, 0), { useKaiBlast: true });
+    expect(result.enemyLoss).toBe(2); // both draws are 0, treated as 1 + 1
+  });
+
+  it('caps at 18 with two maximum draws', () => {
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.9, 0.9), { useKaiBlast: true });
+    expect(result.enemyLoss).toBe(18);
+  });
+
+  it('costs the Sun Lord a flat 4 Endurance, with no return damage from the enemy that round', () => {
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.3, 0.7), { useKaiBlast: true });
+    expect(result.kaiBlastCost).toBe(4);
+    expect(result.chart.enduranceCurrent).toBe(16);
+    expect(result.playerLoss).toBe(0);
+  });
+
+  it('is mutually exclusive with Psi-surge/Kai-surge in the same round - Kai-blast wins and no Psi-surge cost is paid', () => {
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.3, 0.7), { useKaiBlast: true, usePsiSurge: true });
+    expect(result.psiSurgeCost).toBe(0);
+    expect(result.kaiBlastCost).toBe(4);
+  });
+
+  it('is ignored (falls back to a normal round) when the character cannot use Kai-blast', () => {
+    const noKaiSurge: ActionChart = { ...chart, grandMasterDisciplines: chart.grandMasterDisciplines.filter((d) => d !== 'KaiSurge') };
+    const result = resolveCombatRound(noKaiSurge, enemy, fixedRng(0.5), { useKaiBlast: true });
+    expect(result.kaiBlastCost).toBe(0);
   });
 });
