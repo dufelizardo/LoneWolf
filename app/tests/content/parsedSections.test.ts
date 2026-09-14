@@ -176,3 +176,20 @@ describe('book 14 (The Captives of Kaag) puzzle sections', () => {
     expect(endings).toEqual([350]);
   });
 });
+
+describe('book 15 (The Darke Crusade) puzzle sections', () => {
+  const sections = loadSections('tdc');
+
+  it('flags sect89 and sect221 as puzzles, each with a real fallback choice', () => {
+    for (const num of [89, 221]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isEnding, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350), forward-linking to Book 16', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+});

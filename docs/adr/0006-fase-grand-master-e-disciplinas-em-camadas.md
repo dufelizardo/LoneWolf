@@ -233,3 +233,23 @@ Kai-screen, Magi-magic) são puramente narrativas — mesmo padrão dos ranks Pr
 Nenhuma mudança de código em `combat.ts`/`disciplines.ts` neste livro além do necessário pro registro
 básico (`books.ts`/`bookEquipment.ts`) — as regras de Disciplinas, crescimento e combate seguem
 idênticas ao Livro 13.
+
+## Atualização — Livro 15
+
+O Livro 15 (*The Darke Crusade*) é uma continuação direta do motor Grand Master dos Livros 13-14, sem
+nenhuma mudança de regra além de mais conteúdo narrativo em `imprvdsc.htm`.
+
+`imprvdsc.htm` ganha o rank **Sun Knight (6 Disciplinas)** — lido na íntegra, as 6 entradas (Grand
+Weaponmastery, Deliverance, Grand Pathsmanship, Grand Nexus, Telegnosis, Kai-alchemy) são todas
+puramente narrativas, sem nenhum número de Combat Skill/Endurance — nem mesmo o feitiço "Strength" de
+Kai-alchemy, que menciona um "temporary increase in COMBAT SKILL and ENDURANCE scores whilst fighting
+an enemy" sem especificar a quantidade (diferente de toda melhoria numérica já implementada nos
+livros anteriores, que sempre veio com um número exato).
+
+**Confirma que a pendência do Kai-surge segue sem solução**: a entrada de Kai-surge simplesmente não
+aparece na lista do rank Sun Knight — a regra de "atacar até 3 inimigos simultaneamente" do rank
+anterior (Kai Grand Guardian, Livro 14) não é repetida, estendida nem esclarecida aqui. Não há
+informação nova pra resolver a issue #61/JOGOS-92; continua deliberadamente não implementada.
+
+Nenhuma mudança de código em `combat.ts`/`disciplines.ts` — mesmas Disciplinas, mesmos números, mesma
+escada de rank dos livros anteriores.
