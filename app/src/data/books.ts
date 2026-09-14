@@ -1,10 +1,10 @@
 export type EquipmentMode = 'random-one' | 'choose-two' | 'choose-six' | 'choose-four' | 'choose-five';
 
 /** Which top-level content directory this book's raw XHTML lives under (a filesystem concern). */
-export type ContentRoot = 'kai' | 'magnakai';
+export type ContentRoot = 'kai' | 'magnakai' | 'grand_master';
 
 /** Which set of game rules (Disciplines, ranks) this book uses (a rules concern, kept separate from ContentRoot even though the two always move together today). */
-export type Phase = 'kai' | 'magnakai';
+export type Phase = 'kai' | 'magnakai' | 'grand_master';
 
 export interface BookMeta {
   id: string;
@@ -33,6 +33,7 @@ export const BOOKS: BookMeta[] = [
   { id: 'tdt', code: '10tdot', title: 'The Dungeons of Torgar', order: 10, equipmentMode: 'choose-five', contentRoot: 'magnakai', phase: 'magnakai', sectionCount: 350, finalSection: 350 },
   { id: 'tpt', code: '11tpot', title: 'The Prisoners of Time', order: 11, equipmentMode: 'choose-six', contentRoot: 'magnakai', phase: 'magnakai', sectionCount: 350, finalSection: 350 },
   { id: 'tmd', code: '12tmod', title: 'The Masters of Darkness', order: 12, equipmentMode: 'choose-six', contentRoot: 'magnakai', phase: 'magnakai', sectionCount: 350, finalSection: 350 },
+  { id: 'tplr', code: '13tplor', title: 'The Plague Lords of Ruel', order: 13, equipmentMode: 'choose-five', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
 ];
 
 export function getBook(id: string): BookMeta {

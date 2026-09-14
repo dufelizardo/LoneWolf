@@ -206,6 +206,40 @@ describe('getEffectiveCombatSkill', () => {
     expect(getEffectiveCombatSkill(archmasterPsiSurge, enemy)).toBe(baseChart.combatSkill + 3);
     expect(getEffectiveCombatSkill(archmasterPsiSurge, enemy, { usePsiSurge: true })).toBe(baseChart.combatSkill + 6);
   });
+
+  it('Kai-surge (Grand Master) supersedes Psi-surge entirely: +8/+4 instead of any Magnakai tier', () => {
+    // Archmaster-tier Psi-surge (+6/+3) alone, for comparison.
+    const archmasterOnly: ActionChart = {
+      ...baseChart,
+      magnakaiDisciplines: [
+        'PsiSurge', 'Curing', 'Huntmastery', 'Divination', 'Nexus', 'PsiScreen', 'Pathsmanship', 'AnimalControl',
+        'Invisibility',
+      ],
+    };
+    expect(getEffectiveCombatSkill(archmasterOnly, enemy)).toBe(baseChart.combatSkill + 3);
+
+    // Same character, but now also holding Kai-surge: Kai-surge's numbers win.
+    const withKaiSurge: ActionChart = { ...archmasterOnly, grandMasterDisciplines: ['KaiSurge'] };
+    expect(getEffectiveCombatSkill(withKaiSurge, enemy)).toBe(baseChart.combatSkill + 4);
+    expect(getEffectiveCombatSkill(withKaiSurge, enemy, { usePsiSurge: true })).toBe(baseChart.combatSkill + 8);
+
+    // Kai-surge alone (no Magnakai PsiSurge at all) still grants its own bonus.
+    const kaiSurgeOnly: ActionChart = { ...baseChart, grandMasterDisciplines: ['KaiSurge'] };
+    expect(getEffectiveCombatSkill(kaiSurgeOnly, enemy, { usePsiSurge: true })).toBe(baseChart.combatSkill + 8);
+  });
+
+  it('Grand Weaponmastery supersedes Weaponmastery entirely: +5 instead of any Magnakai tier', () => {
+    const withWeaponmastery: ActionChart = { ...baseChart, masteredWeapons: ['Axe', 'Bow', 'Sword'] };
+    expect(getEffectiveCombatSkill(withWeaponmastery, enemy)).toBe(baseChart.combatSkill + 3);
+
+    // Same equipped weapon, but now Grand-mastered too: Grand Weaponmastery's +5 wins.
+    const withGrandWeaponmastery: ActionChart = { ...withWeaponmastery, grandMasteredWeapons: ['Axe'] };
+    expect(getEffectiveCombatSkill(withGrandWeaponmastery, enemy)).toBe(baseChart.combatSkill + 5);
+
+    // A weapon that's only in the old Magnakai list (not Grand-mastered) still gets the old bonus.
+    const swordEquipped: ActionChart = { ...withGrandWeaponmastery, equippedWeapon: 'Sword', weapons: ['Sword'] };
+    expect(getEffectiveCombatSkill(swordEquipped, enemy)).toBe(baseChart.combatSkill + 3);
+  });
 });
 
 describe('resolveCombatRound', () => {
@@ -317,5 +351,34 @@ describe('resolveCombatRound', () => {
     const enemy: Enemy = { name: 'Giak', combatSkill: 10, endurance: 10 };
     const result = resolveCombatRound(chart, enemy, fixedRng(0.5), { usePsiSurge: true });
     expect(result.psiSurgeCost).toBe(1);
+  });
+
+  it('deducts only 1 Endurance for Kai-surge, and refuses to activate at Endurance 6 (its floor is higher than Archmaster\'s)', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('tplr', fixedRng(0, 0, 0)),
+      grandMasterDisciplines: ['KaiSurge'],
+      enduranceCurrent: 20,
+      equippedWeapon: 'Axe',
+      weapons: ['Axe'],
+    };
+    const enemy: Enemy = { name: 'Giak', combatSkill: 10, endurance: 10 };
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.5), { usePsiSurge: true });
+    expect(result.psiSurgeCost).toBe(1);
+
+    const tooLow: ActionChart = { ...chart, enduranceCurrent: 6 };
+    const resultTooLow = resolveCombatRound(tooLow, enemy, fixedRng(0.5), { usePsiSurge: true });
+    expect(resultTooLow.psiSurgeCost).toBe(0);
+  });
+
+  it('applies Kai-screen to fully block Mindforce damage, same as Psi-screen/Mindshield', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('tplr', fixedRng(0, 0, 0)),
+      grandMasterDisciplines: ['KaiScreen'],
+      equippedWeapon: 'Axe',
+      weapons: ['Axe'],
+    };
+    const enemy: Enemy = { name: 'Mindblasting Foe', combatSkill: 30, endurance: 10, attacksWithMindblast: true };
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.9));
+    expect(result.playerLoss).toBe(0);
   });
 });

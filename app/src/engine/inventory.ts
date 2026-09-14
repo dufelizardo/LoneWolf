@@ -1,4 +1,5 @@
-import { MAX_BACKPACK_ITEMS, MAX_GOLD_CROWNS, MAX_WEAPONS, type ActionChart, type SpecialItem, type WeaponType } from './types';
+import { getMaxBackpackItems } from './bookEquipment';
+import { MAX_GOLD_CROWNS, MAX_WEAPONS, type ActionChart, type SpecialItem, type WeaponType } from './types';
 
 function backpackSlotsUsed(chart: ActionChart): number {
   return chart.backpackItems.length + chart.meals;
@@ -25,7 +26,7 @@ export function adjustArrows(chart: ActionChart, delta: number): ActionChart {
 }
 
 export function addBackpackItem(chart: ActionChart, item: string): ActionChart {
-  if (backpackSlotsUsed(chart) >= MAX_BACKPACK_ITEMS) return chart;
+  if (backpackSlotsUsed(chart) >= getMaxBackpackItems(chart.bookId)) return chart;
   return { ...chart, backpackItems: [...chart.backpackItems, item] };
 }
 
@@ -38,7 +39,7 @@ export function removeBackpackItem(chart: ActionChart, item: string): ActionChar
 }
 
 export function addMeal(chart: ActionChart): ActionChart {
-  if (backpackSlotsUsed(chart) >= MAX_BACKPACK_ITEMS) return chart;
+  if (backpackSlotsUsed(chart) >= getMaxBackpackItems(chart.bookId)) return chart;
   return { ...chart, meals: chart.meals + 1 };
 }
 

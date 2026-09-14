@@ -44,9 +44,37 @@ export function getMagnakaiRank(disciplineCount: number): string {
   return MAGNAKAI_RANKS[disciplineCount - 1];
 }
 
-/** Picks the right rank ladder for this chart's book phase — the only place that needs to know both exist. */
+// From levels.htm (grand_master/tplr): a third, entirely separate ladder — unrelated to
+// MAGNAKAI_RANKS despite both ending in a "Grand Master"-ish name. A Grand Master character starts
+// Book 13 at rank 4 ("Kai Grand Defender") with 4 starting Grand Master Disciplines; ranks 1-3 exist
+// in the lore (having been "skipped" by a returning Magnakai-completing character) but are never
+// actually assigned to a real chart.
+export const GRAND_MASTER_RANKS = [
+  'Kai Grand Master Senior',
+  'Kai Grand Master Superior',
+  'Kai Grand Sentinel',
+  'Kai Grand Defender',
+  'Kai Grand Guardian',
+  'Sun Knight',
+  'Sun Lord',
+  'Sun Thane',
+  'Grand Thane',
+  'Grand Crown',
+  'Sun Prince',
+  'Kai Supreme Master',
+];
+
+/** Purely derived from the number of Grand Master Disciplines held. */
+export function getGrandMasterRank(disciplineCount: number): string {
+  if (disciplineCount <= 0) return GRAND_MASTER_RANKS[0];
+  if (disciplineCount > GRAND_MASTER_RANKS.length) return GRAND_MASTER_RANKS[GRAND_MASTER_RANKS.length - 1];
+  return GRAND_MASTER_RANKS[disciplineCount - 1];
+}
+
+/** Picks the right rank ladder for this chart's book phase — the only place that needs to know all three exist. */
 export function getRankForChart(chart: ActionChart): string {
-  return getBook(chart.bookId).phase === 'magnakai'
-    ? getMagnakaiRank(chart.magnakaiDisciplines.length)
-    : getKaiRank(chart.disciplines.length);
+  const phase = getBook(chart.bookId).phase;
+  if (phase === 'grand_master') return getGrandMasterRank(chart.grandMasterDisciplines.length);
+  if (phase === 'magnakai') return getMagnakaiRank(chart.magnakaiDisciplines.length);
+  return getKaiRank(chart.disciplines.length);
 }

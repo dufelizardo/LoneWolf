@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createFreshCharacterForBook } from '../../src/engine/character';
-import { getKaiRank, getMagnakaiRank, getRankForChart } from '../../src/engine/kaiRank';
+import { getGrandMasterRank, getKaiRank, getMagnakaiRank, getRankForChart } from '../../src/engine/kaiRank';
 
 describe('getKaiRank', () => {
   it('maps 5 disciplines (the series starting point) to Initiate', () => {
@@ -40,6 +40,21 @@ describe('getMagnakaiRank', () => {
   });
 });
 
+describe('getGrandMasterRank', () => {
+  it('maps 4 disciplines (the Book 13 starting point) to Kai Grand Defender', () => {
+    expect(getGrandMasterRank(4)).toBe('Kai Grand Defender');
+  });
+
+  it('maps the low and high ends of the 12-rank table', () => {
+    expect(getGrandMasterRank(1)).toBe('Kai Grand Master Senior');
+    expect(getGrandMasterRank(12)).toBe('Kai Supreme Master');
+  });
+
+  it('clamps non-positive counts to the lowest rank', () => {
+    expect(getGrandMasterRank(0)).toBe('Kai Grand Master Senior');
+  });
+});
+
 describe('getRankForChart', () => {
   it('uses the Kai ladder for a Kai-phase book', () => {
     const chart = createFreshCharacterForBook('ft', () => 0);
@@ -51,5 +66,12 @@ describe('getRankForChart', () => {
     const chart = createFreshCharacterForBook('tkt', () => 0);
     chart.magnakaiDisciplines = ['Curing', 'Huntmastery', 'Divination'];
     expect(getRankForChart(chart)).toBe('Kai Master Superior');
+  });
+
+  it('uses the Grand Master ladder for a Grand Master-phase book, ignoring leftover Magnakai Disciplines', () => {
+    const chart = createFreshCharacterForBook('tplr', () => 0);
+    chart.magnakaiDisciplines = ['Curing', 'Huntmastery', 'Divination', 'Weaponmastery', 'Nexus'];
+    chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis'];
+    expect(getRankForChart(chart)).toBe('Kai Grand Defender');
   });
 });
