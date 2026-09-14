@@ -77,6 +77,58 @@ export const MAGNAKAI_DISCIPLINE_LABELS: Record<MagnakaiDiscipline, string> = {
   Divination: 'Divination',
 };
 
+/** The Grand Master phase (Book 13+) layers a new set of 12 Disciplines on top of the 10 Magnakai
+ * ones instead of replacing them outright: 10 are named upgrades of a Magnakai Discipline (e.g.
+ * Weaponmastery -> GrandWeaponmastery), and 2 are wholly new (MagiMagic, KaiAlchemy). Unlike the
+ * Kai->Magnakai boundary, `magnakaiDisciplines` is NOT cleared when crossing into this phase — its
+ * bonuses keep applying wherever the character did not pick the corresponding Grand Master upgrade
+ * (confirmed in discplnz.htm's errata: "Weaponmastery bonuses are replaced by Grand Weaponmastery
+ * bonuses, not added cumulatively" - i.e. the new upgrade supersedes the old bonus when both would
+ * apply, rather than stacking with it; the old one is a live fallback otherwise). */
+export type GrandMasterDiscipline =
+  | 'GrandWeaponmastery'
+  | 'AnimalMastery'
+  | 'Deliverance'
+  | 'Assimilance'
+  | 'GrandHuntmastery'
+  | 'GrandPathsmanship'
+  | 'KaiSurge'
+  | 'KaiScreen'
+  | 'GrandNexus'
+  | 'Telegnosis'
+  | 'MagiMagic'
+  | 'KaiAlchemy';
+
+export const ALL_GRAND_MASTER_DISCIPLINES: GrandMasterDiscipline[] = [
+  'GrandWeaponmastery',
+  'AnimalMastery',
+  'Deliverance',
+  'Assimilance',
+  'GrandHuntmastery',
+  'GrandPathsmanship',
+  'KaiSurge',
+  'KaiScreen',
+  'GrandNexus',
+  'Telegnosis',
+  'MagiMagic',
+  'KaiAlchemy',
+];
+
+export const GRAND_MASTER_DISCIPLINE_LABELS: Record<GrandMasterDiscipline, string> = {
+  GrandWeaponmastery: 'Grand Weaponmastery',
+  AnimalMastery: 'Animal Mastery',
+  Deliverance: 'Deliverance',
+  Assimilance: 'Assimilance',
+  GrandHuntmastery: 'Grand Huntmastery',
+  GrandPathsmanship: 'Grand Pathsmanship',
+  KaiSurge: 'Kai-surge',
+  KaiScreen: 'Kai-screen',
+  GrandNexus: 'Grand Nexus',
+  Telegnosis: 'Telegnosis',
+  MagiMagic: 'Magi-magic',
+  KaiAlchemy: 'Kai-alchemy',
+};
+
 export type WeaponType =
   | 'Axe'
   | 'Sword'
@@ -121,8 +173,12 @@ export interface ActionChart {
   weaponskillWeapon: WeaponType | null;
   /** Empty for every Kai-phase chart; populated only once a character enters the Magnakai phase (Book 6+), at which point `disciplines`/`weaponskillWeapon` are cleared (see carryOverCharacterToBook). A real chart never has both non-empty. */
   magnakaiDisciplines: MagnakaiDiscipline[];
+  /** Empty until a character enters the Grand Master phase (Book 13+). Unlike disciplines/magnakaiDisciplines, `magnakaiDisciplines` is NOT cleared when this is populated — see the GrandMasterDiscipline doc comment for why. */
+  grandMasterDisciplines: GrandMasterDiscipline[];
   /** The Weaponmastery discipline's chosen weapons (up to 3) — separate from `weapons` (what's actually carried); having a weapon mastered doesn't mean carrying it. */
   masteredWeapons: WeaponType[];
+  /** The Grand Weaponmastery discipline's chosen weapons (starts at 2) — kept separate from `masteredWeapons` (the Magnakai-era list) rather than merged into it, since Grand Weaponmastery's own +5 CS bonus replaces Weaponmastery's rather than stacking with it (see GrandMasterDiscipline doc comment); combat.ts checks this list first and only falls back to `masteredWeapons` for a weapon not in it. */
+  grandMasteredWeapons: WeaponType[];
   weapons: WeaponType[];
   equippedWeapon: WeaponType | null;
   backpackItems: string[];
@@ -151,7 +207,7 @@ export interface Enemy {
   mindblastImmune?: boolean;
 }
 
-export const SAVE_VERSION = 6;
+export const SAVE_VERSION = 7;
 
 /** The ActionChart snapshot as it stood the moment a book's canonical ending was reached. */
 export interface CampaignProgress {

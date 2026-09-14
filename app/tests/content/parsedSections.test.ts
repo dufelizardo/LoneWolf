@@ -142,3 +142,20 @@ describe('book 9 (The Cauldron of Fear) puzzle sections', () => {
     expect(endings).toEqual([350]);
   });
 });
+
+describe('book 13 (The Plague Lords of Ruel) puzzle sections', () => {
+  const sections = loadSections('tplr');
+
+  it('flags sect48, sect158 and sect227 as puzzles, each with a real fallback choice', () => {
+    for (const num of [48, 158, 227]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isEnding, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350), forward-linking to Book 14', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+});

@@ -35,6 +35,25 @@ const PSI_SURGE_FREE_BONUS_ARCHMASTER = 3;
 const PSI_SURGE_COST_ARCHMASTER = 1;
 const PSI_SURGE_MIN_ENDURANCE_ARCHMASTER = 4;
 export const ARCHMASTER_DISCIPLINE_COUNT = 9;
+// "When using their psychic ability to attack an enemy, Grand Masters may add 8 points to their
+// COMBAT SKILL. For every round in which Kai-surge is used, Grand Masters need only deduct 1
+// ENDURANCE point. When using the weaker psychic attack - Mindblast - they may add 4 points without
+// loss of ENDURANCE points... Grand Masters cannot use Kai-surge if their ENDURANCE score falls to 6
+// points or below." (discplnz.htm, Book 13) - Kai-surge (Grand Master phase) supersedes Psi-surge
+// entirely (same "replace, not cumulative" rule as Grand Weaponmastery/Weaponmastery below), rather
+// than adding a fourth tier on top of it. Note its Endurance floor (6) is HIGHER than Archmaster
+// Psi-surge's (4) - a genuine quirk of the source material, not a bug: Kai-surge's own numbers are
+// simply stated fresh, not as a further reduction of the Magnakai floor.
+const KAI_SURGE_BONUS = 8;
+const KAI_SURGE_FREE_BONUS = 4;
+const KAI_SURGE_COST = 1;
+const KAI_SURGE_MIN_ENDURANCE = 6;
+// "When you enter combat with one of your Grand Weaponmastery weapons, you add 5 points to your
+// COMBAT SKILL." (discplnz.htm, Book 13) - like Kai-surge above, this supersedes the Weaponmastery
+// bonus (any tier) rather than stacking with it; confirmed via errata: "Weaponmastery bonuses are
+// replaced by Grand Weaponmastery bonuses, not added cumulatively." Tracked via a separate
+// `grandMasteredWeapons` list rather than merged into `masteredWeapons` (see its doc comment).
+const GRAND_WEAPONMASTERY_BONUS = 5;
 // "This potion of strength will increase your COMBAT SKILL by +2 points when swallowed immediately
 // prior to a combat. It lasts for the duration of one combat only." (equipmnt.htm, Book 10). The
 // dose itself is spent via useCombatPotion (disciplines.ts) before the fight starts; this flag is
@@ -58,13 +77,52 @@ function isArchmaster(chart: ActionChart): boolean {
   return chart.magnakaiDisciplines.length >= ARCHMASTER_DISCIPLINE_COUNT;
 }
 
-/** The Endurance floor below which Psi-surge can't be activated - lower for Archmaster rank. Exported so the UI can match combat.ts's actual rule instead of hardcoding the base value. */
+export interface PsiSurgeTier {
+  /** Display name for whichever discipline is actually providing this tier - "Psi-surge" or "Kai-surge". */
+  name: string;
+  bonus: number;
+  freeBonus: number;
+  cost: number;
+  minEndurance: number;
+}
+
+const PSI_SURGE_TIER_BASE: PsiSurgeTier = {
+  name: 'Psi-surge',
+  bonus: PSI_SURGE_BONUS,
+  freeBonus: PSI_SURGE_FREE_BONUS,
+  cost: PSI_SURGE_COST,
+  minEndurance: PSI_SURGE_MIN_ENDURANCE,
+};
+const PSI_SURGE_TIER_ARCHMASTER: PsiSurgeTier = {
+  name: 'Psi-surge',
+  bonus: PSI_SURGE_BONUS_ARCHMASTER,
+  freeBonus: PSI_SURGE_FREE_BONUS_ARCHMASTER,
+  cost: PSI_SURGE_COST_ARCHMASTER,
+  minEndurance: PSI_SURGE_MIN_ENDURANCE_ARCHMASTER,
+};
+const PSI_SURGE_TIER_KAI_SURGE: PsiSurgeTier = {
+  name: 'Kai-surge',
+  bonus: KAI_SURGE_BONUS,
+  freeBonus: KAI_SURGE_FREE_BONUS,
+  cost: KAI_SURGE_COST,
+  minEndurance: KAI_SURGE_MIN_ENDURANCE,
+};
+
+/** Picks the best applicable tier of the Psi-surge/Kai-surge family, or null if the character has neither. Kai-surge (Grand Master) supersedes Psi-surge entirely rather than stacking with it. Exported so the UI can render the right name/numbers instead of hardcoding them. */
+export function resolvePsiSurgeTier(chart: ActionChart): PsiSurgeTier | null {
+  if (chart.grandMasterDisciplines.includes('KaiSurge')) return PSI_SURGE_TIER_KAI_SURGE;
+  if (chart.magnakaiDisciplines.includes('PsiSurge')) return isArchmaster(chart) ? PSI_SURGE_TIER_ARCHMASTER : PSI_SURGE_TIER_BASE;
+  return null;
+}
+
+/** The Endurance floor below which Psi-surge/Kai-surge can't be activated. Exported so the UI can match combat.ts's actual rule instead of hardcoding a value. */
 export function psiSurgeMinEndurance(chart: ActionChart): number {
-  return isArchmaster(chart) ? PSI_SURGE_MIN_ENDURANCE_ARCHMASTER : PSI_SURGE_MIN_ENDURANCE;
+  return resolvePsiSurgeTier(chart)?.minEndurance ?? PSI_SURGE_MIN_ENDURANCE;
 }
 
 function psiSurgeCanActivate(chart: ActionChart, options: CombatRoundOptions): boolean {
-  return !!options.usePsiSurge && chart.enduranceCurrent > psiSurgeMinEndurance(chart);
+  const tier = resolvePsiSurgeTier(chart);
+  return !!tier && !!options.usePsiSurge && chart.enduranceCurrent > tier.minEndurance;
 }
 
 /** Lone Wolf's Combat Skill for this fight, including discipline bonuses and the no-weapon penalty. */
@@ -84,6 +142,8 @@ export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy, option
     }
   } else if (chart.disciplines.includes('Weaponskill') && chart.weaponskillWeapon === chart.equippedWeapon) {
     skill += WEAPONSKILL_BONUS;
+  } else if (chart.grandMasteredWeapons.includes(chart.equippedWeapon)) {
+    skill += GRAND_WEAPONMASTERY_BONUS;
   } else if (chart.masteredWeapons.includes(chart.equippedWeapon)) {
     skill += magnakaiDisciplineCount >= SCION_KAI_DISCIPLINE_COUNT ? WEAPONMASTERY_BONUS_SCION_KAI : WEAPONMASTERY_BONUS;
   }
@@ -92,13 +152,9 @@ export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy, option
     skill += MINDBLAST_BONUS;
   }
 
-  if (chart.magnakaiDisciplines.includes('PsiSurge') && !enemy.mindblastImmune) {
-    const archmaster = isArchmaster(chart);
-    if (psiSurgeCanActivate(chart, options)) {
-      skill += archmaster ? PSI_SURGE_BONUS_ARCHMASTER : PSI_SURGE_BONUS;
-    } else {
-      skill += archmaster ? PSI_SURGE_FREE_BONUS_ARCHMASTER : PSI_SURGE_FREE_BONUS;
-    }
+  const psiSurgeTier = resolvePsiSurgeTier(chart);
+  if (psiSurgeTier && !enemy.mindblastImmune) {
+    skill += psiSurgeCanActivate(chart, options) ? psiSurgeTier.bonus : psiSurgeTier.freeBonus;
   }
 
   if (options.useCombatPotion) {
@@ -144,13 +200,16 @@ export function resolveCombatRound(
   if (chart.disciplines.includes('Mindshield') && enemy.attacksWithMindblast) {
     playerLoss = 0;
   }
-  if (chart.magnakaiDisciplines.includes('PsiScreen') && enemy.attacksWithMindblast) {
+  if (
+    (chart.magnakaiDisciplines.includes('PsiScreen') || chart.grandMasterDisciplines.includes('KaiScreen')) &&
+    enemy.attacksWithMindblast
+  ) {
     playerLoss = 0;
   }
 
-  const psiSurgeActive =
-    chart.magnakaiDisciplines.includes('PsiSurge') && !enemy.mindblastImmune && psiSurgeCanActivate(chart, options);
-  const psiSurgeCost = psiSurgeActive ? (isArchmaster(chart) ? PSI_SURGE_COST_ARCHMASTER : PSI_SURGE_COST) : 0;
+  const psiSurgeTier = resolvePsiSurgeTier(chart);
+  const psiSurgeActive = !!psiSurgeTier && !enemy.mindblastImmune && psiSurgeCanActivate(chart, options);
+  const psiSurgeCost = psiSurgeActive ? psiSurgeTier!.cost : 0;
   // Self-inflicted, not enemy damage — applies even when Mindshield/Psi-screen zeroed the combat loss above.
   const totalPlayerLoss = playerLoss + psiSurgeCost;
 
@@ -164,7 +223,7 @@ export function resolveCombatRound(
   const enemyKilled = nextEnemy.endurance <= 0;
   const playerKilled = nextChart.enduranceCurrent <= 0;
 
-  const psiSurgeNote = psiSurgeCost > 0 ? ` (plus ${psiSurgeCost} for using Psi-surge)` : '';
+  const psiSurgeNote = psiSurgeCost > 0 ? ` (plus ${psiSurgeCost} for using ${psiSurgeTier!.name})` : '';
   const log = `Combat Ratio ${ratio >= 0 ? '+' : ''}${ratio}, rolled ${roll}: ${enemy.name} loses ${enemyLoss} Endurance, Lone Wolf loses ${playerLoss} Endurance${psiSurgeNote}.`;
 
   return {

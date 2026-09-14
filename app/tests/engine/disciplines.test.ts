@@ -3,9 +3,11 @@ import {
   applyHealingRegen,
   applyMissedMealPenalty,
   canUseArchmasterCuring,
+  canUseDeliverance,
   eatMeal,
   useArchmasterCuring,
   useCombatPotion,
+  useDeliverance,
   useHealingPotion,
 } from '../../src/engine/disciplines';
 import { createFreshCharacterForBook } from '../../src/engine/character';
@@ -45,6 +47,11 @@ describe('applyMissedMealPenalty', () => {
     const chart = chartFor('tkt', { magnakaiDisciplines: ['Huntmastery'], enduranceCurrent: 20 });
     expect(applyMissedMealPenalty(chart).enduranceCurrent).toBe(20);
   });
+
+  it('exempts a Grand Huntmastery character from the penalty (Grand Master successor to Huntmastery)', () => {
+    const chart = chartFor('tplr', { grandMasterDisciplines: ['GrandHuntmastery'], enduranceCurrent: 20 });
+    expect(applyMissedMealPenalty(chart).enduranceCurrent).toBe(20);
+  });
 });
 
 describe('eatMeal', () => {
@@ -77,6 +84,11 @@ describe('applyHealingRegen', () => {
 
   it('regenerates for a Curing character too (Magnakai successor to Healing)', () => {
     const chart = chartFor('tkt', { magnakaiDisciplines: ['Curing'], enduranceCurrent: 10, enduranceMax: 20 });
+    expect(applyHealingRegen(chart, false).enduranceCurrent).toBe(11);
+  });
+
+  it('regenerates for a Deliverance character too ("Advanced Curing", Grand Master successor)', () => {
+    const chart = chartFor('tplr', { grandMasterDisciplines: ['Deliverance'], enduranceCurrent: 10, enduranceMax: 20 });
     expect(applyHealingRegen(chart, false).enduranceCurrent).toBe(11);
   });
 });
@@ -186,5 +198,35 @@ describe('canUseArchmasterCuring / useArchmasterCuring', () => {
   it('is a no-op when the conditions are not met', () => {
     const chart = chartFor('tmd', { magnakaiDisciplines: [...archmasterDisciplines], enduranceCurrent: 10 });
     expect(useArchmasterCuring(chart).enduranceCurrent).toBe(10);
+  });
+});
+
+describe('canUseDeliverance / useDeliverance', () => {
+  it('is available with Deliverance and Endurance <= 8 (a higher trigger than Archmaster Curing\'s 6)', () => {
+    const chart = chartFor('tplr', { grandMasterDisciplines: ['Deliverance'], enduranceCurrent: 8 });
+    expect(canUseDeliverance(chart)).toBe(true);
+  });
+
+  it('is unavailable above the Endurance 8 trigger threshold', () => {
+    const chart = chartFor('tplr', { grandMasterDisciplines: ['Deliverance'], enduranceCurrent: 9 });
+    expect(canUseDeliverance(chart)).toBe(false);
+  });
+
+  it('is unavailable without Deliverance, even at low Endurance', () => {
+    const chart = chartFor('tplr', { grandMasterDisciplines: [], enduranceCurrent: 6 });
+    expect(canUseDeliverance(chart)).toBe(false);
+  });
+
+  it('restores 20 Endurance capped at enduranceMax', () => {
+    const chart = chartFor('tplr', { grandMasterDisciplines: ['Deliverance'], enduranceCurrent: 8, enduranceMax: 20 });
+    expect(useDeliverance(chart).enduranceCurrent).toBe(20);
+
+    const nearCap = chartFor('tplr', { grandMasterDisciplines: ['Deliverance'], enduranceCurrent: 5, enduranceMax: 10 });
+    expect(useDeliverance(nearCap).enduranceCurrent).toBe(10);
+  });
+
+  it('is a no-op when the conditions are not met', () => {
+    const chart = chartFor('tplr', { grandMasterDisciplines: ['Deliverance'], enduranceCurrent: 10 });
+    expect(useDeliverance(chart).enduranceCurrent).toBe(10);
   });
 });

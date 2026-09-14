@@ -1,12 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import {
   addExtraDiscipline,
+  addExtraGrandMasterDiscipline,
+  addExtraGrandMasteredWeapon,
   addExtraMagnakaiDiscipline,
   addExtraMasteredWeapon,
   applyDisciplines,
+  applyGrandMasterDisciplines,
   applyMagnakaiDisciplines,
   carryOverCharacterToBook,
   chooseEquipmentOptions,
+  chooseGrandMasteredWeapons,
   chooseMasteredWeapons,
   createFreshCharacterForBook,
 } from '../../src/engine/character';
@@ -697,5 +701,175 @@ describe('chooseEquipmentOptions (book "tmd", choose-six)', () => {
     const chart = createFreshCharacterForBook('tmd', () => 0);
     expect(() => chooseEquipmentOptions(chart, sixOptions.slice(0, 5))).toThrow();
     expect(() => chooseEquipmentOptions(chart, [...sixOptions, 'dagger'])).toThrow();
+  });
+});
+
+describe('chooseEquipmentOptions (book "tplr", choose-five)', () => {
+  const fiveOptions = ['bow', 'quiver', 'meals', 'rope', 'potion-of-laumspur'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('tplr', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('tplr', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants 4 Meals from the Meals option', () => {
+    const chart = createFreshCharacterForBook('tplr', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.meals).toBe(4);
+  });
+
+  it('grants a Potion of Laumspur dose', () => {
+    const chart = createFreshCharacterForBook('tplr', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.healingPotionDoses).toBe(1);
+  });
+
+  it('always starts with the Map of Ruel', () => {
+    const chart = createFreshCharacterForBook('tplr', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of Ruel');
+  });
+
+  it('rolls gold with a +20 bonus, higher than every prior book\'s +10', () => {
+    const chart = createFreshCharacterForBook('tplr', () => 0);
+    expect(chart.goldCrowns).toBe(20);
+  });
+
+  it('allows carrying up to 10 Backpack Items instead of the usual 8', () => {
+    const chart = createFreshCharacterForBook('tplr', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    // 4 Meals + Rope = 5 backpack slots used, well within the raised 10-slot cap.
+    expect(equipped.meals + equipped.backpackItems.length).toBeLessThanOrEqual(10);
+    expect(equipped.backpackItems).toContain('Rope');
+  });
+
+  it('rejects a selection that is not exactly five options', () => {
+    const chart = createFreshCharacterForBook('tplr', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fiveOptions.slice(0, 4))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
+  });
+});
+
+describe('applyGrandMasterDisciplines', () => {
+  it('rejects anything other than exactly 4 disciplines', () => {
+    const chart = createFreshCharacterForBook('tplr', fixedRng(0, 0, 0, 0));
+    expect(() => applyGrandMasterDisciplines(chart, ['GrandWeaponmastery', 'Deliverance'])).toThrow();
+    expect(() =>
+      applyGrandMasterDisciplines(chart, ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'GrandNexus']),
+    ).toThrow();
+  });
+
+  it('sets exactly the 4 chosen disciplines with no stat bonus', () => {
+    const chart = createFreshCharacterForBook('tplr', fixedRng(0, 0, 0, 0));
+    const equipped = applyGrandMasterDisciplines(chart, ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis']);
+    expect(equipped.grandMasterDisciplines).toEqual(['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis']);
+    expect(equipped.combatSkill).toBe(chart.combatSkill);
+    expect(equipped.enduranceMax).toBe(chart.enduranceMax);
+  });
+});
+
+describe('addExtraGrandMasterDiscipline', () => {
+  it('adds exactly one new discipline and grants +1 Combat Skill / +2 Endurance (max and current)', () => {
+    const base = applyGrandMasterDisciplines(createFreshCharacterForBook('tplr', fixedRng(0, 0, 0, 0)), [
+      'GrandWeaponmastery',
+      'Deliverance',
+      'GrandHuntmastery',
+      'Telegnosis',
+    ]);
+    const withExtra = addExtraGrandMasterDiscipline(base, 'GrandNexus');
+    expect(withExtra.grandMasterDisciplines).toHaveLength(5);
+    expect(withExtra.grandMasterDisciplines).toContain('GrandNexus');
+    expect(withExtra.combatSkill).toBe(base.combatSkill + 1);
+    expect(withExtra.enduranceMax).toBe(base.enduranceMax + 2);
+    expect(withExtra.enduranceCurrent).toBe(base.enduranceCurrent + 2);
+  });
+
+  it('rejects a discipline the character already has', () => {
+    const base = applyGrandMasterDisciplines(createFreshCharacterForBook('tplr', fixedRng(0, 0, 0, 0)), [
+      'GrandWeaponmastery',
+      'Deliverance',
+      'GrandHuntmastery',
+      'Telegnosis',
+    ]);
+    expect(() => addExtraGrandMasterDiscipline(base, 'Deliverance')).toThrow();
+  });
+});
+
+describe('chooseGrandMasteredWeapons / addExtraGrandMasteredWeapon', () => {
+  it('rejects anything other than exactly 2 weapons', () => {
+    const chart = createFreshCharacterForBook('tplr', () => 0);
+    expect(() => chooseGrandMasteredWeapons(chart, ['Sword'])).toThrow();
+    expect(() => chooseGrandMasteredWeapons(chart, ['Sword', 'Bow', 'Axe'])).toThrow();
+  });
+
+  it('sets grandMasteredWeapons independently of masteredWeapons and carried weapons', () => {
+    const chart = { ...createFreshCharacterForBook('tplr', () => 0), masteredWeapons: ['Dagger'] as const };
+    const equipped = chooseGrandMasteredWeapons(chart, ['Sword', 'Bow']);
+    expect(equipped.grandMasteredWeapons).toEqual(['Sword', 'Bow']);
+    expect(equipped.masteredWeapons).toEqual(['Dagger']);
+    expect(equipped.weapons).toEqual(chart.weapons);
+  });
+
+  it('adds exactly one new weapon via addExtraGrandMasteredWeapon', () => {
+    const chart = chooseGrandMasteredWeapons(createFreshCharacterForBook('tplr', () => 0), ['Sword', 'Bow']);
+    const grown = addExtraGrandMasteredWeapon(chart, 'Axe');
+    expect(grown.grandMasteredWeapons).toEqual(['Sword', 'Bow', 'Axe']);
+  });
+
+  it('rejects a weapon that is already Grand-mastered', () => {
+    const chart = chooseGrandMasteredWeapons(createFreshCharacterForBook('tplr', () => 0), ['Sword', 'Bow']);
+    expect(() => addExtraGrandMasteredWeapon(chart, 'Sword')).toThrow();
+  });
+});
+
+describe('carryOverCharacterToBook crossing into the Grand Master phase (regression)', () => {
+  it('does NOT clear magnakaiDisciplines or masteredWeapons (unlike the Kai->Magnakai boundary)', () => {
+    const magnakaiChart = chooseMasteredWeapons(
+      applyMagnakaiDisciplines(createFreshCharacterForBook('tkt', fixedRng(0, 0, 0, 0)), [
+        'Weaponmastery',
+        'Curing',
+        'Huntmastery',
+      ]),
+      ['Sword', 'Bow', 'Axe'],
+    );
+
+    const carried = carryOverCharacterToBook(magnakaiChart, 'tplr', fixedRng(0));
+    expect(carried.magnakaiDisciplines).toEqual(magnakaiChart.magnakaiDisciplines);
+    expect(carried.masteredWeapons).toEqual(magnakaiChart.masteredWeapons);
+    expect(carried.grandMasterDisciplines).toEqual([]);
+    expect(carried.grandMasteredWeapons).toEqual([]);
+  });
+
+  it('filters Special Items down to the fixed Grand Master carry-over whitelist', () => {
+    const chart = {
+      ...createFreshCharacterForBook('tmd', fixedRng(0, 0, 0, 0)),
+      specialItems: [
+        { name: 'Sommerswerd' },
+        { name: 'Map of the Darklands' },
+        { name: 'Fireseed' },
+        { name: 'Silver Bracers' },
+      ],
+    };
+    const carried = carryOverCharacterToBook(chart, 'tplr', fixedRng(0));
+    const names = carried.specialItems.map((i) => i.name);
+    expect(names).toContain('Sommerswerd');
+    expect(names).toContain('Silver Bracers');
+    expect(names).not.toContain('Map of the Darklands');
+    expect(names).not.toContain('Fireseed');
+  });
+
+  it('does not filter Special Items when staying within the Grand Master phase', () => {
+    const chart = {
+      ...createFreshCharacterForBook('tplr', fixedRng(0, 0, 0, 0)),
+      specialItems: [{ name: 'Some Ordinary Find' }],
+    };
+    const carried = carryOverCharacterToBook(chart, 'tplr', fixedRng(0));
+    expect(carried.specialItems.map((i) => i.name)).toContain('Some Ordinary Find');
   });
 });

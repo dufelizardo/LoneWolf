@@ -1,6 +1,12 @@
 import { useState } from 'react';
-import { ARCHMASTER_DISCIPLINE_COUNT, psiSurgeMinEndurance, resolveCombatRound } from '../engine/combat';
-import { canUseArchmasterCuring, useArchmasterCuring, useCombatPotion } from '../engine/disciplines';
+import { psiSurgeMinEndurance, resolveCombatRound, resolvePsiSurgeTier } from '../engine/combat';
+import {
+  canUseArchmasterCuring,
+  canUseDeliverance,
+  useArchmasterCuring,
+  useCombatPotion,
+  useDeliverance,
+} from '../engine/disciplines';
 import { getBookEquipment } from '../engine/bookEquipment';
 import type { ActionChart, Enemy } from '../engine/types';
 import type { CombatEncounter, Choice } from '../data/section-types';
@@ -25,10 +31,13 @@ export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onF
   const [wantsCombatPotion, setWantsCombatPotion] = useState(false);
   const [potionActiveThisFight, setPotionActiveThisFight] = useState(false);
 
-  const hasPsiSurge = chart.magnakaiDisciplines.includes('PsiSurge');
-  const isArchmasterPsiSurge = hasPsiSurge && chart.magnakaiDisciplines.length >= ARCHMASTER_DISCIPLINE_COUNT;
+  const psiSurgeTier = resolvePsiSurgeTier(chart);
   const psiSurgeAvailable = chart.enduranceCurrent > psiSurgeMinEndurance(chart);
   const combatPotionLabel = getBookEquipment(chart.bookId).combatPotionLabel ?? 'Potion of Alether';
+  // Deliverance (Grand Master) supersedes Archmaster Curing (Magnakai) rather than stacking with it
+  // - only ever offer one combat-heal button, preferring the better/newer one when both apply.
+  const useDeliveranceInstead = canUseDeliverance(chart);
+  const showArchmasterCuring = !useDeliveranceInstead && canUseArchmasterCuring(chart);
 
   const fightRound = () => {
     // The potion is bought once, before the first round, then stays active (unlike Psi-surge's
@@ -96,7 +105,7 @@ export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onF
         ))}
       </div>
 
-      {hasPsiSurge && (
+      {psiSurgeTier && (
         <label className="psi-surge-toggle">
           <input
             type="checkbox"
@@ -104,13 +113,18 @@ export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onF
             disabled={!psiSurgeAvailable}
             onChange={(e) => setUsePsiSurge(e.target.checked)}
           />
-          {isArchmasterPsiSurge
-            ? `Usar Psi-surge nesta rodada (+6 Combat Skill, -1 Endurance${!psiSurgeAvailable ? ' — indisponível com Endurance ≤ 4' : ''})`
-            : `Usar Psi-surge nesta rodada (+4 Combat Skill, -2 Endurance${!psiSurgeAvailable ? ' — indisponível com Endurance ≤ 6' : ''})`}
+          Usar {psiSurgeTier.name} nesta rodada (+{psiSurgeTier.bonus} Combat Skill, -{psiSurgeTier.cost} Endurance
+          {!psiSurgeAvailable ? ` — indisponível com Endurance ≤ ${psiSurgeMinEndurance(chart)}` : ''})
         </label>
       )}
 
-      {canUseArchmasterCuring(chart) && (
+      {useDeliveranceInstead && (
+        <button type="button" onClick={() => onChartChange(useDeliverance(chart))}>
+          Usar Deliverance: restaurar 20 Endurance (auto-adjudicar o limite de uma vez a cada 20 dias)
+        </button>
+      )}
+
+      {showArchmasterCuring && (
         <button type="button" onClick={() => onChartChange(useArchmasterCuring(chart))}>
           Usar Cura (Archmaster): restaurar 20 Endurance (auto-adjudicar o limite de uma vez a cada 100 dias)
         </button>

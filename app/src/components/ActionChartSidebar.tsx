@@ -15,13 +15,13 @@ import {
   removeWeapon,
 } from '../engine/inventory';
 import { eatMeal, useHealingPotion } from '../engine/disciplines';
-import { getBookEquipment } from '../engine/bookEquipment';
+import { getBookEquipment, getMaxBackpackItems } from '../engine/bookEquipment';
 import { getRankForChart } from '../engine/kaiRank';
 import {
   ALL_WEAPONS,
   DISCIPLINE_LABELS,
+  GRAND_MASTER_DISCIPLINE_LABELS,
   MAGNAKAI_DISCIPLINE_LABELS,
-  MAX_BACKPACK_ITEMS,
   MAX_WEAPONS,
   type ActionChart,
   type WeaponType,
@@ -39,6 +39,7 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
   const [newSpecialEffect, setNewSpecialEffect] = useState('');
   const healingPotionLabel = getBookEquipment(chart.bookId).healingPotionLabel;
   const combatPotionLabel = getBookEquipment(chart.bookId).combatPotionLabel;
+  const maxBackpackItems = getMaxBackpackItems(chart.bookId);
 
   const enduracePct = Math.max(0, Math.min(100, (chart.enduranceCurrent / chart.enduranceMax) * 100));
   const backpackSlotsUsed = chart.backpackItems.length + chart.meals;
@@ -86,7 +87,13 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
       </section>
 
       <section>
-        <h3>{chart.magnakaiDisciplines.length > 0 ? 'Disciplinas Magnakai' : 'Disciplinas Kai'}</h3>
+        <h3>
+          {chart.grandMasterDisciplines.length > 0
+            ? 'Disciplinas Grand Master'
+            : chart.magnakaiDisciplines.length > 0
+              ? 'Disciplinas Magnakai'
+              : 'Disciplinas Kai'}
+        </h3>
         <ul className="plain-list">
           {chart.disciplines.map((d) => (
             <li key={d}>
@@ -97,6 +104,9 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
           {chart.magnakaiDisciplines.map((d) => (
             <li key={d}>{MAGNAKAI_DISCIPLINE_LABELS[d]}</li>
           ))}
+          {chart.grandMasterDisciplines.map((d) => (
+            <li key={d}>{GRAND_MASTER_DISCIPLINE_LABELS[d]}</li>
+          ))}
         </ul>
       </section>
 
@@ -106,6 +116,9 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
         </h3>
         {chart.masteredWeapons.length > 0 && (
           <p className="item-detail">Armas Dominadas (Weaponmastery): {chart.masteredWeapons.join(', ')}</p>
+        )}
+        {chart.grandMasteredWeapons.length > 0 && (
+          <p className="item-detail">Armas Grand Master (Grand Weaponmastery): {chart.grandMasteredWeapons.join(', ')}</p>
         )}
         <ul className="plain-list">
           {chart.weapons.map((w) => (
@@ -159,7 +172,7 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
           <button type="button" onClick={() => onChange(removeMeal(chart))} disabled={chart.meals <= 0}>
             -1
           </button>
-          <button type="button" onClick={() => onChange(addMeal(chart))} disabled={backpackSlotsUsed >= MAX_BACKPACK_ITEMS}>
+          <button type="button" onClick={() => onChange(addMeal(chart))} disabled={backpackSlotsUsed >= maxBackpackItems}>
             +1
           </button>
           <button type="button" onClick={() => onChange(eatMeal(chart))} disabled={chart.meals <= 0}>
@@ -170,7 +183,7 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
 
       <section>
         <h3>
-          Mochila ({backpackSlotsUsed}/{MAX_BACKPACK_ITEMS})
+          Mochila ({backpackSlotsUsed}/{maxBackpackItems})
         </h3>
         <ul className="plain-list">
           {chart.backpackItems.map((item, i) => (

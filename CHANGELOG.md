@@ -4,6 +4,42 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.14.0] — 2026-09-14
+
+Livro 13, *The Plague Lords of Ruel*, adicionado — primeiro livro da nova fase **Grand Master**,
+distinta da fase Magnakai (Livros 6-12, agora completa) e da fase Kai (Livros 1-5). Ver a
+[ADR-0006](docs/adr/0006-fase-grand-master-e-disciplinas-em-camadas.md) para os detalhes completos da
+arquitetura.
+
+- **Terceiro sistema de Disciplinas**: 12 Disciplinas Grand Master (10 upgrades nomeados das
+  Disciplinas Magnakai + 2 totalmente novas — Magi-magic e Kai-alchemy, magia de batalha ainda sem
+  efeito numérico definido). Personagem escolhe 4 livremente pra começar, sem tabela de conversão.
+- **Diferente de toda transição de fase anterior: `magnakaiDisciplines` NÃO é zerado.** Confirmado
+  via errata oficial: os upgrades Grand Master **substituem** os bônus Magnakai correspondentes
+  (não somam), mas a Disciplina Magnakai antiga continua valendo como alternativa sempre que o
+  jogador não escolheu o upgrade equivalente. Implementado como uma checagem "melhor camada
+  disponível" em `combat.ts` (Weaponmastery/Grand Weaponmastery, Psi-surge/Kai-surge) e
+  `disciplines.ts` (Curing/Deliverance), não uma checagem de fase.
+- **Kai-surge**: +8 Combat Skill / -1 Endurance por rodada (mais forte que qualquer tier Magnakai),
+  modo grátis Mindblast vira +4 CS — mas o piso mínimo de Endurance pra ativar é 6, curiosamente
+  maior que o piso do Archmaster Magnakai (4), uma peculiaridade real do texto original.
+- **Grand Weaponmastery**: +5 CS com uma arma dominada, checklist próprio de 2 armas iniciais
+  (`grandMasteredWeapons`, campo separado do `masteredWeapons` Magnakai).
+- **Deliverance** ("Advanced Curing"): cura de combate de 20 Endurance quando Endurance ≤ 8 (limite
+  de dias auto-adjudicado, como o Archmaster Curing do Livro 12).
+- **Novo teto de rank**: escada de 12 ranks inteiramente nova (`GRAND_MASTER_RANKS`, Kai Grand Master
+  Senior → Kai Supreme Master), sem relação com a escada Magnakai — um personagem começa o Livro 13
+  já no rank 4 ("Kai Grand Defender").
+- **Novo bônus permanente**: cada Disciplina Grand Master além das 4 iniciais concede +1 Combat
+  Skill / +2 Endurance permanentes na ficha — diferente de todo bônus condicional de combate já
+  existente.
+- **Itens Especiais**: pela primeira vez, só uma lista fechada de 10 nomes específicos sobrevive à
+  transição de fase (antes, tudo era transferido).
+- Mochila sobe de 8 pra 10 slots; bônus de ouro sobe de +10 pra +20.
+
+`SAVE_VERSION` 6 → 7 (`ActionChart` ganha `grandMasterDisciplines` e `grandMasteredWeapons`) — saves
+anteriores a esta versão deixam de carregar.
+
 ## [0.13.0] — 2026-09-13
 
 Livro 12, *The Masters of Darkness*, adicionado — sétimo e último livro da fase Magnakai. O final é

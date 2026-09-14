@@ -9,6 +9,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const CONTENT_ROOTS: Record<ContentRoot, string> = {
   kai: process.env.LW_KAI_ROOT ?? join(__dirname, '../../kai'),
   magnakai: process.env.LW_MAGNAKAI_ROOT ?? join(__dirname, '../../magnakai'),
+  grand_master: process.env.LW_GRAND_MASTER_ROOT ?? join(__dirname, '../../grand_master'),
 };
 const DATA_DIR = join(__dirname, '../src/data');
 const ILLUSTRATIONS_ROOT = join(__dirname, '../public/illustrations');

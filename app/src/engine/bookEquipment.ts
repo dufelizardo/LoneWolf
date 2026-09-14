@@ -18,6 +18,8 @@ export interface BookEquipmentConfig {
   combatPotionLabel?: string;
   /** Some books (e.g. Kalte's icy wastes) explicitly disable Hunting's no-Meal-needed exemption for the whole book. */
   huntingDisabled?: boolean;
+  /** Overrides the shared MAX_BACKPACK_ITEMS cap (Grand Master books raise it from 8 to 10 - "you may now carry a maximum of ten Backpack Items", gamerulz.htm Book 13). */
+  maxBackpackItems?: number;
   /** Items every character gets regardless of how equipment is chosen (fixed narrative grants). */
   applyBaseEquipment: (chart: ActionChart) => void;
   /** For books with equipmentMode 'random-one': roll 0-9, apply exactly one matching option. */
@@ -38,9 +40,9 @@ function addWeaponIfRoom(chart: ActionChart, weapon: WeaponType) {
   if (!chart.equippedWeapon) chart.equippedWeapon = weapon;
 }
 
-/** Backpack Items and Meals share the same 8-slot cap. */
+/** Backpack Items and Meals share the same slot cap (8, or 10 from the Grand Master phase onward). */
 function hasBackpackRoom(chart: ActionChart): boolean {
-  return chart.backpackItems.length + chart.meals < MAX_BACKPACK_ITEMS;
+  return chart.backpackItems.length + chart.meals < getMaxBackpackItems(chart.bookId);
 }
 
 function addMealIfRoom(chart: ActionChart) {
@@ -536,10 +538,49 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
       { id: 'axe', label: 'Axe', apply: (c) => addWeaponIfRoom(c, 'Axe') },
     ],
   },
+  tplr: {
+    // "add 20 to the number you have picked" - higher than every prior book's +10.
+    goldRollBonus: 20,
+    // Never actually read for tplr — same reasoning as tkt above.
+    weaponPool: ALL_WEAPONS,
+    healingPotionLabel: 'Potion of Laumspur',
+    // "you may now carry a maximum of ten Backpack Items" (gamerulz.htm, Book 13) - up from 8.
+    maxBackpackItems: 10,
+    applyBaseEquipment: (c) => {
+      addSpecialItem(c, { name: 'Map of Ruel' });
+    },
+    chooseCount: 5,
+    chooseOptions: [
+      { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
+      { id: 'bow', label: 'Bow', apply: (c) => addWeaponIfRoom(c, 'Bow') },
+      {
+        id: 'quiver',
+        label: 'Quiver (6 Arrows)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Quiver', knownEffects: 'Holds up to 6 Arrows' });
+          addArrows(c, 6);
+        },
+      },
+      { id: 'axe', label: 'Axe', apply: (c) => addWeaponIfRoom(c, 'Axe') },
+      {
+        id: 'meals',
+        label: '4 Meals',
+        apply: (c) => { for (let i = 0; i < 4; i++) addMealIfRoom(c); },
+      },
+      { id: 'rope', label: 'Rope', apply: (c) => addBackpackItemIfRoom(c, 'Rope') },
+      { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: (c) => grantHealingPotion(c) },
+      { id: 'spear', label: 'Spear', apply: (c) => addWeaponIfRoom(c, 'Spear') },
+      { id: 'dagger', label: 'Dagger', apply: (c) => addWeaponIfRoom(c, 'Dagger') },
+    ],
+  },
 };
 
 export function getBookEquipment(bookId: string): BookEquipmentConfig {
   const config = BOOK_EQUIPMENT[bookId];
   if (!config) throw new Error(`No equipment config for book: ${bookId}`);
   return config;
+}
+
+export function getMaxBackpackItems(bookId: string): number {
+  return getBookEquipment(bookId).maxBackpackItems ?? MAX_BACKPACK_ITEMS;
 }

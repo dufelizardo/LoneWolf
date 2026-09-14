@@ -10,7 +10,10 @@ const NO_MEAL_PENALTY = 3;
  * of the two arrays populated, see carryOverCharacterToBook, so this OR needs no phase check).
  */
 export function applyHealingRegen(chart: ActionChart, hadCombatThisSection: boolean): ActionChart {
-  const canRegen = chart.disciplines.includes('Healing') || chart.magnakaiDisciplines.includes('Curing');
+  const canRegen =
+    chart.disciplines.includes('Healing') ||
+    chart.magnakaiDisciplines.includes('Curing') ||
+    chart.grandMasterDisciplines.includes('Deliverance');
   if (hadCombatThisSection || !canRegen) return chart;
   if (chart.enduranceCurrent >= chart.enduranceMax) return chart;
   return {
@@ -26,7 +29,10 @@ export function eatMeal(chart: ActionChart): ActionChart {
 
 /** Call when the story requires a Meal and the player has none (and lacks Hunting/Huntmastery). */
 export function applyMissedMealPenalty(chart: ActionChart): ActionChart {
-  const hasExemptDiscipline = chart.disciplines.includes('Hunting') || chart.magnakaiDisciplines.includes('Huntmastery');
+  const hasExemptDiscipline =
+    chart.disciplines.includes('Hunting') ||
+    chart.magnakaiDisciplines.includes('Huntmastery') ||
+    chart.grandMasterDisciplines.includes('GrandHuntmastery');
   const huntingExempts = hasExemptDiscipline && !getBookEquipment(chart.bookId).huntingDisabled;
   if (huntingExempts) return chart;
   return { ...chart, enduranceCurrent: Math.max(0, chart.enduranceCurrent - NO_MEAL_PENALTY) };
@@ -79,5 +85,30 @@ export function useArchmasterCuring(chart: ActionChart): ActionChart {
   return {
     ...chart,
     enduranceCurrent: Math.min(chart.enduranceMax, chart.enduranceCurrent + ARCHMASTER_CURING_RESTORE),
+  };
+}
+
+const DELIVERANCE_RESTORE = 20;
+const DELIVERANCE_TRIGGER_ENDURANCE = 8;
+
+/**
+ * "Grand Masters are able to use their healing power to repair serious battle-wounds. If, whilst in
+ * combat, their ENDURANCE is reduced to 8 points or less, they can draw upon their mastery to
+ * restore 20 ENDURANCE points. This ability can only be used once every 20 days." (discplnz.htm,
+ * Book 13) — Deliverance ("Advanced Curing") supersedes the Archmaster Curing heal rather than
+ * stacking with it (same "replace, not cumulative" pattern as Grand Weaponmastery/Weaponmastery),
+ * so canUseDeliverance is checked first by the UI and canUseArchmasterCuring only applies when the
+ * character hasn't reached Deliverance. The 20-day cooldown has the same no-calendar caveat as
+ * Archmaster Curing's 100-day one — left to the player to self-adjudicate.
+ */
+export function canUseDeliverance(chart: ActionChart): boolean {
+  return chart.grandMasterDisciplines.includes('Deliverance') && chart.enduranceCurrent <= DELIVERANCE_TRIGGER_ENDURANCE;
+}
+
+export function useDeliverance(chart: ActionChart): ActionChart {
+  if (!canUseDeliverance(chart)) return chart;
+  return {
+    ...chart,
+    enduranceCurrent: Math.min(chart.enduranceMax, chart.enduranceCurrent + DELIVERANCE_RESTORE),
   };
 }
