@@ -4,6 +4,26 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.18.0] — 2026-09-14
+
+Livro 17, *The Deathlord of Ixia*, adicionado — quinta entrega da fase Grand Master. O livro mais
+simples de implementar desde o início da fase: `cmbtrulz.htm`/`discplnz.htm` são byte-idênticos ao
+Livro 16, então **nenhuma mudança em `combat.ts`/`disciplines.ts`** foi necessária.
+
+- Equipamento: escolha 4 de 9 itens — Broadsword é uma opção nova (nunca oferecida como arma inicial
+  em nenhum livro anterior), no lugar do Quarterstaff do Livro 16. Mapa automático: Map of Ixia and
+  the Hardlands.
+- **Rank Sun Lord (7 Disciplinas) repetido sem nenhuma mudança numérica**: os dois bônus do Livro 16
+  (fogo do Grand Weaponmastery +1 Endurance, Kai-blast) continuam exatamente iguais.
+- **Novo rank Sun Thane (8 Disciplinas)** aparece pela primeira vez em `imprvdsc.htm` — lido na
+  íntegra, as 6 entradas (Animal Mastery, Deliverance, Grand Huntmastery, Grand Pathsmanship,
+  Kai-screen, Kai-alchemy) são todas puramente narrativas, sem nenhum número de Combat
+  Skill/Endurance — mesmo padrão dos ranks Kai Grand Guardian e Sun Knight.
+- Pendência do Kai-surge "atacar 3 inimigos simultaneamente" (issue #61/JOGOS-92) segue sem nenhuma
+  informação nova.
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.17.0] — 2026-09-14
 
 Livro 16, *The Legacy of Vashna*, adicionado — quarta entrega da fase Grand Master. Equipamento muda

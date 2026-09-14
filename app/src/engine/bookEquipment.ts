@@ -680,6 +680,43 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
       { id: 'dagger', label: 'Dagger', apply: (c) => addWeaponIfRoom(c, 'Dagger') },
     ],
   },
+  tdi: {
+    // "add 20 to the number you have picked" - same as tplr/tcok/tdc/tlv.
+    goldRollBonus: 20,
+    // Never actually read for tdi — same reasoning as tkt above.
+    weaponPool: ALL_WEAPONS,
+    healingPotionLabel: 'Potion of Laumspur',
+    // "maximum of ten Backpack Items" - unchanged from tplr/tcok/tdc/tlv.
+    maxBackpackItems: 10,
+    applyBaseEquipment: (c) => {
+      addSpecialItem(c, { name: 'Map of Ixia and the Hardlands' });
+    },
+    chooseCount: 4,
+    chooseOptions: [
+      // "Broadsword" replaces tlv's Quarterstaff - never offered as a choosable starting weapon
+      // before this book (equipmnt.htm, Book 17).
+      { id: 'broadsword', label: 'Broadsword', apply: (c) => addWeaponIfRoom(c, 'Broadsword') },
+      { id: 'bow', label: 'Bow', apply: (c) => addWeaponIfRoom(c, 'Bow') },
+      {
+        id: 'quiver',
+        label: 'Quiver (6 Arrows)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Quiver', knownEffects: 'Holds up to 6 Arrows' });
+          addArrows(c, 6);
+        },
+      },
+      { id: 'dagger', label: 'Dagger', apply: (c) => addWeaponIfRoom(c, 'Dagger') },
+      { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
+      {
+        id: 'meals',
+        label: '2 Meals',
+        apply: (c) => { for (let i = 0; i < 2; i++) addMealIfRoom(c); },
+      },
+      { id: 'rope', label: 'Rope', apply: (c) => addBackpackItemIfRoom(c, 'Rope') },
+      { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: (c) => grantHealingPotion(c) },
+      { id: 'axe', label: 'Axe', apply: (c) => addWeaponIfRoom(c, 'Axe') },
+    ],
+  },
 };
 
 export function getBookEquipment(bookId: string): BookEquipmentConfig {

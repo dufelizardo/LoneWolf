@@ -41,6 +41,7 @@ export const BOOKS: BookMeta[] = [
   { id: 'tcok', code: '14tcok', title: 'The Captives of Kaag', order: 14, equipmentMode: 'choose-five', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350, contentDirName: 'tck' },
   { id: 'tdc', code: '15tdc', title: 'The Darke Crusade', order: 15, equipmentMode: 'choose-five', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
   { id: 'tlv', code: '16tlov', title: 'The Legacy of Vashna', order: 16, equipmentMode: 'choose-four', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
+  { id: 'tdi', code: '17tdoi', title: 'The Deathlord of Ixia', order: 17, equipmentMode: 'choose-four', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
 ];
 
 export function getBook(id: string): BookMeta {

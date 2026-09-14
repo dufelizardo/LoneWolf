@@ -15,6 +15,7 @@ import sectionsTplr from '../data/sections.tplr.json';
 import sectionsTcok from '../data/sections.tcok.json';
 import sectionsTdc from '../data/sections.tdc.json';
 import sectionsTlv from '../data/sections.tlv.json';
+import sectionsTdi from '../data/sections.tdi.json';
 import type { SectionMap } from '../data/section-types';
 import { getFootnote } from '../data/footnotes';
 import { applyHealingRegen } from '../engine/disciplines';
@@ -43,6 +44,7 @@ const SECTIONS_BY_BOOK: Record<string, SectionMap> = {
   tcok: sectionsTcok as unknown as SectionMap,
   tdc: sectionsTdc as unknown as SectionMap,
   tlv: sectionsTlv as unknown as SectionMap,
+  tdi: sectionsTdi as unknown as SectionMap,
 };
 
 const EVADE_KEYWORDS = /\bevad|\bflee|\bescape|\brun away\b/i;
