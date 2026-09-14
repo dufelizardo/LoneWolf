@@ -4,6 +4,30 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.17.0] — 2026-09-14
+
+Livro 16, *The Legacy of Vashna*, adicionado — quarta entrega da fase Grand Master. Equipamento muda
+de forma pela primeira vez desde o início da fase: escolha 4 itens (não 5) de uma lista de 9 —
+2 Meals (não 4) e Quarterstaff no lugar do Spear. Mapa automático: Map of the Maakengorge.
+
+- **Primeira mudança mecânica real na fase Grand Master desde o Livro 13**: o rank **Sun Lord**
+  (7 Disciplinas Grand Master) tem conteúdo genuinamente numérico em `imprvdsc.htm`, ao contrário de
+  todo o conteúdo puramente narrativo dos ranks Kai Grand Guardian (5) e Sun Knight (6):
+  - **Grand Weaponmastery**: arma Grand-mastered equipada (exceto Quarterstaff, "wholly wooden")
+    inflige +1 Endurance extra de dano por rodada bem-sucedida, a partir do rank Sun Lord.
+  - **Kai-surge ganha "Kai-blast"**: ataque psíquico de 2 a 18 pontos de Endurance de dano direto
+    (soma de 2 números da Random Number Table, '0'=1), custando 4 Endurance ao usuário, "não pode ser
+    combinado com nenhuma outra forma de ataque psíquico". O texto fonte não esclarece se o inimigo
+    ainda contra-ataca na mesma rodada — **decisão de design tomada com o usuário**: Kai-blast
+    substitui a rodada inteira (sem Combat Ratio, sem contra-ataque do inimigo naquela rodada).
+- **Pendência do Kai-surge "atacar 3 inimigos simultaneamente" (Kai Grand Guardian, issue
+  #61/JOGOS-92) segue sem solução** — não mencionada em nenhum lugar do conteúdo do Livro 16.
+- Todas as outras entradas do rank Sun Lord (Assimilance, Grand Huntmastery, Telegnosis, Magi-magic)
+  são puramente narrativas.
+
+Sem mudança de `SAVE_VERSION` — Kai-blast é derivado de `grandMasterDisciplines`/contagem, sem novo
+campo persistente no `ActionChart`.
+
 ## [0.16.0] — 2026-09-14
 
 Livro 15, *The Darke Crusade*, adicionado — terceiro livro da fase Grand Master. Regras de

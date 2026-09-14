@@ -54,6 +54,23 @@ const KAI_SURGE_MIN_ENDURANCE = 6;
 // replaced by Grand Weaponmastery bonuses, not added cumulatively." Tracked via a separate
 // `grandMasteredWeapons` list rather than merged into `masteredWeapons` (see its doc comment).
 const GRAND_WEAPONMASTERY_BONUS = 5;
+// "Sun Lords with this Discipline are able to cause the metal edge of any non-magical weapon to
+// ignite and burn fiercely. When a weapon thus affected is used in combat, it inflicts an additional
+// 1 ENDURANCE point loss upon an enemy in every successful round of combat. This ability cannot be
+// used with a wholly wooden weapon such as a quarterstaff." (imprvdsc.htm, Book 16) - the first
+// genuinely numeric Improved Discipline bonus since the Grand Master phase began (Books 13-15's
+// rank-up content was purely narrative). Applies once Sun Lord rank (7 Grand Master Disciplines) is
+// reached, on top of the flat Grand Weaponmastery Combat Skill bonus above.
+const GRAND_WEAPONMASTERY_FIRE_BONUS = 1;
+const SUN_LORD_DISCIPLINE_COUNT = 7;
+// "It can cause an enemy to lose between 2 and 18 ENDURANCE points in one attack. A Kai Sun Lord
+// using Kai-blast determines the damage inflicted on an enemy by picking two numbers from the Random
+// Number Table. These numbers should be added together (a '0' = 1)... use of a Kai-blast will reduce
+// a Sun Lord's ENDURANCE points total by 4. It cannot be used in conjunction with any other form of
+// psychic attack." (imprvdsc.htm, Book 16, Kai-surge at Sun Lord rank). The source text doesn't state
+// whether the enemy still attacks back the same round; by design decision, Kai-blast replaces the
+// round entirely (no Combat Ratio/CRT roll, no return damage) rather than adding to a normal round.
+const KAI_BLAST_COST = 4;
 // "This potion of strength will increase your COMBAT SKILL by +2 points when swallowed immediately
 // prior to a combat. It lasts for the duration of one combat only." (equipmnt.htm, Book 10). The
 // dose itself is spent via useCombatPotion (disciplines.ts) before the fight starts; this flag is
@@ -71,6 +88,13 @@ export interface CombatRoundOptions {
   usePsiSurge?: boolean;
   /** Whether a Potion of Alether is currently active for this fight (dose already spent by the caller via useCombatPotion). Applies flatly every round for the rest of the fight, not just once. */
   useCombatPotion?: boolean;
+  /** Player's choice to use Kai-blast this round instead of a normal round. Only relevant once canUseKaiBlast(chart) is true; ignored otherwise. Mutually exclusive with usePsiSurge - Kai-blast wins if both are set. */
+  useKaiBlast?: boolean;
+}
+
+/** Whether the character has reached Sun Lord rank (7 Grand Master Disciplines) with Kai-surge, and can therefore use Kai-blast. */
+export function canUseKaiBlast(chart: ActionChart): boolean {
+  return chart.grandMasterDisciplines.includes('KaiSurge') && chart.grandMasterDisciplines.length >= SUN_LORD_DISCIPLINE_COUNT;
 }
 
 function isArchmaster(chart: ActionChart): boolean {
@@ -177,6 +201,8 @@ export interface CombatRoundResult {
   playerLoss: number;
   /** Extra Endurance spent this round for the costed Psi-surge mode, already reflected in playerLoss/chart. */
   psiSurgeCost: number;
+  /** Extra Endurance spent this round for using Kai-blast, already reflected in playerLoss/chart. */
+  kaiBlastCost: number;
   playerKilled: boolean;
   enemyKilled: boolean;
   log: string;
@@ -189,13 +215,62 @@ export function resolveCombatRound(
   rng: Rng = Math.random,
   options: CombatRoundOptions = {},
 ): CombatRoundResult {
+  const kaiBlastActive = !!options.useKaiBlast && canUseKaiBlast(chart);
+
+  if (kaiBlastActive) {
+    // Kai-blast replaces the round entirely: no Combat Ratio/CRT lookup, no return damage from the
+    // enemy - a decisive psychic strike rather than a mutual exchange of blows (design decision, see
+    // KAI_BLAST_COST comment above for the source ambiguity this resolves).
+    const roll1 = rollRandomNumber(rng) || 1;
+    const roll2 = rollRandomNumber(rng) || 1;
+    const enemyLoss = Math.min(enemy.endurance, roll1 + roll2);
+    const kaiBlastCost = KAI_BLAST_COST;
+
+    const nextEnemy: Enemy = { ...enemy, endurance: Math.max(0, enemy.endurance - enemyLoss) };
+    const nextChart: ActionChart = {
+      ...chart,
+      enduranceCurrent: Math.max(0, chart.enduranceCurrent - kaiBlastCost),
+    };
+    nextChart.isAlive = nextChart.enduranceCurrent > 0;
+
+    const enemyKilled = nextEnemy.endurance <= 0;
+    const playerKilled = nextChart.enduranceCurrent <= 0;
+
+    const log = `Kai-blast: ${enemy.name} loses ${enemyLoss} Endurance, Lone Wolf loses ${kaiBlastCost} Endurance.`;
+
+    return {
+      chart: nextChart,
+      enemy: nextEnemy,
+      roll: roll1 + roll2,
+      ratio: 0,
+      enemyLoss,
+      playerLoss: 0,
+      psiSurgeCost: 0,
+      kaiBlastCost,
+      playerKilled,
+      enemyKilled,
+      log,
+    };
+  }
+
   const effectiveSkill = getEffectiveCombatSkill(chart, enemy, options);
   const ratio = effectiveSkill - enemy.combatSkill;
   const roll = rollRandomNumber(rng);
   const result = getCombatResult(ratio, roll);
 
-  const enemyLoss = result.enemyLoss === 'K' ? enemy.endurance : result.enemyLoss;
+  let enemyLoss = result.enemyLoss === 'K' ? enemy.endurance : result.enemyLoss;
   let playerLoss = result.playerLoss === 'K' ? chart.enduranceCurrent : result.playerLoss;
+
+  if (
+    enemyLoss > 0 &&
+    chart.grandMasterDisciplines.includes('GrandWeaponmastery') &&
+    chart.grandMasterDisciplines.length >= SUN_LORD_DISCIPLINE_COUNT &&
+    chart.equippedWeapon &&
+    chart.grandMasteredWeapons.includes(chart.equippedWeapon) &&
+    chart.equippedWeapon !== 'Quarterstaff'
+  ) {
+    enemyLoss = Math.min(enemy.endurance, enemyLoss + GRAND_WEAPONMASTERY_FIRE_BONUS);
+  }
 
   if (chart.disciplines.includes('Mindshield') && enemy.attacksWithMindblast) {
     playerLoss = 0;
@@ -234,6 +309,7 @@ export function resolveCombatRound(
     enemyLoss,
     playerLoss,
     psiSurgeCost,
+    kaiBlastCost: 0,
     playerKilled,
     enemyKilled,
     log,

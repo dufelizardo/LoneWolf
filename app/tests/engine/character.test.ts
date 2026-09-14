@@ -858,6 +858,62 @@ describe('chooseEquipmentOptions (book "tdc", choose-five)', () => {
   });
 });
 
+describe('chooseEquipmentOptions (book "tlv", choose-four)', () => {
+  const fourOptions = ['bow', 'quiver', 'meals', 'potion-of-laumspur'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('tlv', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('tlv', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants 2 Meals from the Meals option (not 4, unlike tplr/tcok/tdc)', () => {
+    const chart = createFreshCharacterForBook('tlv', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.meals).toBe(2);
+  });
+
+  it('grants a Potion of Laumspur dose', () => {
+    const chart = createFreshCharacterForBook('tlv', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.healingPotionDoses).toBe(1);
+  });
+
+  it('offers Quarterstaff instead of Spear', () => {
+    const chart = createFreshCharacterForBook('tlv', () => 0);
+    const equipped = chooseEquipmentOptions(chart, ['quarterstaff', 'quiver', 'meals', 'potion-of-laumspur']);
+    expect(equipped.weapons).toContain('Quarterstaff');
+  });
+
+  it('always starts with the Map of the Maakengorge', () => {
+    const chart = createFreshCharacterForBook('tlv', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of the Maakengorge');
+  });
+
+  it('rolls gold with a +20 bonus, same as tplr/tcok/tdc', () => {
+    const chart = createFreshCharacterForBook('tlv', () => 0);
+    expect(chart.goldCrowns).toBe(20);
+  });
+
+  it('allows carrying up to 10 Backpack Items instead of the usual 8', () => {
+    const chart = createFreshCharacterForBook('tlv', () => 0);
+    const equipped = chooseEquipmentOptions(chart, [...fourOptions.slice(0, 3), 'rope']);
+    expect(equipped.backpackItems).toContain('Rope');
+  });
+
+  it('rejects a selection that is not exactly four options', () => {
+    const chart = createFreshCharacterForBook('tlv', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fourOptions.slice(0, 3))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fourOptions, 'sword'])).toThrow();
+  });
+});
+
 describe('carryOverCharacterToBook within the Grand Master phase, book "tplr" -> "tcok" (regression)', () => {
   it('does NOT re-apply the Special Item carry-over whitelist (it only gates the Magnakai->Grand Master boundary)', () => {
     const chart = {
