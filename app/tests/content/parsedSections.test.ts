@@ -159,3 +159,20 @@ describe('book 13 (The Plague Lords of Ruel) puzzle sections', () => {
     expect(endings).toEqual([350]);
   });
 });
+
+describe('book 14 (The Captives of Kaag) puzzle sections', () => {
+  const sections = loadSections('tcok');
+
+  it('flags sect127, sect181, sect220 and sect319 as puzzles, each with a real fallback choice', () => {
+    for (const num of [127, 181, 220, 319]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isEnding, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350), forward-linking to Book 15', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+});

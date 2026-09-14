@@ -18,6 +18,8 @@ export interface BookMeta {
   sectionCount: number;
   /** The section number of this book's one canonical (mission-success) ending. */
   finalSection: number;
+  /** Overrides `id` as the on-disk folder name under `contentRoot` (parseContent.ts's contentDirFor). Only needed when the source content's own folder name would collide with another book's `id` — e.g. Book 14's folder is coincidentally named "tck", already taken by Book 3, so Book 14 uses id "tcok" with this set to "tck". Every other book's folder already matches its `id`. */
+  contentDirName?: string;
 }
 
 export const BOOKS: BookMeta[] = [
@@ -34,6 +36,9 @@ export const BOOKS: BookMeta[] = [
   { id: 'tpt', code: '11tpot', title: 'The Prisoners of Time', order: 11, equipmentMode: 'choose-six', contentRoot: 'magnakai', phase: 'magnakai', sectionCount: 350, finalSection: 350 },
   { id: 'tmd', code: '12tmod', title: 'The Masters of Darkness', order: 12, equipmentMode: 'choose-six', contentRoot: 'magnakai', phase: 'magnakai', sectionCount: 350, finalSection: 350 },
   { id: 'tplr', code: '13tplor', title: 'The Plague Lords of Ruel', order: 13, equipmentMode: 'choose-five', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
+  // Note: this book's source folder is coincidentally named "tck" (grand_master/tck/), already taken
+  // by Book 3's id — hence "tcok" here plus contentDirName to point the parser at the real folder.
+  { id: 'tcok', code: '14tcok', title: 'The Captives of Kaag', order: 14, equipmentMode: 'choose-five', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350, contentDirName: 'tck' },
 ];
 
 export function getBook(id: string): BookMeta {
