@@ -807,6 +807,57 @@ describe('chooseEquipmentOptions (book "tcok", choose-five)', () => {
   });
 });
 
+describe('chooseEquipmentOptions (book "tdc", choose-five)', () => {
+  const fiveOptions = ['bow', 'quiver', 'meals', 'rope', 'potion-of-laumspur'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('tdc', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('tdc', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants 4 Meals from the Meals option', () => {
+    const chart = createFreshCharacterForBook('tdc', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.meals).toBe(4);
+  });
+
+  it('grants a Potion of Laumspur dose', () => {
+    const chart = createFreshCharacterForBook('tdc', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.healingPotionDoses).toBe(1);
+  });
+
+  it('always starts with the Map of the Western Tentarias', () => {
+    const chart = createFreshCharacterForBook('tdc', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of the Western Tentarias');
+  });
+
+  it('rolls gold with a +20 bonus, same as tplr/tcok', () => {
+    const chart = createFreshCharacterForBook('tdc', () => 0);
+    expect(chart.goldCrowns).toBe(20);
+  });
+
+  it('allows carrying up to 10 Backpack Items instead of the usual 8', () => {
+    const chart = createFreshCharacterForBook('tdc', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.meals + equipped.backpackItems.length).toBeLessThanOrEqual(10);
+    expect(equipped.backpackItems).toContain('Rope');
+  });
+
+  it('rejects a selection that is not exactly five options', () => {
+    const chart = createFreshCharacterForBook('tdc', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fiveOptions.slice(0, 4))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
+  });
+});
+
 describe('carryOverCharacterToBook within the Grand Master phase, book "tplr" -> "tcok" (regression)', () => {
   it('does NOT re-apply the Special Item carry-over whitelist (it only gates the Magnakai->Grand Master boundary)', () => {
     const chart = {

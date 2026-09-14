@@ -39,6 +39,7 @@ export const BOOKS: BookMeta[] = [
   // Note: this book's source folder is coincidentally named "tck" (grand_master/tck/), already taken
   // by Book 3's id — hence "tcok" here plus contentDirName to point the parser at the real folder.
   { id: 'tcok', code: '14tcok', title: 'The Captives of Kaag', order: 14, equipmentMode: 'choose-five', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350, contentDirName: 'tck' },
+  { id: 'tdc', code: '15tdc', title: 'The Darke Crusade', order: 15, equipmentMode: 'choose-five', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
 ];
 
 export function getBook(id: string): BookMeta {

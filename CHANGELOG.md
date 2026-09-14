@@ -4,6 +4,25 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.16.0] — 2026-09-14
+
+Livro 15, *The Darke Crusade*, adicionado — terceiro livro da fase Grand Master. Regras de
+disciplina, crescimento, combate e equipamento seguem idênticas aos Livros 13-14; só o mapa
+automático muda (Map of the Western Tentarias).
+
+- **Improved Grand Master Disciplines ganha conteúdo real pro rank Sun Knight (6 Disciplinas)**:
+  lido na íntegra, as 6 entradas (Grand Weaponmastery, Deliverance, Grand Pathsmanship, Grand Nexus,
+  Telegnosis, Kai-alchemy) são todas puramente narrativas — nenhuma tem um número de Combat
+  Skill/Endurance, nem mesmo o feitiço "Strength" de Kai-alchemy, que menciona um "temporary
+  increase in COMBAT SKILL and ENDURANCE" sem especificar quanto.
+- **Kai-surge não aparece no rank Sun Knight** — a regra de "atacar até 3 inimigos simultaneamente"
+  do rank anterior (Kai Grand Guardian, Livro 14) não é repetida, estendida nem esclarecida aqui.
+  Continua exatamente como pendência real, sem informação nova (issue #61/JOGOS-92 seguem abertas).
+- Nenhuma mudança em `combat.ts`/`disciplines.ts` — mesmas Disciplinas, mesmos números, mesma escada
+  de rank dos livros anteriores.
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.15.0] — 2026-09-14
 
 Livro 14, *The Captives of Kaag*, adicionado — segundo livro da fase Grand Master. O livro mais
