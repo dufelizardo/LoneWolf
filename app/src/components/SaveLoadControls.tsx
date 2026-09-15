@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react';
 import { downloadSaveFile, getLastCloudCode, loadGameFromCloud, loadSaveFile, saveGameToCloud } from '../engine/persistence';
 import type { ActionChart, CampaignProgress, SaveGame } from '../engine/types';
+import type { GreyStarActionChart } from '../engine/greyStarTypes';
 
 interface Props {
   campaign: CampaignProgress;
-  chart: ActionChart | null;
+  chart: ActionChart | GreyStarActionChart | null;
   canSave: boolean;
   canLoad: boolean;
   onNewGame: () => void;

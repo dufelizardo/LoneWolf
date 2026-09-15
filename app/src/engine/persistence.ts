@@ -1,9 +1,12 @@
 import { SAVE_VERSION, createEmptyCampaign, type ActionChart, type CampaignProgress, type SaveGame } from './types';
+import type { GreyStarActionChart } from './greyStarTypes';
 
 const STORAGE_KEY = 'lonewolf-save';
 const CLOUD_CODE_KEY = 'lonewolf-cloud-code';
 
-export function saveGame(campaign: CampaignProgress, chart: ActionChart | null): void {
+type Chart = ActionChart | GreyStarActionChart | null;
+
+export function saveGame(campaign: CampaignProgress, chart: Chart): void {
   const save: SaveGame = { saveVersion: SAVE_VERSION, campaign, chart };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(save));
 }
@@ -35,7 +38,7 @@ export function getLastCloudCode(): string | null {
 /** Saves to the server. Creates a new save code the first time, or updates the existing one. */
 export async function saveGameToCloud(
   campaign: CampaignProgress,
-  chart: ActionChart | null,
+  chart: Chart,
   code?: string | null,
 ): Promise<string> {
   const save: SaveGame = { saveVersion: SAVE_VERSION, campaign, chart };
@@ -78,7 +81,7 @@ export function newCampaign(): CampaignProgress {
 }
 
 /** Serializes the current save state to the same JSON shape used everywhere else (localStorage, cloud). Pure/testable — no DOM or I/O. */
-export function serializeSave(campaign: CampaignProgress, chart: ActionChart | null): string {
+export function serializeSave(campaign: CampaignProgress, chart: Chart): string {
   const save: SaveGame = { saveVersion: SAVE_VERSION, campaign, chart };
   return JSON.stringify(save, null, 2);
 }
@@ -91,7 +94,7 @@ export function serializeSave(campaign: CampaignProgress, chart: ActionChart | n
  * home-lab k3s setup). The file can be re-imported later via parseSaveFile, including to restore a
  * lost cloud save (see loadSaveFile / SaveLoadControls's "Importar Backup").
  */
-export function downloadSaveFile(campaign: CampaignProgress, chart: ActionChart | null): void {
+export function downloadSaveFile(campaign: CampaignProgress, chart: Chart): void {
   const json = serializeSave(campaign, chart);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);

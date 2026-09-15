@@ -11,15 +11,26 @@ const CONTENT_ROOTS: Record<ContentRoot, string> = {
   magnakai: process.env.LW_MAGNAKAI_ROOT ?? join(__dirname, '../../magnakai'),
   grand_master: process.env.LW_GRAND_MASTER_ROOT ?? join(__dirname, '../../grand_master'),
   new_order: process.env.LW_NEW_ORDER_ROOT ?? join(__dirname, '../../new_order'),
+  world_of_lone_wolf: process.env.LW_WORLD_ROOT ?? join(__dirname, '../../world_of_lone_wolf'),
 };
 const DATA_DIR = join(__dirname, '../src/data');
 const ILLUSTRATIONS_ROOT = join(__dirname, '../public/illustrations');
 
 function contentDirFor(book: BookMeta): string {
-  return join(CONTENT_ROOTS[book.contentRoot], book.contentDirName ?? book.id, 'en', 'xhtml', 'lw', book.code);
+  return join(
+    CONTENT_ROOTS[book.contentRoot],
+    book.contentDirName ?? book.id,
+    'en',
+    'xhtml',
+    book.contentCodeSegment ?? 'lw',
+    book.code,
+  );
 }
 
-const ALLOWED_TAGS = new Set(['p', 'span', 'figure', 'img', 'em', 'strong', 'br', 'a']);
+// blockquote/ul/li/dl/dt/dd added for Grey Star the Wizard (world_of_lone_wolf), whose sections use
+// them for real structure (e.g. a closing riddle, shopping lists) that every Lone Wolf-series book so
+// far has gotten away without - a strictly more permissive superset, safe for every existing book.
+const ALLOWED_TAGS = new Set(['p', 'span', 'figure', 'img', 'em', 'strong', 'br', 'a', 'blockquote', 'ul', 'li', 'dl', 'dt', 'dd']);
 
 function normalizeText(text: string): string {
   return text.replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
@@ -139,7 +150,11 @@ function parseSectionFile(contentDir: string, num: number): Section {
   const hasPuzzle = clone.find('p.puzzle').length > 0;
 
   const illustrations: string[] = [];
-  clone.find('figure img').each((_, el) => {
+  // Modern Lone Wolf-series books mark real illustrations with <figure><img/></figure>. Grey Star the
+  // Wizard (world_of_lone_wolf) instead wraps a bordered <table> in <div class="illustration">, with
+  // decorative border-tile <img>s (alt="") alongside the real illustration, which alone carries the
+  // literal alt text "[illustration]" (with brackets) - that's what distinguishes it from the tiles.
+  clone.find('figure img, div.illustration img[alt="[illustration]"]').each((_, el) => {
     const src = $(el).attr('src');
     if (src) illustrations.push(src);
   });
@@ -191,14 +206,21 @@ function parseSectionFile(contentDir: string, num: number): Section {
   };
 }
 
-function parseStorySoFar(contentDir: string): string {
-  const filePath = join(contentDir, 'tssf.htm');
+function parseIntroFile(contentDir: string, filename: string): string {
+  const filePath = join(contentDir, filename);
   const html = readFileSync(filePath, 'utf-8');
   const $ = cheerio.load(html, { xmlMode: false });
   const container = $('div.maintext').first();
   const clone = container.clone();
   clone.find('h2, h3').remove();
   return sanitizeBodyHtml($, clone);
+}
+
+function parseStorySoFar(contentDir: string, book: BookMeta): string {
+  // Grey Star the Wizard (world_of_lone_wolf) has an earlier frontmatter page ("Of the Coming of
+  // Grey Star") before tssf.htm - every other book's tssf.htm is the sole intro page.
+  const extra = book.extraIntroFile ? parseIntroFile(contentDir, book.extraIntroFile) : '';
+  return extra + parseIntroFile(contentDir, 'tssf.htm');
 }
 
 function copyIllustrations(contentDir: string, outDir: string, sections: SectionMap) {
@@ -247,7 +269,7 @@ function main() {
 
   for (const book of BOOKS) {
     const { warnings } = parseBook(book);
-    bookIntros[book.id] = { html: parseStorySoFar(contentDirFor(book)) };
+    bookIntros[book.id] = { html: parseStorySoFar(contentDirFor(book), book) };
 
     console.log(`[${book.id}] ${warnings.length} parser warning(s):`);
     for (const w of warnings) console.log(`  - ${w}`);

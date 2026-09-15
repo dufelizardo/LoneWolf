@@ -3343,7 +3343,7 @@
   },
   "149": {
     "number": 149,
-    "bodyHtml": "\n      \n      <p>Caldar instructs one of his guards to escort you to the castle armoury, where you are encouraged to take whatever you need. From among the many racks of fine weapons and equipment, the following items catch your eye:</p>\n      \n       <li>Broadsword</li>\n       <li>Sword</li>\n       <li>Axe</li>\n       <li>Warhammer</li>\n       <li>Short Sword</li>\n       <li>Mace</li>\n       <li>Spear</li>\n       <li>Arrows (6)</li>\n       <li>Quiver (counts as a Special Item if you choose this in addition to any Quiver you may already possess)</li>\n       <li>Naphtha Bomb (small explosive incendiary—counts as a Backpack Item)</li>\n      \n      \n     ",
+    "bodyHtml": "\n      \n      <p>Caldar instructs one of his guards to escort you to the castle armoury, where you are encouraged to take whatever you need. From among the many racks of fine weapons and equipment, the following items catch your eye:</p>\n      <ul>\n       <li>Broadsword</li>\n       <li>Sword</li>\n       <li>Axe</li>\n       <li>Warhammer</li>\n       <li>Short Sword</li>\n       <li>Mace</li>\n       <li>Spear</li>\n       <li>Arrows (6)</li>\n       <li>Quiver (counts as a Special Item if you choose this in addition to any Quiver you may already possess)</li>\n       <li>Naphtha Bomb (small explosive incendiary—counts as a Backpack Item)</li>\n      </ul>\n      \n     ",
     "illustrations": [],
     "combats": [],
     "choices": [

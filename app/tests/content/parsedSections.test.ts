@@ -507,3 +507,35 @@ describe('book 29 (The Storms of Chai) sections - ninth book of the New Order ph
     expect(endings).toEqual([253, 350]);
   });
 });
+
+describe('book gsw (Grey Star the Wizard) sections - first book of the World of Lone Wolf phase, a wholly independent spin-off series (not a numeric continuation)', () => {
+  const sections = loadSections('gsw');
+
+  it('flags sect92 and sect264 as puzzles', () => {
+    for (const num of [92, 264]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isDeadEnd, `sect${num}`).toBe(false);
+    }
+  });
+
+  it('sect92 is puzzle-only (a Prophecy check resolved by returning to a previously noted section, same shape as Book 5\'s sect331) with no regular choice', () => {
+    expect(sections[92].choices).toHaveLength(0);
+  });
+
+  it('sect264 mixes the puzzle option with two regular fallback choices', () => {
+    expect(sections[264].choices.length).toBeGreaterThan(0);
+  });
+
+  it('has exactly one real ending, at the canonical final section (350), forward-linking to Grey Star Book 2 ("The Forbidden City")', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+
+  it('has exactly the 27 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([
+      9, 14, 17, 20, 63, 67, 69, 103, 122, 138, 155, 173, 177, 207, 216, 220, 225, 237, 262, 299, 306, 312, 315, 316,
+      317, 318, 324,
+    ]);
+  });
+});
