@@ -71,6 +71,13 @@ const SUN_LORD_DISCIPLINE_COUNT = 7;
 // whether the enemy still attacks back the same round; by design decision, Kai-blast replaces the
 // round entirely (no Combat Ratio/CRT roll, no return damage) rather than adding to a normal round.
 const KAI_BLAST_COST = 4;
+// "When fighting bare-handed, i.e. without any weapons, they may add 3 points to their COMBAT
+// SKILL." (imprvdsc.htm, Book 19, Grand Weaponmastery at Grand Crown rank) - unlike the Magnakai
+// no-weapon tiers above (Tutelary/Scion-kai, which merely reduce the -4 penalty), this is a genuine
+// positive bonus that fully replaces the no-weapon penalty rather than shrinking it. Applies once
+// Grand Crown rank (10 Grand Master Disciplines) is reached.
+const GRAND_WEAPONMASTERY_UNARMED_BONUS = 3;
+const GRAND_CROWN_DISCIPLINE_COUNT = 10;
 // "This potion of strength will increase your COMBAT SKILL by +2 points when swallowed immediately
 // prior to a combat. It lasts for the duration of one combat only." (equipmnt.htm, Book 10). The
 // dose itself is spent via useCombatPotion (disciplines.ts) before the fight starts; this flag is
@@ -157,7 +164,9 @@ export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy, option
   const magnakaiDisciplineCount = chart.magnakaiDisciplines.length;
 
   if (!chart.equippedWeapon) {
-    if (hasWeaponmastery && magnakaiDisciplineCount >= SCION_KAI_DISCIPLINE_COUNT) {
+    if (chart.grandMasterDisciplines.includes('GrandWeaponmastery') && chart.grandMasterDisciplines.length >= GRAND_CROWN_DISCIPLINE_COUNT) {
+      skill += GRAND_WEAPONMASTERY_UNARMED_BONUS;
+    } else if (hasWeaponmastery && magnakaiDisciplineCount >= SCION_KAI_DISCIPLINE_COUNT) {
       skill += NO_WEAPON_PENALTY_SCION_KAI;
     } else if (hasWeaponmastery && magnakaiDisciplineCount >= TUTELARY_DISCIPLINE_COUNT) {
       skill += NO_WEAPON_PENALTY_TUTELARY;

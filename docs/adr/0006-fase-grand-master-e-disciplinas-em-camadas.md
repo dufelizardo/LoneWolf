@@ -335,3 +335,33 @@ usadas nas 350 seções.
 Livro 18 — não resolvida, não implementada.
 
 Sem mudança de `SAVE_VERSION`.
+
+## Atualização — Livro 19
+
+O Livro 19 (*Wolf's Bane*) traz a **primeira mudança mecânica real desde o Sun Lord (Livro 16)**:
+`imprvdsc.htm` ganha o rank **Grand Crown (10 Disciplinas)** — alcançável exatamente neste livro por
+quem carrega um personagem com os 6 livros anteriores completados (4 base + 6 = 10). Duas das seis
+entradas têm números reais:
+
+- **Grand Weaponmastery**: *"When fighting bare-handed, i.e. without any weapons, they may add 3
+  points to their COMBAT SKILL."* Diferente das melhorias de desarmado já implementadas pra
+  Weaponmastery normal (Tutelary/Scion-kai, que só reduzem a penalidade de -4 pra -2/-1), esta é um
+  **bônus positivo que substitui a penalidade inteira**. Implementado em `combat.ts`
+  (`GRAND_WEAPONMASTERY_UNARMED_BONUS = 3`, `GRAND_CROWN_DISCIPLINE_COUNT = 10`), checado com
+  prioridade acima dos tiers Magnakai no ramo "sem arma equipada" de `getEffectiveCombatSkill`.
+- **Kai-alchemy ganha o feitiço Teleport**: *"will cost the caster between 1 and 5 ENDURANCE points
+  every time it is used."* Número real, mas **sem nenhum gancho no motor atual** — o app não modela
+  nenhum sistema de viagem/teleporte fora da navegação linear por seções (mesma categoria de todo o
+  resto de Magi-magic/Kai-alchemy até agora, que só existem como flags narrativas). **Decisão**:
+  documentar como conteúdo real não implementável por falta de mecanismo correspondente, sem abrir uma
+  pendência de design (diferente do Kai-surge de 3 inimigos) — não há ambiguidade a resolver aqui, só
+  ausência de um sistema de viagem no motor.
+- As outras 4 entradas do rank Grand Crown (Animal Mastery, Grand Pathsmanship, Kai-screen, Grand
+  Nexus) são narrativas ou dependem de "circunstâncias individuais" sem número fixo.
+
+**Pendência do Kai-surge de 3 inimigos simultâneos (issue #61/JOGOS-92) segue sem nenhuma menção** no
+Livro 19 — não resolvida, não implementada.
+
+Sem mudança de `SAVE_VERSION` — o bônus de desarmado é derivado de `grandMasterDisciplines`/
+contagem, igual ao padrão já usado por Psi-surge/Kai-surge/Kai-blast, sem novo campo persistente no
+`ActionChart`.
