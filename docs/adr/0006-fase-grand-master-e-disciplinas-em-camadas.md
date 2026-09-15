@@ -2,9 +2,11 @@
 
 ## Status
 
-**Implementada.** Livro 13 (*The Plague Lords of Ruel*) jogável de ponta a ponta — primeiro livro da
-fase Grand Master, distinta da fase Magnakai (Livros 6-12, agora completa) e da fase Kai (Livros
-1-5). Mergeado em `main` via PR, publicado via `publish-image.yml`.
+**Implementada e completa.** Fase Grand Master inteira (Livros 13-20, *The Plague Lords of Ruel* até
+*The Curse of Naar*) jogável de ponta a ponta — distinta da fase Magnakai (Livros 6-12) e da fase Kai
+(Livros 1-5). O Livro 20 encerra a fase; a próxima aventura (Livro 21, "Voyage of the Moonstone")
+inicia uma fase nova ("New Order"), fora do escopo desta ADR. Cada livro mergeado em `main` via PR,
+publicado via `publish-image.yml`.
 
 ## Contexto
 
@@ -365,3 +367,53 @@ Livro 19 — não resolvida, não implementada.
 Sem mudança de `SAVE_VERSION` — o bônus de desarmado é derivado de `grandMasterDisciplines`/
 contagem, igual ao padrão já usado por Psi-surge/Kai-surge/Kai-blast, sem novo campo persistente no
 `ActionChart`.
+
+## Atualização — Livro 20 (e fim da fase Grand Master)
+
+O Livro 20 (*The Curse of Naar*) é a **última entrega da fase Grand Master**, confirmado por três
+sinais no conteúdo fonte: `discplnz.htm` não tem o parágrafo de "próxima aventura Grand Master" que
+todo livro anterior tinha; `gamerulz.htm` chama esta de "this **ultimate** Grand Master adventure"; e
+a seção final (`sect350`) encerra com *"Your triumph over Naar paves the way for your accedence to
+the rank of Kai Supreme Master... the first of the New Order adventures is about to begin"*, apontando
+pro Livro 21 "Voyage of the Moonstone" — início de uma fase nova ("New Order"), fora do escopo desta
+ADR.
+
+`imprvdsc.htm` repete os ranks Kai Grand Guardian (5) a Grand Crown (10) sem nenhuma mudança
+numérica. **Surge um novo rank, Sun Prince (11 Disciplinas)**, com uma habilidade real:
+
+- **Kai-surge ganha "Kai-ray"**: *"This ability can [be] used once during a combat to reduce an
+  enemy's ENDURANCE score by 15 points. However, use of this Kai-ray will also reduce a Sun Prince's
+  ENDURANCE score by 4 points. It cannot be used if a Sun Prince's ENDURANCE score is 10 or less, and
+  it cannot be used in conjunction with any other form of psychic attack."* Diferente do Kai-blast
+  (dano rolado de 2 números da Random Number Table, usável toda rodada), Kai-ray é dano **fixo** de
+  15, usável **só 1 vez por combate inteiro**, com piso de Endurance > 10. **Decisão de design tomada
+  explicitamente com o usuário**: Kai-ray e Kai-blast **coexistem como opções independentes** — ao
+  chegar em Sun Prince, o jogador ganha uma terceira opção por rodada, sem perder o Kai-blast
+  ilimitado já disponível desde Sun Lord (diferente do padrão "melhor camada vence" usado pro bônus de
+  arma do Grand Weaponmastery, porque aqui as duas habilidades servem propósitos distintos: dano
+  moderado repetível vs. um "nuke" único por luta). Implementado em `combat.ts`
+  (`SUN_PRINCE_DISCIPLINE_COUNT = 11`, `KAI_RAY_DAMAGE = 15`, `KAI_RAY_COST = 4`,
+  `KAI_RAY_MIN_ENDURANCE = 10`, `canUseKaiRay`), com o controle de "1 uso por luta" guardado no
+  `CombatModal` (mesmo padrão de estado persistente já usado pra `potionActiveThisFight`).
+- As outras 4 entradas do rank Sun Prince (Animal Mastery, Deliverance, Assimilance, Kai-screen, Grand
+  Huntmastery) são puramente narrativas. Não existe seção pro rank Kai Supreme Master (12) —
+  mencionado só narrativamente no epílogo da seção 350, nunca alcançável como Disciplina jogável.
+
+**Caso novo de conteúdo**: as seções 297 e 338 têm `class="puzzle"` **e** `class="deadend"` na mesma
+seção (acertar o total de 3 Itens Especiais resolve o puzzle; errar ou não ter os itens narra o
+fracasso ali mesmo, sem link de escolha separado). Confirmado que `parseContent.ts` já lida com isso
+corretamente sem mudança de código — `isDeadEnd`/`hasPuzzle` são checados independentemente
+(linhas 134/138), então os dois podem ser `true` na mesma seção sem quebrar nenhum invariante.
+
+**Pendência do Kai-surge de 3 inimigos simultâneos (issue #61/JOGOS-92) segue sem nenhuma menção** no
+Livro 20 — não resolvida, não implementada, e permanece em aberto ao final de toda a fase Grand
+Master.
+
+**Fim da fase**: com o Livro 20, os 8 livros da fase Grand Master (13-20) estão completos. Nenhuma
+mudança de UI foi necessária para marcar "fim de fase" — confirmado que `getNextBook()` (`books.ts`)
+não é usado em lugar nenhum da UI, e `GameOverScreen.tsx` já é genérico (o botão "Escolher Próximo
+Livro" só volta pra tela de seleção), mesmo padrão zero-UI-especial já usado nas transições Kai→
+Magnakai e Magnakai→Grand Master.
+
+Sem mudança de `SAVE_VERSION` — Kai-ray é inteiramente derivado de `grandMasterDisciplines`/contagem,
+igual ao padrão já usado por Kai-blast, sem novo campo persistente no `ActionChart`.

@@ -1082,6 +1082,63 @@ describe('chooseEquipmentOptions (book "wb", choose-four)', () => {
   });
 });
 
+describe('chooseEquipmentOptions (book "tcn", choose-four)', () => {
+  const fourOptions = ['bow', 'quiver', 'meals', 'potion-of-laumspur'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('tcn', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('tcn', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants 2 Meals from the Meals option', () => {
+    const chart = createFreshCharacterForBook('tcn', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.meals).toBe(2);
+  });
+
+  it('grants a Potion of Laumspur dose', () => {
+    const chart = createFreshCharacterForBook('tcn', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.healingPotionDoses).toBe(1);
+  });
+
+  it('offers Quarterstaff and Broadsword together for the first time (Books 17-19 only ever alternated between them)', () => {
+    const chart = createFreshCharacterForBook('tcn', () => 0);
+    const equipped = chooseEquipmentOptions(chart, ['quarterstaff', 'broadsword', 'quiver', 'meals']);
+    expect(equipped.weapons).toContain('Quarterstaff');
+    expect(equipped.weapons).toContain('Broadsword');
+  });
+
+  it('always starts with the Map of the Planes of Existence', () => {
+    const chart = createFreshCharacterForBook('tcn', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of the Planes of Existence');
+  });
+
+  it('rolls gold with a +20 bonus, same as tplr/tcok/tdc/tlv/tdi/dd/wb', () => {
+    const chart = createFreshCharacterForBook('tcn', () => 0);
+    expect(chart.goldCrowns).toBe(20);
+  });
+
+  it('allows carrying up to 10 Backpack Items instead of the usual 8', () => {
+    const chart = createFreshCharacterForBook('tcn', () => 0);
+    const equipped = chooseEquipmentOptions(chart, [...fourOptions.slice(0, 3), 'rope']);
+    expect(equipped.backpackItems).toContain('Rope');
+  });
+
+  it('rejects a selection that is not exactly four options', () => {
+    const chart = createFreshCharacterForBook('tcn', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fourOptions.slice(0, 3))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fourOptions, 'sword'])).toThrow();
+  });
+});
+
 describe('carryOverCharacterToBook within the Grand Master phase, book "tplr" -> "tcok" (regression)', () => {
   it('does NOT re-apply the Special Item carry-over whitelist (it only gates the Magnakai->Grand Master boundary)', () => {
     const chart = {

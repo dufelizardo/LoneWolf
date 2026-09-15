@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getCombatResult } from '../../src/data/crt';
-import { canUseKaiBlast, getEffectiveCombatSkill, resolveCombatRound } from '../../src/engine/combat';
+import { canUseKaiBlast, canUseKaiRay, getEffectiveCombatSkill, resolveCombatRound } from '../../src/engine/combat';
 import { createFreshCharacterForBook } from '../../src/engine/character';
 import type { ActionChart, Enemy } from '../../src/engine/types';
 
@@ -515,5 +515,66 @@ describe('Grand Crown Grand Weaponmastery unarmed bonus (Book 19)', () => {
     ];
     const chart = chartWith(withoutGrandWeaponmastery);
     expect(getEffectiveCombatSkill(chart, enemy)).toBe(6); // 10 base - 4 usual no-weapon penalty
+  });
+});
+
+describe('canUseKaiRay (Book 20, Sun Prince rank)', () => {
+  const elevenDisciplinesWithKaiSurge: ActionChart['grandMasterDisciplines'] = [
+    'KaiSurge', 'GrandWeaponmastery', 'AnimalMastery', 'Deliverance', 'Assimilance',
+    'GrandHuntmastery', 'GrandPathsmanship', 'KaiScreen', 'GrandNexus', 'Telegnosis', 'MagiMagic',
+  ];
+
+  it('requires KaiSurge, 11+ Grand Master Disciplines, and Endurance above 10', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('tcn', fixedRng(0, 0, 0)),
+      grandMasterDisciplines: elevenDisciplinesWithKaiSurge,
+      enduranceCurrent: 20,
+    };
+    expect(canUseKaiRay(chart)).toBe(true);
+
+    const tooFewDisciplines: ActionChart = { ...chart, grandMasterDisciplines: elevenDisciplinesWithKaiSurge.slice(0, 10) };
+    expect(canUseKaiRay(tooFewDisciplines)).toBe(false);
+
+    const withoutKaiSurge: ActionChart = { ...chart, grandMasterDisciplines: elevenDisciplinesWithKaiSurge.filter((d) => d !== 'KaiSurge') };
+    expect(canUseKaiRay(withoutKaiSurge)).toBe(false);
+
+    const tooLowEndurance: ActionChart = { ...chart, enduranceCurrent: 10 };
+    expect(canUseKaiRay(tooLowEndurance)).toBe(false);
+  });
+});
+
+describe('resolveCombatRound with Kai-ray (Book 20, Sun Prince rank)', () => {
+  const chart: ActionChart = {
+    ...createFreshCharacterForBook('tcn', fixedRng(0, 0, 0)),
+    grandMasterDisciplines: [
+      'KaiSurge', 'GrandWeaponmastery', 'AnimalMastery', 'Deliverance', 'Assimilance',
+      'GrandHuntmastery', 'GrandPathsmanship', 'KaiScreen', 'GrandNexus', 'Telegnosis', 'MagiMagic',
+    ],
+    enduranceCurrent: 20,
+    equippedWeapon: 'Axe',
+    weapons: ['Axe'],
+  };
+  const enemy: Enemy = { name: 'Giak', combatSkill: 100, endurance: 20 };
+
+  it('deals a fixed 15 Endurance damage, costs 4 Endurance, with no return damage from the enemy', () => {
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.5), { useKaiRay: true });
+    expect(result.enemyLoss).toBe(15);
+    expect(result.kaiRayCost).toBe(4);
+    expect(result.chart.enduranceCurrent).toBe(16);
+    expect(result.playerLoss).toBe(0);
+  });
+
+  it('is ignored (falls back to a normal round) when Endurance is 10 or below', () => {
+    const tooLow: ActionChart = { ...chart, enduranceCurrent: 10 };
+    const result = resolveCombatRound(tooLow, enemy, fixedRng(0.5), { useKaiRay: true });
+    expect(result.kaiRayCost).toBe(0);
+  });
+
+  it('coexists with Kai-blast as an independent option - both remain available on the same character', () => {
+    expect(canUseKaiRay(chart)).toBe(true);
+    expect(canUseKaiBlast(chart)).toBe(true);
+    const kaiBlastResult = resolveCombatRound(chart, enemy, fixedRng(0.3, 0.7), { useKaiBlast: true });
+    expect(kaiBlastResult.kaiBlastCost).toBe(4);
+    expect(kaiBlastResult.kaiRayCost).toBe(0);
   });
 });

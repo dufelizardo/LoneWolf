@@ -4,6 +4,30 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.21.0] — 2026-09-15
+
+Livro 20, *The Curse of Naar*, adicionado — oitava e **última entrega da fase Grand Master**. A fase
+Grand Master (Livros 13-20) está completa. A seção final encerra a fase com *"the first of the New
+Order adventures is about to begin"*, apontando pro Livro 21 "Voyage of the Moonstone" — início de
+uma fase nova, fora do escopo deste trabalho.
+
+- Equipamento: escolha 4 de 10 itens — pela primeira vez Quarterstaff **e** Broadsword aparecem juntos
+  na mesma lista (Livros 17-19 só alternavam entre os dois). Mapa automático: Map of the Planes of
+  Existence.
+- **Novo rank Sun Prince (11 Disciplinas)**, alcançável neste livro por quem carrega um personagem com
+  os 7 livros anteriores completados. Kai-surge ganha **"Kai-ray"**: dano fixo de 15 Endurance, 1 uso
+  por combate inteiro (não por rodada, diferente do Kai-blast), custa 4 Endurance, exige Endurance >
+  10, mutuamente exclusivo com qualquer outro ataque psíquico na rodada. **Decisão de design**:
+  Kai-ray coexiste com Kai-blast como uma terceira opção independente (não substitui) — o jogador
+  ganha ambos ao chegar em Sun Prince. Implementado em `combat.ts`.
+- **Caso novo no conteúdo**: as seções 297 e 338 têm `class="puzzle"` e `class="deadend"` na mesma
+  seção (sem link de escolha separado) — confirmado que o parser já lida com isso corretamente, sem
+  mudança de código.
+- Pendência do Kai-surge "atacar 3 inimigos simultaneamente" (issue #61/JOGOS-92) segue sem nenhuma
+  informação nova — permanece em aberto ao final de toda a fase Grand Master.
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.20.0] — 2026-09-15
 
 Livro 19, *Wolf's Bane*, adicionado — sétima entrega da fase Grand Master. Este livro é o penúltimo

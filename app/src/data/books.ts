@@ -44,6 +44,7 @@ export const BOOKS: BookMeta[] = [
   { id: 'tdi', code: '17tdoi', title: 'The Deathlord of Ixia', order: 17, equipmentMode: 'choose-four', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
   { id: 'dd', code: '18dotd', title: 'Dawn of the Dragons', order: 18, equipmentMode: 'choose-four', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
   { id: 'wb', code: '19wb', title: "Wolf's Bane", order: 19, equipmentMode: 'choose-four', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
+  { id: 'tcn', code: '20tcon', title: 'The Curse of Naar', order: 20, equipmentMode: 'choose-four', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
 ];
 
 export function getBook(id: string): BookMeta {
