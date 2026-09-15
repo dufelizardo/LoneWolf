@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { canUseKaiBlast, psiSurgeMinEndurance, resolveCombatRound, resolvePsiSurgeTier } from '../engine/combat';
+import { canUseKaiBlast, canUseKaiRay, psiSurgeMinEndurance, resolveCombatRound, resolvePsiSurgeTier } from '../engine/combat';
 import {
   canUseArchmasterCuring,
   canUseDeliverance,
@@ -29,12 +29,15 @@ export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onF
   const [log, setLog] = useState<string[]>([]);
   const [usePsiSurge, setUsePsiSurge] = useState(false);
   const [useKaiBlast, setUseKaiBlast] = useState(false);
+  const [useKaiRay, setUseKaiRay] = useState(false);
+  const [kaiRayUsedThisFight, setKaiRayUsedThisFight] = useState(false);
   const [wantsCombatPotion, setWantsCombatPotion] = useState(false);
   const [potionActiveThisFight, setPotionActiveThisFight] = useState(false);
 
   const psiSurgeTier = resolvePsiSurgeTier(chart);
   const psiSurgeAvailable = chart.enduranceCurrent > psiSurgeMinEndurance(chart);
   const kaiBlastAvailable = canUseKaiBlast(chart);
+  const kaiRayAvailable = !kaiRayUsedThisFight && canUseKaiRay(chart);
   const combatPotionLabel = getBookEquipment(chart.bookId).combatPotionLabel ?? 'Potion of Alether';
   // Deliverance (Grand Master) supersedes Archmaster Curing (Magnakai) rather than stacking with it
   // - only ever offer one combat-heal button, preferring the better/newer one when both apply.
@@ -52,9 +55,12 @@ export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onF
       usePsiSurge,
       useCombatPotion: potionActiveNow,
       useKaiBlast,
+      useKaiRay,
     });
     setUsePsiSurge(false); // must be actively re-chosen every round, never "sticky"
     setUseKaiBlast(false);
+    if (useKaiRay && result.kaiRayCost > 0) setKaiRayUsedThisFight(true); // one charge per whole fight, unlike Kai-blast
+    setUseKaiRay(false);
     if (activatingPotionNow) setPotionActiveThisFight(true);
     onChartChange(result.chart);
     setEnemy(result.enemy);
@@ -114,7 +120,7 @@ export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onF
           <input
             type="checkbox"
             checked={usePsiSurge}
-            disabled={!psiSurgeAvailable || useKaiBlast}
+            disabled={!psiSurgeAvailable || useKaiBlast || useKaiRay}
             onChange={(e) => setUsePsiSurge(e.target.checked)}
           />
           Usar {psiSurgeTier.name} nesta rodada (+{psiSurgeTier.bonus} Combat Skill, -{psiSurgeTier.cost} Endurance
@@ -127,12 +133,34 @@ export function CombatModal({ chart, encounters, evadeChoice, onChartChange, onF
           <input
             type="checkbox"
             checked={useKaiBlast}
+            disabled={useKaiRay}
             onChange={(e) => {
               setUseKaiBlast(e.target.checked);
-              if (e.target.checked) setUsePsiSurge(false);
+              if (e.target.checked) {
+                setUsePsiSurge(false);
+                setUseKaiRay(false);
+              }
             }}
           />
           Usar Kai-blast nesta rodada (2-18 de dano direto, -4 Endurance, substitui o ataque desta rodada — não pode ser combinado com {psiSurgeTier?.name ?? 'Psi-surge'})
+        </label>
+      )}
+
+      {kaiRayAvailable && (
+        <label className="kai-ray-toggle">
+          <input
+            type="checkbox"
+            checked={useKaiRay}
+            disabled={useKaiBlast}
+            onChange={(e) => {
+              setUseKaiRay(e.target.checked);
+              if (e.target.checked) {
+                setUsePsiSurge(false);
+                setUseKaiBlast(false);
+              }
+            }}
+          />
+          Usar Kai-ray nesta rodada (15 de dano direto, -4 Endurance, só uma vez por este combate, substitui o ataque desta rodada — não pode ser combinado com {psiSurgeTier?.name ?? 'Psi-surge'})
         </label>
       )}
 

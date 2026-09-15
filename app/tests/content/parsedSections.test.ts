@@ -278,3 +278,31 @@ describe('book 19 (Wolf\'s Bane) puzzle sections', () => {
     expect(deadEnds).toEqual([89, 93, 158, 221, 222, 242, 269, 301, 303]);
   });
 });
+
+describe('book 20 (The Curse of Naar) sections - final book of the Grand Master phase', () => {
+  const sections = loadSections('tcn');
+
+  it('flags sect239 as a puzzle with a real fallback choice', () => {
+    expect(sections[239].hasPuzzle).toBe(true);
+    expect(sections[239].isDeadEnd).toBe(false);
+    expect(sections[239].choices.length).toBeGreaterThan(0);
+  });
+
+  it('flags sect297 and sect338 as puzzles that are ALSO dead ends with no fallback choice (new pattern: wrong/missing Special Items narrate a failure inline instead of linking to a separate dead-end section)', () => {
+    for (const num of [297, 338]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isDeadEnd, `sect${num}`).toBe(true);
+      expect(sections[num].choices.length, `sect${num}`).toBe(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350) - the Grand Master series concludes here, forward-linking to Book 21 (a new phase, "New Order")', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+
+  it('has exactly the 20 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([13, 25, 55, 56, 96, 126, 128, 136, 171, 172, 189, 209, 231, 241, 262, 289, 297, 325, 338, 346]);
+  });
+});

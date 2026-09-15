@@ -78,6 +78,20 @@ const KAI_BLAST_COST = 4;
 // Grand Crown rank (10 Grand Master Disciplines) is reached.
 const GRAND_WEAPONMASTERY_UNARMED_BONUS = 3;
 const GRAND_CROWN_DISCIPLINE_COUNT = 10;
+// "This ability can [be] used once during a combat to reduce an enemy's ENDURANCE score by 15
+// points. However, use of this Kai-ray will also reduce a Sun Prince's ENDURANCE score by 4 points.
+// It cannot be used if a Sun Prince's ENDURANCE score is 10 or less, and it cannot be used in
+// conjunction with any other form of psychic attack." (imprvdsc.htm, Book 20, Kai-surge at Sun Prince
+// rank). Unlike Kai-blast (usable every round, damage rolled from 2 Random Number Table picks),
+// Kai-ray is a flat, fixed 15 damage, usable only once per whole fight. By design decision, Kai-ray
+// coexists with Kai-blast as an independent third option rather than superseding it - a Sun Prince
+// keeps unlimited Kai-blast AND gains one Kai-ray charge per fight, since the two serve different
+// purposes (repeatable moderate damage vs. a single large one). Same round-replacement rule as
+// Kai-blast (no Combat Ratio/CRT roll, no return damage).
+const KAI_RAY_DAMAGE = 15;
+const KAI_RAY_COST = 4;
+const KAI_RAY_MIN_ENDURANCE = 10;
+const SUN_PRINCE_DISCIPLINE_COUNT = 11;
 // "This potion of strength will increase your COMBAT SKILL by +2 points when swallowed immediately
 // prior to a combat. It lasts for the duration of one combat only." (equipmnt.htm, Book 10). The
 // dose itself is spent via useCombatPotion (disciplines.ts) before the fight starts; this flag is
@@ -97,11 +111,22 @@ export interface CombatRoundOptions {
   useCombatPotion?: boolean;
   /** Player's choice to use Kai-blast this round instead of a normal round. Only relevant once canUseKaiBlast(chart) is true; ignored otherwise. Mutually exclusive with usePsiSurge - Kai-blast wins if both are set. */
   useKaiBlast?: boolean;
+  /** Player's choice to use Kai-ray this round instead of a normal round. Only relevant once canUseKaiRay(chart) is true and it hasn't already been used this fight (tracked by the caller); ignored otherwise. Mutually exclusive with usePsiSurge/useKaiBlast - Kai-ray wins if more than one is set. */
+  useKaiRay?: boolean;
 }
 
 /** Whether the character has reached Sun Lord rank (7 Grand Master Disciplines) with Kai-surge, and can therefore use Kai-blast. */
 export function canUseKaiBlast(chart: ActionChart): boolean {
   return chart.grandMasterDisciplines.includes('KaiSurge') && chart.grandMasterDisciplines.length >= SUN_LORD_DISCIPLINE_COUNT;
+}
+
+/** Whether the character has reached Sun Prince rank (11 Grand Master Disciplines) with Kai-surge, has enough Endurance, and can therefore use Kai-ray. Doesn't track the once-per-fight usage limit - the caller (CombatModal) must not offer this once already used in the current fight. */
+export function canUseKaiRay(chart: ActionChart): boolean {
+  return (
+    chart.grandMasterDisciplines.includes('KaiSurge') &&
+    chart.grandMasterDisciplines.length >= SUN_PRINCE_DISCIPLINE_COUNT &&
+    chart.enduranceCurrent > KAI_RAY_MIN_ENDURANCE
+  );
 }
 
 function isArchmaster(chart: ActionChart): boolean {
@@ -212,6 +237,8 @@ export interface CombatRoundResult {
   psiSurgeCost: number;
   /** Extra Endurance spent this round for using Kai-blast, already reflected in playerLoss/chart. */
   kaiBlastCost: number;
+  /** Extra Endurance spent this round for using Kai-ray, already reflected in playerLoss/chart. */
+  kaiRayCost: number;
   playerKilled: boolean;
   enemyKilled: boolean;
   log: string;
@@ -224,6 +251,42 @@ export function resolveCombatRound(
   rng: Rng = Math.random,
   options: CombatRoundOptions = {},
 ): CombatRoundResult {
+  const kaiRayActive = !!options.useKaiRay && canUseKaiRay(chart);
+
+  if (kaiRayActive) {
+    // Kai-ray replaces the round entirely, same as Kai-blast: no Combat Ratio/CRT lookup, no return
+    // damage from the enemy. Fixed 15 damage (not rolled), fixed 4 Endurance self-cost.
+    const enemyLoss = Math.min(enemy.endurance, KAI_RAY_DAMAGE);
+    const kaiRayCost = KAI_RAY_COST;
+
+    const nextEnemy: Enemy = { ...enemy, endurance: Math.max(0, enemy.endurance - enemyLoss) };
+    const nextChart: ActionChart = {
+      ...chart,
+      enduranceCurrent: Math.max(0, chart.enduranceCurrent - kaiRayCost),
+    };
+    nextChart.isAlive = nextChart.enduranceCurrent > 0;
+
+    const enemyKilled = nextEnemy.endurance <= 0;
+    const playerKilled = nextChart.enduranceCurrent <= 0;
+
+    const log = `Kai-ray: ${enemy.name} loses ${enemyLoss} Endurance, Lone Wolf loses ${kaiRayCost} Endurance.`;
+
+    return {
+      chart: nextChart,
+      enemy: nextEnemy,
+      roll: 0,
+      ratio: 0,
+      enemyLoss,
+      playerLoss: 0,
+      psiSurgeCost: 0,
+      kaiBlastCost: 0,
+      kaiRayCost,
+      playerKilled,
+      enemyKilled,
+      log,
+    };
+  }
+
   const kaiBlastActive = !!options.useKaiBlast && canUseKaiBlast(chart);
 
   if (kaiBlastActive) {
@@ -256,6 +319,7 @@ export function resolveCombatRound(
       playerLoss: 0,
       psiSurgeCost: 0,
       kaiBlastCost,
+      kaiRayCost: 0,
       playerKilled,
       enemyKilled,
       log,
@@ -319,6 +383,7 @@ export function resolveCombatRound(
     playerLoss,
     psiSurgeCost,
     kaiBlastCost: 0,
+    kaiRayCost: 0,
     playerKilled,
     enemyKilled,
     log,
