@@ -4,6 +4,31 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.27.0] — 2026-09-15
+
+Livro 24, *Rune War*, adicionado — **quarta entrega da fase New Order**, com carry-over normal a partir
+do Livro 23. Ver ADR-0007 (seção "Atualização — Livro 24") para o detalhamento completo.
+
+- **Confirmado, via `tssf.htm`, que é uma continuação direta da história** (não uma aventura nova
+  independente como o Livro 21) — a abertura retoma literalmente a cena final do Livro 23 (retorno a
+  Holmgard). Segue a regra normal de desbloqueio: só libera após completar o Livro 23.
+- **Nenhuma Disciplina nova**: mesmo pool de 16 dos Livros 21-23.
+- **Primeira lista de equipamento genuinamente diferente desde o Livro 21**: Quarterstaff foi trocado
+  por Broadsword e Flute por Lute (mesmas categorias, mesma ausência de efeito mecânico) — as demais
+  regras (escolha 5, até 2 armas, ouro +20, mochila até 10, tabela de Arma Kai) permanecem idênticas.
+- Rank "Kai Grand Defender" (8 Disciplinas) ganha conteúdo real (narrativo) em `imprvdsc.htm`,
+  validando de forma cruzada a fórmula de rank com base 5 introduzida no Livro 21.
+- Carry-over do Livro 23 confirmado normal (mantém CS/EP, Itens Especiais, Arma Kai, Nome Kai, Armas
+  normais e Itens de Mochila; ganha +1 Disciplina Grand Master e +1 CS/+2 EP).
+- 350 seções, 2 becos sem saída marcados no original, mais 4 seções de "vitória pírrica" (a missão é
+  cumprida mas o personagem morre) que o livro-fonte não marca com a classe de beco sem saída — uma
+  peculiaridade de conteúdo já coberta pela lógica existente do motor (qualquer final que não seja a
+  seção canônica do livro já é tratado como derrota), sem exigir mudança de código. 3 seções-quebra-
+  cabeça com fallback de escolha. Final canônico único em `sect350`, apontando para o Livro 25 "Trail
+  of the Wolf".
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.26.0] — 2026-09-15
 
 Livro 23, *Mydnight's Hero*, adicionado — **terceira entrega da fase New Order**, com carry-over normal

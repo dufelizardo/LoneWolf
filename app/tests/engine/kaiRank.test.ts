@@ -102,6 +102,12 @@ describe('getRankForChart', () => {
     chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery', 'Elementalism'];
     expect(getRankForChart(chart)).toBe('Kai Grand Sentinel');
   });
+
+  it('a character who completed Books 21, 22 and 23 (8 Disciplines) carried into Book 24 maps to "Kai Grand Defender", matching Book 24 imprvdsc.htm\'s real content tier', () => {
+    const chart = createFreshCharacterForBook('rw', () => 0);
+    chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery', 'Elementalism', 'Bardsmanship'];
+    expect(getRankForChart(chart)).toBe('Kai Grand Defender');
+  });
 });
 
 describe('getGrandMasterBaseline', () => {

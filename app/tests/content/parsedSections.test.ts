@@ -372,3 +372,25 @@ describe('book 23 (Mydnight\'s Hero) sections - third book of the New Order phas
     expect(deadEnds).toEqual([36, 147, 162, 225, 319, 339, 343]);
   });
 });
+
+describe('book 24 (Rune War) sections - fourth book of the New Order phase', () => {
+  const sections = loadSections('rw');
+
+  it('flags sect148, sect158 and sect297 as puzzles, each with a real fallback choice', () => {
+    for (const num of [148, 158, 297]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isDeadEnd, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length, `sect${num}`).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly the 2 known dead-end sections (marked class="deadend" in the source)', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([134, 229]);
+  });
+
+  it('has the canonical ending at the final section (350), plus 4 non-canonical "pyrrhic victory" sections (42, 111, 267, 300) where Lone Wolf dies after completing the mission - a source-content quirk (these lack the class="deadend" marker every other death section uses) already handled by GameScreen.tsx\'s existing "non-final ending -> treated as a death" fallback, same as tck sect61', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number).sort((a, b) => a - b);
+    expect(endings).toEqual([42, 111, 267, 300, 350]);
+  });
+});
