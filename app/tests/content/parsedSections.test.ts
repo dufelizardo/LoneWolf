@@ -539,3 +539,25 @@ describe('book gsw (Grey Star the Wizard) sections - first book of the World of 
     ]);
   });
 });
+
+describe('book tfc (The Forbidden City) sections - second book of the Grey Star mini-series (World of Lone Wolf), a direct continuation of Book 1 (gsw sect350 ends mid-riddle, this book\'s sect1 resolves it in its first sentence)', () => {
+  const sections = loadSections('tfc');
+
+  it('has zero puzzle sections', () => {
+    const puzzles = Object.values(sections).filter((s) => s.hasPuzzle);
+    expect(puzzles).toHaveLength(0);
+  });
+
+  it('has exactly one real ending, at the canonical final section (310)', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([310]);
+  });
+
+  it('has exactly the 26 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([
+      3, 33, 56, 70, 90, 98, 102, 110, 127, 128, 152, 167, 179, 193, 202, 213, 220, 236, 239, 242, 244, 260, 261, 263,
+      277, 280,
+    ]);
+  });
+});

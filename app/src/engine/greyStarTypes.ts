@@ -43,6 +43,11 @@ export interface GreyStarActionChart {
    * either direction, only ENDURANCE <= 0 ends the adventure.
    */
   willpowerCurrent: number;
+  /** The WILLPOWER rolled at character creation (before any spend or one-time gift bonus), kept
+   * immutable for the rest of the adventure. Only needed for Book 2+'s carry-over: gamerulz.htm offers
+   * a method that recalculates WILLPOWER from "your original score from the beginning of" the previous
+   * book, not its current (likely near-zero) value. */
+  willpowerStarting: number;
   enduranceCurrent: number;
   enduranceMax: number;
   /** Exactly five of the seven ALL_MAGICAL_POWERS, chosen once at creation. */

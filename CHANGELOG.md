@@ -4,6 +4,24 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.34.0] — 2026-09-15
+
+Livro 2 da mini-série Grey Star, *The Forbidden City*, adicionado — **continuação direta do Livro 1**
+(confirmado: a seção final do Livro 1 termina no meio de uma charada que a seção 1 deste livro resolve
+na primeira frase). Ver ADR-0008 (seção "Atualização — Livro 2") para o detalhamento completo.
+
+- **Carry-over de WILLPOWER com 3 métodos à escolha do jogador**: o livro reconhece que simplesmente
+  somar 10 ao WILLPOWER atual "não parece justo" (tende a estar baixo ao fim de uma aventura) e oferece
+  2 alternativas — rolar um WILLPOWER novo, ou reaproveitar o WILLPOWER **inicial** do livro anterior.
+  Novo campo persistido `willpowerStarting` (`SAVE_VERSION`: 9 → 10).
+- Ao transferir personagem, escolhe **mais um** Magical Power (dos 2 que sobraram, dos 7 totais) —
+  ganha o Herb Pouch agora se o poder novo for Alchemy e ainda não tivesse.
+- **Primeira diferença real de equipamento entre livros de Grey Star**: este livro não tem a tabela de
+  presente único da Ilha de Lorn que o Livro 1 tinha — criado `greyStarBookEquipment.ts` (config mínima
+  por-livro, revisitando a simplificação original da ADR-0008).
+- Zero mudança de parser (mesmo conjunto de tags do Livro 1, mesmo padrão de ilustração, CRT
+  byte-idêntico). 310 seções, 26 becos sem saída, zero seções-quebra-cabeça.
+
 ## [0.33.0] — 2026-09-15
 
 **Nova fase: "World of Lone Wolf"** — Livro 1, *Grey Star the Wizard*, adicionado. Diferente de toda

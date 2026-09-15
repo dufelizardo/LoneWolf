@@ -139,7 +139,7 @@ linhas que já não têm nenhuma superposição real de regras.
 - **`greyStarBookEquipment.ts` separado, seguindo o padrão de `bookEquipment.ts` (rejeitado por ora)**:
   o plano original cogitava isso, mas com um único livro na fase o kit fixo cabe direto em
   `greyStarCharacter.ts` de forma mais legível: revisitar se/quando o Livro 2 (*The Forbidden City*)
-  precisar de configuração por-livro.
+  precisar de configuração por-livro. **Revisitado no Livro 2 — ver "Atualização — Livro 2" abaixo.**
 
 ## Consequências
 
@@ -155,3 +155,85 @@ linhas que já não têm nenhuma superposição real de regras.
   existir na numeração `gs/0Ncode/`): reaproveitar `GreyStarActionChart`/`greyStarCombat.ts` enquanto as
   regras continuarem as mesmas, só generalizando (config por-livro, ex.) quando um livro futuro realmente
   divergir — mesmo critério de "não generalizar antes de ter 2 casos reais" já usado no resto do projeto.
+
+## Atualização — Livro 2 (The Forbidden City)
+
+O Livro 2 (*The Forbidden City*, `world_of_lone_wolf/acp/en/xhtml/gs/02tfc/`) é a segunda entrega da
+mini-série Grey Star — mas, ao contrário do Livro 1 (uma entrada independente na história), **este é
+uma continuação direta**: confirmado lendo `tssf.htm` na íntegra e comparando com a seção final do
+Livro 1 (`gsw` `sect350`) — a seção 350 termina no meio da charada dos Kundi ("Wise Shianti and Kundi
+man... But what does Kundi see?") e `sect1.htm` deste livro resolve essa mesma charada na primeira
+frase ("Of course! ... The Kundi man would see himself!"). É a mesma cena, sem salto temporal.
+
+### Carry-over de WILLPOWER — mecânica genuinamente nova, primeira vez fora das 4 fases Lone Wolf
+
+`gamerulz.htm` confirma um carry-over real a partir do Livro 1, mas com uma mecânica sem equivalente em
+Kai/Magnakai/Grand Master/New Order: o texto principal diz "add 10 to your WILLPOWER total", mas a
+própria nota de rodapé 1 reconhece que isso "não parece justo" (WILLPOWER tende a estar baixo ao fim de
+um livro, já gasto em magia) e oferece 2 alternativas — rolar um WILLPOWER novo (20+d10) + 10, ou usar
+o WILLPOWER **inicial** do livro anterior (o valor rolado na criação, antes de qualquer gasto) + 10 —
+deixando a escolha do método com o jogador. Isso exigiu um campo novo persistido,
+`GreyStarActionChart.willpowerStarting` (a rolagem de criação, imutável durante toda a aventura,
+distinto de `willpowerCurrent`) — `SAVE_VERSION`: 9 → 10.
+
+A nova função `carryOverGreyStarCharacterToBook(previous, bookId, willpowerMethod, rng)` em
+`greyStarCharacter.ts` calcula o novo WILLPOWER pelos 3 métodos e propaga tudo o mais (`combatSkill`,
+`enduranceCurrent`/`Max`, `magicalPowers`, `weapons`, `backpackItems`, `herbPouchItems`,
+`specialItems`, `nobles`) via spread, sem mudança — apesar do texto de `gamerulz.htm` só mencionar
+literalmente "armas e Itens Especiais" no carry-over, a própria errata do livro (nota da seção 17, sobre
+um Bundle of Azawood Leaves comprado no Livro 1 e usado neste livro) confirma na prática que Itens de
+Mochila/Herb Pouch também sobrevivem — mesmo padrão de "carry-over completo" já usado por
+`carryOverCharacterToBook` (`character.ts`) pras 4 fases Lone Wolf.
+
+### Mais um Magical Power no carry-over
+
+`gamerulz.htm`: "you may add 10 to your WILLPOWER total and choose one more Magical Power" — nova
+função `addExtraMagicalPower(chart, power)` valida que o personagem tem exatamente 5 poderes (nunca
+menos, nunca mais) e acrescenta o 6º, dos 2 que sobraram dos 7 totais. Se o poder novo for Alchemy e o
+personagem ainda não tinha, ganha o Herb Pouch agora — a lista de 4 itens iniciais foi extraída pro
+helper privado `grantHerbPouchStartingContents`, reaproveitado tanto por essa função nova quanto pela
+`chooseMagicalPowers` já existente (evita duplicar a lista).
+
+### `greyStarBookEquipment.ts` criado — a simplificação original da ADR revisitada
+
+A ADR original deliberadamente não criou um arquivo de config por-livro (só havia 1 livro, o kit era
+totalmente fixo). O Livro 2 introduziu a primeira diferença real: seu `equipmnt.htm` **não tem** a
+tabela de presente único (Jewelled Dagger/Magic Talisman/Vial of Laumspur) que o Livro 1 tinha — aquele
+presente era especificamente a despedida dos Mestres Shianti na Ilha de Lorn, só faz sentido na primeira
+aventura. Criado `app/src/data/greyStarBookEquipment.ts`, deliberadamente muito mais simples que
+`bookEquipment.ts` (só um booleano `grantsStartingGift`, sem `chooseOptions`/`kaiWeaponTable`/
+`goldRollBonus` — o kit de Grey Star continua fixo em todo o resto).
+
+### Zero mudança de parser — confirmado por comparação direta
+
+Diferente do Livro 1 (que exigiu várias mudanças em `parseContent.ts`), o Livro 2 não precisou de
+nenhuma: o conjunto de tags HTML usado nas 310 seções (`a, blockquote, br, cite, div, em, h3, i, img,
+li, p, span, sup, table, tbody, td, tr, ul`) é **idêntico** ao já usado (e já aceito) pelo Livro 1 —
+nenhuma tag nova, incluindo `cite`/`i`/`sup` que já eram degradadas pro texto puro desde o Livro 1. O
+padrão de ilustração (`div.illustration img[alt="[illustration]"]`) é o mesmo. As imagens
+`crtneg.png`/`crtpos.png` são **byte-idênticas** (md5 conferido) às do Livro 1 — `getCombatResult` de
+`crt.ts` continua reaproveitado sem nenhuma mudança.
+
+### UI: fluxo de criação de personagem ramificado por `creationMode`
+
+`GreyStarCharacterCreationScreen.tsx` ganhou os mesmos props `creationMode`/`previousChart` já usados
+por `CharacterCreationScreen.tsx` (par Lone Wolf) — fluxo fresco (rola atributos, escolhe 5 poderes,
+presente condicional a `getGreyStarBookEquipment(book.id).grantsStartingGift`) ou fluxo de transferência
+(sem rolagem, mostra CS/EP/WILLPOWER herdados, seletor dos 3 métodos de WILLPOWER, escolha do 6º poder).
+`BookIntroScreen.tsx`'s prop `previousChart` foi alargado de `ActionChart | null` pra
+`ActionChart | GreyStarActionChart | null` (mudança de tipo só — o componente só testa truthiness, não
+lê campos específicos de nenhum dos dois tipos).
+
+### Verificação do carry-over sem jogar 350 seções
+
+Jogar o Livro 1 inteiro só pra testar o carry-over do Livro 2 não é prático. Verificado via Playwright
+injetando um save sintético em `localStorage` (mesmo formato de `SaveGame`/`CampaignProgress` já usado
+por `persistence.ts`) com uma entrada `gsw` completa — confirmado: tela de seleção mostra o Livro 1 com
+"✓" e desbloqueia o Livro 2, a introdução oferece "Transferir personagem"/"Começar do zero", o fluxo de
+transferência mostra os 3 métodos de WILLPOWER e só as 2 Magical Powers realmente restantes, e o
+personagem resultante chega à Seção 1 do Livro 2 com os itens herdados (ex: Jewelled Dagger) intactos.
+
+### Sem mudança de código de combate
+
+Mecânica de combate inalterada (mesmas penalidades de arma, mesmo multiplicador de WILLPOWER) —
+`greyStarCombat.ts` não precisou de nenhuma mudança, sem novos testes de combate.

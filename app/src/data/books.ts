@@ -75,6 +75,12 @@ export const BOOKS: BookMeta[] = [
   // is a required field but unused here - Grey Star's fixed-kit creation flow never calls
   // bookEquipment.ts/chooseEquipmentOptions (see greyStarBookEquipment.ts instead).
   { id: 'gsw', code: '01gstw', title: 'Grey Star the Wizard', order: 30, equipmentMode: 'choose-five', contentRoot: 'world_of_lone_wolf', phase: 'world_of_lone_wolf', sectionCount: 350, finalSection: 350, allowsCarryOver: false, contentCodeSegment: 'gs', extraIntroFile: 'coming.htm' },
+  // Book 2 of the Grey Star mini-series - a direct continuation of Book 1 (confirmed: gsw's sect350
+  // ends mid-riddle, this book's sect1 resolves that exact riddle in its first sentence), unlike Book
+  // 1 itself which was a standalone entry point. allowsCarryOver left at its true default - gamerulz.htm
+  // describes a real carry-over path from gsw. Source folder is named "acp", not "tfc", hence
+  // contentDirName. equipmentMode is a placeholder like gsw's - unused (see greyStarBookEquipment.ts).
+  { id: 'tfc', code: '02tfc', title: 'The Forbidden City', order: 31, equipmentMode: 'choose-five', contentRoot: 'world_of_lone_wolf', phase: 'world_of_lone_wolf', sectionCount: 310, finalSection: 310, contentDirName: 'acp', contentCodeSegment: 'gs', extraIntroFile: 'coming.htm' },
 ];
 
 export function getBook(id: string): BookMeta {

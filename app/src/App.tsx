@@ -113,7 +113,7 @@ function App() {
               // previous book = the one whose order is exactly one less than this book's
               return getBook(c.bookId).order === book.order - 1;
             });
-            return (previousEntry as ActionChart | undefined) ?? null;
+            return (previousEntry as ActionChart | GreyStarActionChart | undefined) ?? null;
           })()}
           onContinue={(mode) => {
             setCreationMode(mode);
@@ -125,6 +125,14 @@ function App() {
       {mode === 'create' && activeBookId && isGreyStarBook(activeBookId) && (
         <GreyStarCharacterCreationScreen
           book={getBook(activeBookId)}
+          creationMode={creationMode}
+          previousChart={
+            creationMode === 'carryover' && getBook(activeBookId).allowsCarryOver !== false
+              ? (Object.values(campaign.completedBooks).find(
+                  (c) => getBook(c.bookId).order === getBook(activeBookId).order - 1,
+                ) as GreyStarActionChart | undefined) ?? null
+              : null
+          }
           onReady={(newChart) => {
             setGreyStarChart(newChart);
             setMode('playing');
