@@ -4,6 +4,15 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.22.0] — 2026-09-15
+
+Tela de seleção de livros agora agrupa os títulos por fase — Kai, Magnakai, Grand Master, New Order, e
+um placeholder "World of Lone Wolf (ainda não implementado)" pra fase seguinte, que ainda não tem
+nenhum livro. A lógica de desbloqueio (o próximo livro libera assim que o anterior é completado) não
+mudou — já funcionava corretamente em toda transição de fase, só a apresentação visual mudou.
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.21.0] — 2026-09-15
 
 Livro 20, *The Curse of Naar*, adicionado — oitava e **última entrega da fase Grand Master**. A fase
