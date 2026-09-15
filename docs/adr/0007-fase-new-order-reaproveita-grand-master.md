@@ -4,8 +4,10 @@
 
 **Implementada.** Livros 21 (*Voyage of the Moonstone*), 22 (*The Buccaneers of Shadaki*), 23
 (*Mydnight's Hero*), 24 (*Rune War*), 25 (*Trail of the Wolf*), 26 (*The Fall of Blood Mountain*), 27
-(*Vampirium*) e 28 (*The Hunger of Sejanoz*) jogáveis de ponta a ponta — oito primeiras entregas da fase
-New Order, sucedendo a fase Grand Master (Livros 13-20, completa).
+(*Vampirium*), 28 (*The Hunger of Sejanoz*) e 29 (*The Storms of Chai*) jogáveis de ponta a ponta — nove
+primeiras entregas da fase New Order, sucedendo a fase Grand Master (Livros 13-20, completa). **O Livro
+30 ("Dead in the Deep") nunca será publicável pelo Project Aon** (confirmado: sem licença, sem planos
+de obtê-la) — o Livro 29 é, portanto, provavelmente a última entrega implementável desta fase.
 
 ## Contexto
 
@@ -406,3 +408,59 @@ pra "Sun Thane" corretamente após a escolha da Disciplina extra).
 Nenhuma Disciplina nova, mesma lista de equipamento e tabela de Arma Kai do Livro 27. 12 Disciplinas
 (base 5, índice 7) continua bem abaixo dos limiares de Grand Crown (índice 9) e Sun Prince (índice 10)
 em `combat.ts`. Sem mudança de `SAVE_VERSION`.
+
+## Atualização — Livro 29
+
+O Livro 29 (*The Storms of Chai*) é a nona entrega da fase New Order — e a primeira de uma era de
+produção real radicalmente diferente das anteriores.
+
+### `gamerulz.htm` continua sendo o critério decisivo, mesmo com moldura/produção totalmente diferentes
+
+`tssf.htm` deste livro tem um salto narrativo de **17 anos** (Livro 28 era MS 5085, este é MS 5102),
+um monastério novo em "Lorn", personagens inéditos (Rei Tor IV, já falecido; novos Grão-Mestres), e é
+de uma produção real de **2016** — copyright só de "Joe Dever" (sem "Brian Williams"), mapa por
+Francesco Mattioli, arte interior por Brian Williams e Giuseppe Camuncoli — bem diferente de
+1994-1998. Isso levantou a dúvida se seria um sistema de regras diferente.
+
+**Investigação direta de `gamerulz.htm`/`discplnz.htm` confirmou que não**: mecanicamente é idêntico a
+todo livro anterior — mesmo cálculo de CS (+25)/EP (+30), mesmo carry-over normal "Books 21–28", mesmas
+16 Disciplinas, mesma regra de 5 pra início do zero, mesma progressão de +1 Disciplina/+1 CS/+2 EP por
+aventura completada. **Reafirma o critério já estabelecido no Livro 26**: a fonte de verdade pra decidir
+`allowsCarryOver` é sempre `gamerulz.htm`, nunca a moldura narrativa do `tssf.htm` nem a era de
+produção real do material-fonte.
+
+### Confirmação cruzada do rank "Grand Thane"
+
+`imprvdsc.htm` ganha o próximo patamar de conteúdo real: **Grand Thane** (índice 8 do array
+`GRAND_MASTER_RANKS`). Um personagem que completou os Livros 21-28 sequencialmente chega ao Livro 29
+com 13 Disciplinas Grand Master, e `getGrandMasterRank(13, 5)` já produzia esse rank antes mesmo dessa
+confirmação existir — validado também por Playwright manual (rank atualiza de "Sun Thane" pra "Grand
+Thane" corretamente). A entrada de Kai-surge neste rank reafirma a pendência de design já registrada
+(ADR-0006, issue #61/JOGOS-92) — agora "atacar até **10** inimigos simultaneamente" (o número escala
+com o rank, mas a ambiguidade mecânica é a mesma) — continua deliberadamente não implementada.
+
+### Recorrência da peculiaridade de morte não marcada (vista antes no Livro 24)
+
+A seção 253 narra a morte do personagem ("Tragically, your life and your mission end here...") sem a
+classe `class="deadend"` — mesma categoria da peculiaridade encontrada no Livro 24. Diferente do Livro
+24 (que ainda tinha outras seções com `deadend` marcado corretamente em outro lugar do livro), **o
+Livro 29 não tem NENHUM `class="deadend"` em lugar nenhum** — a única forma de morrer no livro
+(seção 253) é dessa forma não marcada. Isso expôs uma lacuna no teste genérico
+`describe.each(BOOKS)` de `parsedSections.test.ts`, que assumia "todo livro tem pelo menos um dead-end
+marcado" — generalizado pra também aceitar finais não-canônicos (que `GameScreen.tsx` já trata como
+derrota) como evidência válida de "o livro tem uma forma de perder". Sem mudança de código de
+produção, só do teste.
+
+### Sem mudança de código de produção
+
+Nenhuma Disciplina nova, mesma lista de equipamento e tabela de Arma Kai do Livro 28. 13 Disciplinas
+(base 5, índice 8) continua abaixo do limiar de Sun Prince (índice 10) em `combat.ts`. Sem mudança de
+`SAVE_VERSION`.
+
+### Fim provável da fase New Order implementável
+
+`new_order/dd/` (conteúdo do Livro 30, "Dead in the Deep") contém apenas um `.txt` informativo: *"Project
+Aon has not been licensed to publish the text of this book, and there are no plans to do so."* —
+diferente de todo caso anterior de "arquivo `.zip` ainda não extraído", este é um caso permanente de
+indisponibilidade. Isso significa que o Livro 29 é, com alta probabilidade, a última entrega desta fase
+que algum dia será implementável nesta aplicação.

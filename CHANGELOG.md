@@ -4,6 +4,28 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.32.0] — 2026-09-15
+
+Livro 29, *The Storms of Chai*, adicionado — **nona entrega da fase New Order**, com carry-over normal
+a partir do Livro 28. Ver ADR-0007 (seção "Atualização — Livro 29") para o detalhamento completo.
+
+- **Produção real de uma era radicalmente diferente**: salto narrativo de 17 anos (Livro 28 era MS
+  5085, este é MS 5102), monastério novo, copyright de 2016 (só "Joe Dever", sem "Brian Williams").
+  Apesar disso, `gamerulz.htm`/`discplnz.htm` confirmam que as regras são **mecanicamente idênticas**
+  a todo livro anterior — carry-over normal, mesmas 16 Disciplinas, mesma regra de 5 pra início do
+  zero. Reforça o critério já estabelecido: `gamerulz.htm` decide, não a moldura narrativa.
+- Rank "Grand Thane" (13 Disciplinas) ganha conteúdo real (narrativo) em `imprvdsc.htm`, validando de
+  forma cruzada a fórmula de rank com base 5 introduzida no Livro 21.
+- **Recorrência da peculiaridade de morte não marcada** (vista antes no Livro 24): a seção 253 narra a
+  morte do personagem sem a classe `deadend` — já coberto pela lógica existente do motor, sem mudança
+  de código, só documentado em teste (que também precisou ser generalizado, já que este é o primeiro
+  livro sem NENHUM beco sem saída marcado).
+- Mesma lista de equipamento e tabela de Arma Kai do Livro 28. 350 seções, 3 seções-quebra-cabeça.
+- **O Livro 30 "Dead in the Deep" nunca será publicável pelo Project Aon** (sem licença, sem planos de
+  obtê-la) — o Livro 29 é, portanto, provavelmente a última entrega implementável da fase New Order.
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.31.0] — 2026-09-15
 
 Livro 28, *The Hunger of Sejanoz*, adicionado — **oitava entrega da fase New Order**, com carry-over

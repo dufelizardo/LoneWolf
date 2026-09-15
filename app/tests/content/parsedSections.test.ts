@@ -35,11 +35,16 @@ describe.each(BOOKS)('parsed sections for book "$id" ($title)', (book) => {
     }
   });
 
-  it('has at least one dead end, and marks the canonical final section as an ending', () => {
+  it('has at least one dead end (or a non-canonical ending serving the same purpose), and marks the canonical final section as an ending', () => {
     const deadEndCount = Object.values(sections).filter((s) => s.isDeadEnd).length;
-    const endingCount = Object.values(sections).filter((s) => s.isEnding).length;
-    expect(deadEndCount).toBeGreaterThanOrEqual(1);
-    expect(endingCount).toBeGreaterThanOrEqual(1);
+    const endings = Object.values(sections).filter((s) => s.isEnding);
+    // A death that lacks the class="deadend" marker in the source (e.g. Book 24's sect42/111/267/300,
+    // Book 29's sect253) is parsed as isEnding rather than isDeadEnd - GameScreen.tsx already treats
+    // any non-canonical-final isEnding section as a death, so it counts here too. Book 29 is the first
+    // book with zero marked dead-ends at all (its one death, sect253, is entirely of this kind).
+    const nonCanonicalEndingCount = endings.filter((s) => s.number !== book.finalSection).length;
+    expect(deadEndCount + nonCanonicalEndingCount).toBeGreaterThanOrEqual(1);
+    expect(endings.length).toBeGreaterThanOrEqual(1);
     expect(sections[book.finalSection]?.isEnding).toBe(true);
   });
 });
@@ -478,5 +483,27 @@ describe('book 28 (The Hunger of Sejanoz) sections - eighth book of the New Orde
   it('has exactly the 4 known dead-end sections', () => {
     const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
     expect(deadEnds).toEqual([23, 93, 226, 271]);
+  });
+});
+
+describe('book 29 (The Storms of Chai) sections - ninth book of the New Order phase, from a much later (2016) real-world production but mechanically identical rules', () => {
+  const sections = loadSections('tsc');
+
+  it('flags sect62, sect291 and sect314 as puzzles, each with a real fallback choice', () => {
+    for (const num of [62, 291, 314]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isDeadEnd, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length, `sect${num}`).toBeGreaterThan(0);
+    }
+  });
+
+  it('has zero sections marked with the deadend class', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd);
+    expect(deadEnds).toHaveLength(0);
+  });
+
+  it('has the canonical ending at the final section (350), plus one non-canonical death (253) that lacks the class="deadend" marker every other death section in the series uses - the same source-content quirk seen in Book 24, already handled by GameScreen.tsx\'s existing "non-final ending -> treated as a death" fallback', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number).sort((a, b) => a - b);
+    expect(endings).toEqual([253, 350]);
   });
 });

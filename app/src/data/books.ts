@@ -58,6 +58,11 @@ export const BOOKS: BookMeta[] = [
   { id: 'v', code: '27v', title: 'Vampirium', order: 27, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 350, finalSection: 350, initialDisciplineCount: 5 },
   // First New Order book with a section count other than 350 - confirmed via direct file count.
   { id: 'ths', code: '28thos', title: 'The Hunger of Sejanoz', order: 28, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 300, finalSection: 300, initialDisciplineCount: 5 },
+  // Real production is a much later (2016) release with a 17-year in-story time skip, but
+  // gamerulz.htm/discplnz.htm confirm the rules are mechanically identical - normal carry-over
+  // applies. Book 30 ("Dead in the Deep") is confirmed permanently unavailable (Project Aon has no
+  // license to publish it), so this is likely the last implementable book in the New Order phase.
+  { id: 'tsc', code: '29tsoc', title: 'The Storms of Chai', order: 29, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 350, finalSection: 350, initialDisciplineCount: 5 },
 ];
 
 export function getBook(id: string): BookMeta {
