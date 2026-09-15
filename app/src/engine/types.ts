@@ -1,3 +1,5 @@
+import type { GreyStarActionChart } from './greyStarTypes';
+
 export type Discipline =
   | 'Camouflage'
   | 'Hunting'
@@ -239,11 +241,16 @@ export interface Enemy {
   mindblastImmune?: boolean;
 }
 
-export const SAVE_VERSION = 8;
+export const SAVE_VERSION = 9;
 
-/** The ActionChart snapshot as it stood the moment a book's canonical ending was reached. */
+/**
+ * The ActionChart snapshot as it stood the moment a book's canonical ending was reached. Widened to
+ * also accept GreyStarActionChart (world_of_lone_wolf phase) - discriminate at usage sites via
+ * getBook(chart.bookId).phase === 'world_of_lone_wolf' rather than adding a `kind` field to either
+ * chart type (ActionChart is used throughout the app without expecting one).
+ */
 export interface CampaignProgress {
-  completedBooks: Record<string, ActionChart>;
+  completedBooks: Record<string, ActionChart | GreyStarActionChart>;
 }
 
 export function createEmptyCampaign(): CampaignProgress {
@@ -253,5 +260,5 @@ export function createEmptyCampaign(): CampaignProgress {
 export interface SaveGame {
   saveVersion: number;
   campaign: CampaignProgress;
-  chart: ActionChart | null;
+  chart: ActionChart | GreyStarActionChart | null;
 }

@@ -1,10 +1,10 @@
 export type EquipmentMode = 'random-one' | 'choose-two' | 'choose-six' | 'choose-four' | 'choose-five';
 
 /** Which top-level content directory this book's raw XHTML lives under (a filesystem concern). */
-export type ContentRoot = 'kai' | 'magnakai' | 'grand_master' | 'new_order';
+export type ContentRoot = 'kai' | 'magnakai' | 'grand_master' | 'new_order' | 'world_of_lone_wolf';
 
-/** Which set of game rules (Disciplines, ranks) this book uses (a rules concern, kept separate from ContentRoot even though the two always move together today). */
-export type Phase = 'kai' | 'magnakai' | 'grand_master' | 'new_order';
+/** Which set of game rules (Disciplines, ranks) this book uses (a rules concern, kept separate from ContentRoot even though the two always move together today). "world_of_lone_wolf" covers spin-off sub-series (e.g. Grey Star the Wizard) with their own wholly separate character/combat system - see greyStarTypes.ts/greyStarCombat.ts, kept deliberately out of the shared ActionChart/combat.ts used by the other four phases. */
+export type Phase = 'kai' | 'magnakai' | 'grand_master' | 'new_order' | 'world_of_lone_wolf';
 
 export interface BookMeta {
   id: string;
@@ -24,6 +24,10 @@ export interface BookMeta {
   initialDisciplineCount?: number;
   /** Whether a character can be carried over FROM the immediately preceding book (by order) INTO this one. Defaults to true - every phase transition so far (Book 6 into Magnakai, Book 13 into Grand Master) has explicit carry-over rules in its own gamerulz.htm (keep CS/EP, apply a Special Item whitelist, etc.), so carryOverCharacterToBook handles them. Book 21 (New Order) is the first book whose own rules give NO carry-over path at all - CS/EP/Disciplines/equipment are all rolled fresh, with zero reference to a Book 20 Action Chart - so it sets this to false, hiding the "Transferir personagem" option instead of silently offering a transfer the source material never describes. */
   allowsCarryOver?: boolean;
+  /** Overrides the "lw" path segment in parseContent.ts's contentDirFor (`xhtml/<segment>/<code>`). Only Grey Star the Wizard (world_of_lone_wolf) uses "gs" here - every Lone Wolf-series book's source content lives under "xhtml/lw/" regardless of phase. */
+  contentCodeSegment?: string;
+  /** An earlier frontmatter file (relative to the book's content dir) whose sanitized body is prepended to tssf.htm's when building book-intros.json. Only Grey Star the Wizard has one ("coming.htm", "Of the Coming of Grey Star") - every other book's tssf.htm is the sole intro page. */
+  extraIntroFile?: string;
 }
 
 export const BOOKS: BookMeta[] = [
@@ -63,6 +67,14 @@ export const BOOKS: BookMeta[] = [
   // applies. Book 30 ("Dead in the Deep") is confirmed permanently unavailable (Project Aon has no
   // license to publish it), so this is likely the last implementable book in the New Order phase.
   { id: 'tsc', code: '29tsoc', title: 'The Storms of Chai', order: 29, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 350, finalSection: 350, initialDisciplineCount: 5 },
+  // First book of the "World of Lone Wolf" spin-off phase - a wholly new, independent story (a
+  // different protagonist, Grey Star, not a Kai of Lone Wolf's order) with its own character/combat
+  // system (see greyStarTypes.ts/greyStarCombat.ts). allowsCarryOver: false + always-unlocked, same
+  // treatment as Book 21 - confirmed via tssf.htm this is a standalone entry point, not a continuation
+  // of any numbered Lone Wolf book, despite sharing Magnamund lore (Moonstone, Shadaki). equipmentMode
+  // is a required field but unused here - Grey Star's fixed-kit creation flow never calls
+  // bookEquipment.ts/chooseEquipmentOptions (see greyStarBookEquipment.ts instead).
+  { id: 'gsw', code: '01gstw', title: 'Grey Star the Wizard', order: 30, equipmentMode: 'choose-five', contentRoot: 'world_of_lone_wolf', phase: 'world_of_lone_wolf', sectionCount: 350, finalSection: 350, allowsCarryOver: false, contentCodeSegment: 'gs', extraIntroFile: 'coming.htm' },
 ];
 
 export function getBook(id: string): BookMeta {
@@ -87,5 +99,5 @@ export const PHASE_SECTIONS: PhaseSection[] = [
   { phase: 'magnakai', label: 'Magnakai' },
   { phase: 'grand_master', label: 'Grand Master' },
   { phase: 'new_order', label: 'New Order' },
-  { phase: null, label: 'World of Lone Wolf (ainda não implementado)' },
+  { phase: 'world_of_lone_wolf', label: 'World of Lone Wolf' },
 ];

@@ -4,6 +4,40 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.33.0] — 2026-09-15
+
+**Nova fase: "World of Lone Wolf"** — Livro 1, *Grey Star the Wizard*, adicionado. Diferente de toda
+entrega anterior desta sessão, **não é uma continuação numérica** da série principal: é um spin-off
+independente (protagonista Grey Star, um mago Shianti; concepção de Joe Dever e Gary Chalk, texto de Ian
+Page, 1985), com numeração própria reiniciada no Livro 1 e um sistema de personagem/combate genuinamente
+diferente. Ver ADR-0008 para o detalhamento completo.
+
+- **3 atributos em vez de 2**: COMBAT SKILL, ENDURANCE e a novidade **WILLPOWER** (sem teto — pode subir
+  acima do inicial e cair abaixo de zero), gasto para amplificar dano em combate.
+- **Combate com multiplicador de WILLPOWER**: ao empunhar o Wizard's Staff com WILLPOWER > 0, o jogador
+  escolhe quantos pontos gastar por rodada; o dano ao inimigo é multiplicado por esse número. Penalidade
+  de arma sem o Staff em uso: -6 com outra arma (ou o Staff sem WILLPOWER), -8 desarmado.
+- **"Magical Powers"**: 7 poderes fixos, escolhe 5 no início, sem progressão nenhuma neste livro —
+  diferente de toda Disciplina Kai/Magnakai/Grand Master/New Order, que cresce com o rank. Escolher
+  Alchemy concede um Herb Pouch (3º container de inventário).
+- **Equipamento fixo** (não "escolha N de uma lista"): kit inicial fixo + um presente único
+  escolha-1-de-3 dos Mestres Shianti. Moeda ("Nobles") começa em 0, só ganha matando inimigos.
+- **Arquitetura paralela isolada**: `GreyStarActionChart`, motor e telas próprios, sem tocar
+  `ActionChart` nem nenhum componente das 4 fases já existentes — decisão explícita do usuário, ver
+  ADR-0008. Sempre desbloqueado na seleção de livros, como o Livro 21 (sem carry-over).
+- 350 seções, 27 becos sem saída, 2 seções-quebra-cabeça, aponta pro Livro 2 da série Grey Star ("The
+  Forbidden City", fora do escopo desta entrega).
+
+`SAVE_VERSION`: 8 → 9 (forma do save alargada para aceitar `GreyStarActionChart` — sem migração de
+saves antigos, mesmo padrão de todo bump anterior).
+
+**Efeito colateral nos 29 livros já implementados**: o parser passou a preservar `<blockquote>`/`<ul>`/
+`<li>`/`<dl>`/`<dt>`/`<dd>` (necessários pras seções de Grey Star) em vez de descartá-los — regenerar
+`sections.*.json` pra todos os livros restaura a formatação real de listas de itens e versos/charadas
+que antes eram achatados em texto corrido. Mudança puramente estrutural (superset mais permissivo),
+sem nenhuma mudança de conteúdo — validado pelos 538 testes já existentes, que continuaram passando
+inalterados.
+
 ## [0.32.0] — 2026-09-15
 
 Livro 29, *The Storms of Chai*, adicionado — **nona entrega da fase New Order**, com carry-over normal
