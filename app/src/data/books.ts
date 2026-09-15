@@ -1,10 +1,10 @@
 export type EquipmentMode = 'random-one' | 'choose-two' | 'choose-six' | 'choose-four' | 'choose-five';
 
 /** Which top-level content directory this book's raw XHTML lives under (a filesystem concern). */
-export type ContentRoot = 'kai' | 'magnakai' | 'grand_master';
+export type ContentRoot = 'kai' | 'magnakai' | 'grand_master' | 'new_order';
 
 /** Which set of game rules (Disciplines, ranks) this book uses (a rules concern, kept separate from ContentRoot even though the two always move together today). */
-export type Phase = 'kai' | 'magnakai' | 'grand_master';
+export type Phase = 'kai' | 'magnakai' | 'grand_master' | 'new_order';
 
 export interface BookMeta {
   id: string;
@@ -20,6 +20,8 @@ export interface BookMeta {
   finalSection: number;
   /** Overrides `id` as the on-disk folder name under `contentRoot` (parseContent.ts's contentDirFor). Only needed when the source content's own folder name would collide with another book's `id` — e.g. Book 14's folder is coincidentally named "tck", already taken by Book 3, so Book 14 uses id "tcok" with this set to "tck". Every other book's folder already matches its `id`. */
   contentDirName?: string;
+  /** How many Grand Master Disciplines a fresh character picks when entering this phase for the first time (applyGrandMasterDisciplines). Only set on the first book of a phase that uses this discipline pool - Book 13 (Grand Master) defaults to 4 when unset, Book 21 (New Order) sets 5. */
+  initialDisciplineCount?: number;
 }
 
 export const BOOKS: BookMeta[] = [
@@ -57,3 +59,17 @@ export function getNextBook(currentId: string): BookMeta | null {
   const current = getBook(currentId);
   return BOOKS.find((b) => b.order === current.order + 1) ?? null;
 }
+
+/** Display-only grouping for the book selection screen. `phase: null` marks a future phase with no books yet (rendered as a "coming soon" heading, no list). */
+export interface PhaseSection {
+  phase: Phase | null;
+  label: string;
+}
+
+export const PHASE_SECTIONS: PhaseSection[] = [
+  { phase: 'kai', label: 'Kai' },
+  { phase: 'magnakai', label: 'Magnakai' },
+  { phase: 'grand_master', label: 'Grand Master' },
+  { phase: 'new_order', label: 'New Order' },
+  { phase: null, label: 'World of Lone Wolf (ainda não implementado)' },
+];
