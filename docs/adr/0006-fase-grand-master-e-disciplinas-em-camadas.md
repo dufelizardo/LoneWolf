@@ -287,3 +287,26 @@ Livro 16 — não resolvida, não implementada.
 Sem mudança de `SAVE_VERSION` — Kai-blast é inteiramente derivado de `grandMasterDisciplines`/
 contagem, igual ao padrão já usado por Psi-surge/Kai-surge, sem novo campo persistente no
 `ActionChart`.
+
+## Atualização — Livro 17
+
+O Livro 17 (*The Deathlord of Ixia*) é o livro mais simples de implementar desde o início da fase
+Grand Master: `cmbtrulz.htm` é **byte-idêntico** ao do Livro 16 (diff vazio), e `discplnz.htm` também
+não muda em nenhum número. **Nenhuma mudança de código em `combat.ts`/`disciplines.ts`** foi
+necessária.
+
+`imprvdsc.htm` repete os ranks Kai Grand Guardian (5), Sun Knight (6) e Sun Lord (7)
+**essencialmente verbatim** do Livro 16 (só um ajuste cosmético de "surface"→"surfaces" no errata) —
+os dois bônus numéricos do Sun Lord (fogo do Grand Weaponmastery, Kai-blast) continuam exatamente
+iguais, sem nenhuma extensão ou mudança.
+
+**Surge um novo rank, Sun Thane (8 Disciplinas)** — mas, diferente do Sun Lord, suas 6 entradas
+(Animal Mastery, Deliverance, Grand Huntmastery, Grand Pathsmanship, Kai-screen, Kai-alchemy) são
+**todas puramente narrativas**, sem nenhum número de Combat Skill/Endurance — mesmo padrão dos ranks
+Kai Grand Guardian e Sun Knight. Confirma que o salto numérico do Sun Lord no Livro 16 foi pontual,
+não o início de uma escalada de bônus a cada rank.
+
+**Pendência do Kai-surge de 3 inimigos simultâneos (issue #61/JOGOS-92) segue sem nenhuma menção** no
+Livro 17 — texto idêntico ao dos Livros 14-16, não resolvida, não implementada.
+
+Sem mudança de `SAVE_VERSION`.

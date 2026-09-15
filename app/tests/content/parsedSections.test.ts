@@ -215,3 +215,25 @@ describe('book 16 (The Legacy of Vashna) puzzle sections', () => {
     expect(deadEnds).toEqual([43, 96, 134, 141, 160, 313, 322]);
   });
 });
+
+describe('book 17 (The Deathlord of Ixia) puzzle sections', () => {
+  const sections = loadSections('tdi');
+
+  it('flags sect69, sect213 and sect322 as puzzles, each with a real fallback choice', () => {
+    for (const num of [69, 213, 322]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isEnding, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350), forward-linking to Book 18', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+
+  it('has exactly the 16 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([5, 55, 65, 72, 99, 134, 173, 178, 212, 215, 238, 257, 269, 316, 319, 328]);
+  });
+});
