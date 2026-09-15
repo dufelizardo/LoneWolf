@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createFreshCharacterForBook } from '../../src/engine/character';
-import { getGrandMasterRank, getKaiRank, getMagnakaiRank, getRankForChart } from '../../src/engine/kaiRank';
+import { getGrandMasterBaseline, getGrandMasterRank, getKaiRank, getMagnakaiRank, getRankForChart } from '../../src/engine/kaiRank';
 
 describe('getKaiRank', () => {
   it('maps 5 disciplines (the series starting point) to Initiate', () => {
@@ -95,5 +95,23 @@ describe('getRankForChart', () => {
     const chart = createFreshCharacterForBook('tbs', () => 0);
     chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery'];
     expect(getRankForChart(chart)).toBe('Kai Grand Master Superior');
+  });
+
+  it('a character who completed both Books 21 and 22 (7 Disciplines) carried into Book 23 maps to "Kai Grand Sentinel", matching Book 23 imprvdsc.htm\'s real content tier', () => {
+    const chart = createFreshCharacterForBook('mh', () => 0);
+    chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery', 'Elementalism'];
+    expect(getRankForChart(chart)).toBe('Kai Grand Sentinel');
+  });
+});
+
+describe('getGrandMasterBaseline', () => {
+  it('is 1 for a Grand Master-phase book', () => {
+    const chart = createFreshCharacterForBook('tplr', () => 0);
+    expect(getGrandMasterBaseline(chart)).toBe(1);
+  });
+
+  it('is 5 for a New Order-phase book', () => {
+    const chart = createFreshCharacterForBook('mh', () => 0);
+    expect(getGrandMasterBaseline(chart)).toBe(5);
   });
 });

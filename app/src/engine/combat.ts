@@ -1,4 +1,5 @@
 import { getCombatResult } from '../data/crt';
+import { getGrandMasterBaseline } from './kaiRank';
 import { rollRandomNumber, type Rng } from './rng';
 import type { ActionChart, Enemy } from './types';
 
@@ -59,10 +60,16 @@ const GRAND_WEAPONMASTERY_BONUS = 5;
 // 1 ENDURANCE point loss upon an enemy in every successful round of combat. This ability cannot be
 // used with a wholly wooden weapon such as a quarterstaff." (imprvdsc.htm, Book 16) - the first
 // genuinely numeric Improved Discipline bonus since the Grand Master phase began (Books 13-15's
-// rank-up content was purely narrative). Applies once Sun Lord rank (7 Grand Master Disciplines) is
-// reached, on top of the flat Grand Weaponmastery Combat Skill bonus above.
+// rank-up content was purely narrative). Applies once Sun Lord rank is reached, on top of the flat
+// Grand Weaponmastery Combat Skill bonus above.
 const GRAND_WEAPONMASTERY_FIRE_BONUS = 1;
-const SUN_LORD_DISCIPLINE_COUNT = 7;
+// Position of 'Sun Lord' in kaiRank.ts's GRAND_MASTER_RANKS ladder (shared by the Grand Master and New
+// Order phases). Compared against `disciplineCount - getGrandMasterBaseline(chart)` rather than a raw
+// Discipline count - Grand Master's baseline of 1 makes that 7 Disciplines (unchanged from before this
+// was made phase-aware), but New Order's baseline of 5 makes it 11. Before this fix, a New Order
+// character reaching 7 raw Disciplines (reachable in Book 23 via two sequential carry-overs) would
+// have been misdetected as Sun Lord despite only being "Kai Grand Sentinel" on the New Order ladder.
+const SUN_LORD_RANK_INDEX = 6;
 // "It can cause an enemy to lose between 2 and 18 ENDURANCE points in one attack. A Kai Sun Lord
 // using Kai-blast determines the damage inflicted on an enemy by picking two numbers from the Random
 // Number Table. These numbers should be added together (a '0' = 1)... use of a Kai-blast will reduce
@@ -75,9 +82,11 @@ const KAI_BLAST_COST = 4;
 // SKILL." (imprvdsc.htm, Book 19, Grand Weaponmastery at Grand Crown rank) - unlike the Magnakai
 // no-weapon tiers above (Tutelary/Scion-kai, which merely reduce the -4 penalty), this is a genuine
 // positive bonus that fully replaces the no-weapon penalty rather than shrinking it. Applies once
-// Grand Crown rank (10 Grand Master Disciplines) is reached.
+// Grand Crown rank is reached.
 const GRAND_WEAPONMASTERY_UNARMED_BONUS = 3;
-const GRAND_CROWN_DISCIPLINE_COUNT = 10;
+// Position of 'Grand Crown' in GRAND_MASTER_RANKS - see SUN_LORD_RANK_INDEX's comment for why this is
+// an index compared against a baseline-adjusted count rather than a raw Discipline count.
+const GRAND_CROWN_RANK_INDEX = 9;
 // "When using this Kai Weapon in normal combat you may add +5 points to your COMBAT SKILL... If you
 // possess the Discipline of Grand Weaponmastery for a weapon type which is the same as your unique
 // Kai Weapon, you may add the Grand Weaponmastery bonus of +5... This is in addition to the bonus
@@ -100,7 +109,9 @@ const KAI_WEAPON_BONUS = 5;
 const KAI_RAY_DAMAGE = 15;
 const KAI_RAY_COST = 4;
 const KAI_RAY_MIN_ENDURANCE = 10;
-const SUN_PRINCE_DISCIPLINE_COUNT = 11;
+// Position of 'Sun Prince' in GRAND_MASTER_RANKS - see SUN_LORD_RANK_INDEX's comment for why this is
+// an index compared against a baseline-adjusted count rather than a raw Discipline count.
+const SUN_PRINCE_RANK_INDEX = 10;
 // "This potion of strength will increase your COMBAT SKILL by +2 points when swallowed immediately
 // prior to a combat. It lasts for the duration of one combat only." (equipmnt.htm, Book 10). The
 // dose itself is spent via useCombatPotion (disciplines.ts) before the fight starts; this flag is
@@ -124,16 +135,19 @@ export interface CombatRoundOptions {
   useKaiRay?: boolean;
 }
 
-/** Whether the character has reached Sun Lord rank (7 Grand Master Disciplines) with Kai-surge, and can therefore use Kai-blast. */
+/** Whether the character has reached Sun Lord rank with Kai-surge, and can therefore use Kai-blast. */
 export function canUseKaiBlast(chart: ActionChart): boolean {
-  return chart.grandMasterDisciplines.includes('KaiSurge') && chart.grandMasterDisciplines.length >= SUN_LORD_DISCIPLINE_COUNT;
+  return (
+    chart.grandMasterDisciplines.includes('KaiSurge') &&
+    chart.grandMasterDisciplines.length - getGrandMasterBaseline(chart) >= SUN_LORD_RANK_INDEX
+  );
 }
 
-/** Whether the character has reached Sun Prince rank (11 Grand Master Disciplines) with Kai-surge, has enough Endurance, and can therefore use Kai-ray. Doesn't track the once-per-fight usage limit - the caller (CombatModal) must not offer this once already used in the current fight. */
+/** Whether the character has reached Sun Prince rank with Kai-surge, has enough Endurance, and can therefore use Kai-ray. Doesn't track the once-per-fight usage limit - the caller (CombatModal) must not offer this once already used in the current fight. */
 export function canUseKaiRay(chart: ActionChart): boolean {
   return (
     chart.grandMasterDisciplines.includes('KaiSurge') &&
-    chart.grandMasterDisciplines.length >= SUN_PRINCE_DISCIPLINE_COUNT &&
+    chart.grandMasterDisciplines.length - getGrandMasterBaseline(chart) >= SUN_PRINCE_RANK_INDEX &&
     chart.enduranceCurrent > KAI_RAY_MIN_ENDURANCE
   );
 }
@@ -198,7 +212,10 @@ export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy, option
   const magnakaiDisciplineCount = chart.magnakaiDisciplines.length;
 
   if (!chart.equippedWeapon) {
-    if (chart.grandMasterDisciplines.includes('GrandWeaponmastery') && chart.grandMasterDisciplines.length >= GRAND_CROWN_DISCIPLINE_COUNT) {
+    if (
+      chart.grandMasterDisciplines.includes('GrandWeaponmastery') &&
+      chart.grandMasterDisciplines.length - getGrandMasterBaseline(chart) >= GRAND_CROWN_RANK_INDEX
+    ) {
       skill += GRAND_WEAPONMASTERY_UNARMED_BONUS;
     } else if (hasWeaponmastery && magnakaiDisciplineCount >= SCION_KAI_DISCIPLINE_COUNT) {
       skill += NO_WEAPON_PENALTY_SCION_KAI;
@@ -352,7 +369,7 @@ export function resolveCombatRound(
   if (
     enemyLoss > 0 &&
     chart.grandMasterDisciplines.includes('GrandWeaponmastery') &&
-    chart.grandMasterDisciplines.length >= SUN_LORD_DISCIPLINE_COUNT &&
+    chart.grandMasterDisciplines.length - getGrandMasterBaseline(chart) >= SUN_LORD_RANK_INDEX &&
     chart.equippedWeapon &&
     chart.grandMasteredWeapons.includes(chart.equippedWeapon) &&
     chart.equippedWeapon !== 'Quarterstaff'

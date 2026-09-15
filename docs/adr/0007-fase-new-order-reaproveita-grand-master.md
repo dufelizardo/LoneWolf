@@ -2,9 +2,9 @@
 
 ## Status
 
-**Implementada.** Livros 21 (*Voyage of the Moonstone*) e 22 (*The Buccaneers of Shadaki*) jogáveis de
-ponta a ponta — primeira e segunda entregas da fase New Order, sucedendo a fase Grand Master (Livros
-13-20, completa).
+**Implementada.** Livros 21 (*Voyage of the Moonstone*), 22 (*The Buccaneers of Shadaki*) e 23
+(*Mydnight's Hero*) jogáveis de ponta a ponta — três primeiras entregas da fase New Order, sucedendo a
+fase Grand Master (Livros 13-20, completa).
 
 ## Contexto
 
@@ -63,13 +63,14 @@ da usada no Grand Master. `getGrandMasterRank` ganhou um parâmetro `baseline = 
 "Kai Grand Master Senior"). `getRankForChart` ganhou um ramo pra `phase === 'new_order'` chamando essa
 mesma função com base 5.
 
-**Dívida técnica registrada, não resolvida agora**: os limiares numéricos em `combat.ts`
-(`SUN_LORD_DISCIPLINE_COUNT=7`, `GRAND_CROWN_DISCIPLINE_COUNT=10`, `SUN_PRINCE_DISCIPLINE_COUNT=11`)
-são contagens brutas de Disciplinas, calibrados pra base 1 do Grand Master. Como o New Order usa base
-5, os MESMOS números brutos não corresponderiam aos ranks equivalentes nessa fase nova (ex: o
-equivalente de "Sun Lord" no New Order seria contagem bruta 11, não 7). Isso não afeta o Livro 21 (o
-máximo alcançável nele é 5 Disciplinas, bem abaixo de qualquer limiar) — fica para quando um livro
-New Order futuro introduzir conteúdo numérico de rank alto.
+**Dívida técnica registrada nesta seção — resolvida no Livro 23, ver "Atualização — Livro 23" abaixo**:
+os limiares numéricos em `combat.ts` (`SUN_LORD_DISCIPLINE_COUNT=7`, `GRAND_CROWN_DISCIPLINE_COUNT=10`,
+`SUN_PRINCE_DISCIPLINE_COUNT=11`) eram contagens brutas de Disciplinas, calibradas pra base 1 do Grand
+Master. Como o New Order usa base 5, os MESMOS números brutos não corresponderiam aos ranks
+equivalentes nessa fase nova (ex: o equivalente de "Sun Lord" no New Order seria contagem bruta 11, não
+7). Isso não afetou os Livros 21 e 22 (máximo de 5 e 6 Disciplinas respectivamente, abaixo de qualquer
+limiar) — mas o Livro 23 permite chegar a 7 (via dois carry-overs sequenciais), disparando o problema de
+fato.
 
 ### 4. Sem carry-over do Livro 20 — novo campo `BookMeta.allowsCarryOver`
 
@@ -171,4 +172,54 @@ necessária** — só dados novos (`books.ts`, `bookEquipment.ts`), com uma exce
   alcançável no Livro 22 é 6 (carry-over do Livro 21), bem abaixo do primeiro limiar
   (`SUN_LORD_DISCIPLINE_COUNT = 7`). Continua registrada, não resolvida, para quando um livro New
   Order futuro ultrapassar esse ponto.
+- Sem mudança de `SAVE_VERSION` — nenhum campo novo persistente.
+
+## Atualização — Livro 23
+
+O Livro 23 (*Mydnight's Hero*) é a terceira entrega da fase New Order, com carry-over normal a partir
+do Livro 22 (`gamerulz.htm` do Livro 23 até formaliza que o carry-over vale "de qualquer um dos livros
+anteriores da série" — Livros 21 ou 22 — mas como o desbloqueio do app já exige ter completado o livro
+imediatamente anterior pra acessar o próximo, esse cenário de "pular direto do 21 pro 23" nunca ocorre
+na prática: quem chega ao Livro 23 sempre completou o 22 antes).
+
+### Confirmação cruzada do rank "Kai Grand Sentinel"
+
+`imprvdsc.htm` ganha um novo patamar de conteúdo real: **Kai Grand Sentinel** (melhorias narrativas
+para Grand Weaponmastery, Grand Pathsmanship, Astrology, Herbmastery, Elementalism e Bardsmanship,
+nenhuma com bônus numérico). Um personagem que completou os Livros 21 e 22 sequencialmente chega ao
+Livro 23 com 7 Disciplinas Grand Master (5 iniciais + 1 + 1), e `getGrandMasterRank(7, 5)` já produzia
+o índice 2 — `'Kai Grand Sentinel'` — antes mesmo dessa confirmação existir. Mais uma validação
+independente da arquitetura de base 5, sem exigir nenhuma mudança de código.
+
+### Bug real corrigido: limiares de `combat.ts` agora baseline-aware
+
+A dívida técnica registrada na seção 3 acima ("Rank recalculado com uma base diferente") deixou de ser
+hipotética neste livro: **7 Disciplinas Grand Master é exatamente o valor bruto que `combat.ts` usava
+como limiar de rank Sun Lord** (`SUN_LORD_DISCIPLINE_COUNT = 7`), calibrado implicitamente pra base 1
+do Grand Master. Um personagem New Order chegando ao Livro 23 com 7 Disciplinas (via dois carry-overs
+sequenciais) e que tivesse escolhido Kai-surge seria incorretamente tratado por `canUseKaiBlast` como
+tendo alcançado o rank Grand-Master-fase "Sun Lord" — ganhando acesso ao Kai-blast, uma habilidade de
+dano de 2-18 pontos que substitui o round inteiro — quando na real escada de rank do New Order (base 5)
+7 Disciplinas equivale apenas a "Kai Grand Sentinel", um rank bem mais baixo sem nenhuma habilidade de
+combate especial nova. O mesmo problema afetava o bônus de fogo do Grand Weaponmastery (Sun Lord), o
+bônus desarmado do Grand Weaponmastery (Grand Crown) e o Kai-ray (Sun Prince) — todos comparavam a
+contagem bruta de Disciplinas contra um valor fixo, sem considerar a fase/base do livro.
+
+**Correção**: os três limiares viraram índices de posição no array `GRAND_MASTER_RANKS` (compartilhado
+entre as fases Grand Master e New Order) em vez de contagens brutas — `SUN_LORD_RANK_INDEX = 6`,
+`GRAND_CROWN_RANK_INDEX = 9`, `SUN_PRINCE_RANK_INDEX = 10` — comparados contra
+`chart.grandMasterDisciplines.length - getGrandMasterBaseline(chart)`. `getGrandMasterBaseline`
+(nova função exportada de `kaiRank.ts`) extrai a mesma lógica de baseline já usada internamente por
+`getRankForChart` (5 pra `new_order`, 1 pra qualquer outra fase), evitando duplicação. Pra fase Grand
+Master (base 1), o comportamento é idêntico a antes (`length - 1 >= 6` ⟺ `length >= 7`) — os testes
+existentes de Sun Lord/Grand Crown/Sun Prince continuam passando inalterados. Pra New Order (base 5),
+o limiar de Sun Lord passa a ser corretamente 11 Disciplinas brutas, não 7 — só quem realmente alcançar
+o rank "Sun Lord" na escada compartilhada ganha as habilidades correspondentes.
+
+### O que mais é igual (sem mudança de arquitetura)
+
+- Nenhuma Disciplina nova, mesmo pool de 16.
+- Tabela de Arma Kai e tabelas de Nome Kai byte-idênticas aos Livros 21/22.
+- Equipamento: mesma lista de 10 itens, escolha 5, mesmo ouro/mochila — só muda o mapa automático
+  (`'Map of Central Southern Magnamund'`).
 - Sem mudança de `SAVE_VERSION` — nenhum campo novo persistente.
