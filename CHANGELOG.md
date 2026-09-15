@@ -4,6 +4,34 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.26.0] — 2026-09-15
+
+Livro 23, *Mydnight's Hero*, adicionado — **terceira entrega da fase New Order**, com carry-over normal
+a partir do Livro 22. Ver ADR-0007 (seção "Atualização — Livro 23") para o detalhamento completo.
+
+- **Nenhuma Disciplina nova**: mesmo pool de 16 Disciplinas dos Livros 21/22.
+- **`imprvdsc.htm` ganha um novo patamar de rank com conteúdo real**: "Kai Grand Sentinel" (melhorias
+  narrativas, sem bônus numérico). Um personagem que completou os Livros 21 e 22 sequencialmente chega
+  ao Livro 23 com 7 Disciplinas Grand Master e mostra exatamente esse rank — confirmação cruzada da
+  fórmula de rank com base 5 introduzida no Livro 21.
+- **Correção de um bug real de combate**: os limiares numéricos de `combat.ts` para os ranks Sun Lord,
+  Grand Crown e Sun Prince (usados por Kai-blast, Kai-ray e os bônus de Grand Weaponmastery) comparavam
+  a contagem bruta de Disciplinas Grand Master contra valores fixos (7/10/11), calibrados apenas para a
+  fase Grand Master (base 1). Um personagem do New Order que completasse os Livros 21 e 22 em sequência
+  chegava ao Livro 23 com exatamente 7 Disciplinas — o mesmo valor bruto do limiar de Sun Lord — e, se
+  tivesse escolhido Kai-surge, ganharia incorretamente acesso ao Kai-blast (uma habilidade de dano de
+  Grand Master avançado), apesar de estar apenas no rank "Kai Grand Sentinel" na escada do New Order
+  (bem mais baixo). Corrigido: os limiares agora são posições no array de ranks (`GRAND_MASTER_RANKS`)
+  comparadas contra a contagem de Disciplinas ajustada pela base da fase (`getGrandMasterBaseline`,
+  nova função exportada de `kaiRank.ts`) — resolve a dívida técnica já registrada na ADR-0007 desde o
+  Livro 21, sem alterar nenhum comportamento da fase Grand Master (base 1 preservada).
+- Carry-over do Livro 22 confirmado normal (mantém CS/EP, Itens Especiais, Arma Kai, Nome Kai, Armas
+  normais e Itens de Mochila; ganha +1 Disciplina Grand Master e +1 CS/+2 EP).
+- 350 seções, 7 becos sem saída, 3 seções-quebra-cabeça com alternativa de escolha, final único que
+  aponta para o Livro 24 "Rune War" (série contínua confirmada).
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.25.0] — 2026-09-15
 
 Livro 22, *The Buccaneers of Shadaki*, adicionado — **segunda entrega da fase New Order**, com carry-over

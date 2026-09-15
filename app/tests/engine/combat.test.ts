@@ -617,3 +617,47 @@ describe('Kai Weapon bonus (Book 21+)', () => {
     expect(getEffectiveCombatSkill(chart, enemy)).toBe(20); // 10 base + 5 Grand Weaponmastery + 5 Kai Weapon
   });
 });
+
+describe('rank-tier thresholds are baseline-aware, not raw Discipline counts (Book 23 regression)', () => {
+  // A character who completed both Books 21 and 22 sequentially carries 7 Grand Master Disciplines
+  // into Book 23 - the same raw count the Grand Master phase uses for Sun Lord rank - but on the New
+  // Order ladder (baseline 5) that's only "Kai Grand Sentinel" (index 2), nowhere near Sun Lord
+  // (index 6, raw count 11 under baseline 5). Before this fix, canUseKaiBlast/the fire bonus/the
+  // unarmed bonus compared the raw count directly against 7/10/11, misfiring for this exact case.
+  const newOrderDisciplines: ActionChart['grandMasterDisciplines'] = [
+    'KaiSurge', 'GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery',
+  ];
+  const enemy: Enemy = { name: 'Giak', combatSkill: 5, endurance: 20 };
+
+  it('canUseKaiBlast is false for a New Order character with 7 raw Disciplines (only "Kai Grand Sentinel", not Sun Lord)', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('mh', fixedRng(0, 0, 0)),
+      grandMasterDisciplines: newOrderDisciplines,
+    };
+    expect(canUseKaiBlast(chart)).toBe(false);
+  });
+
+  it('canUseKaiBlast is still true for a Grand Master-phase character with the same 7 raw Disciplines (genuinely Sun Lord under baseline 1)', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('tlv', fixedRng(0, 0, 0)),
+      grandMasterDisciplines: newOrderDisciplines,
+    };
+    expect(canUseKaiBlast(chart)).toBe(true);
+  });
+
+  it('the Sun Lord Grand Weaponmastery fire bonus does not apply for a New Order character with 7 raw Disciplines', () => {
+    // No KaiSurge here (unlike newOrderDisciplines above) - this test isolates the fire bonus, and
+    // KaiSurge's own free "Mindblast" sub-mode bonus (always-on, unrelated to rank) would otherwise
+    // shift the base ratio and muddy the +1-or-not comparison this test is making.
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('mh', fixedRng(0, 0, 0)),
+      combatSkill: 10,
+      grandMasterDisciplines: ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery', 'Elementalism'],
+      grandMasteredWeapons: ['Axe'],
+      equippedWeapon: 'Axe',
+      weapons: ['Axe'],
+    };
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.5));
+    expect(result.enemyLoss).toBe(12); // ratio 10, roll 5 -> 12, no +1 fire bonus
+  });
+});

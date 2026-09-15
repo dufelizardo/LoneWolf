@@ -70,11 +70,9 @@ export const GRAND_MASTER_RANKS = [
  * Disciplines, landing on index 3, "Kai Grand Defender"). The New Order phase (Book 21+) reuses this
  * exact same 12-name ladder but starts fresh at 5 Disciplines mapping to index 0, "Kai Grand Master
  * Senior" (confirmed verbatim in Book 21's levels.htm: "You begin the New Order adventures at this
- * level of Kai Grand Mastery") — so New Order passes baseline 5 instead. This is NOT a design choice
- * needing reconciliation with the raw discipline-count thresholds in combat.ts (SUN_LORD_DISCIPLINE_COUNT
- * etc., which stay Grand-Master-phase-specific, baseline 1) — those would need their own baseline
- * awareness if a future New Order book ever grants enough Disciplines to reach an equivalent numeric
- * tier (Book 21 tops out at 5, far short of any of them).
+ * level of Kai Grand Mastery") — so New Order passes baseline 5 instead. combat.ts's rank-tier
+ * thresholds (Sun Lord, Grand Crown, Sun Prince) use getGrandMasterBaseline below rather than a raw
+ * Discipline count, for the same reason — see its SUN_LORD_RANK_INDEX comment.
  */
 export function getGrandMasterRank(disciplineCount: number, baseline = 1): string {
   const index = disciplineCount - baseline;
@@ -86,11 +84,24 @@ export function getGrandMasterRank(disciplineCount: number, baseline = 1): strin
 /** New Order (Book 21+) discipline count that maps to the first rank ("Kai Grand Master Senior"). */
 const NEW_ORDER_RANK_BASELINE = 5;
 
+/**
+ * The `baseline` getGrandMasterRank needs for this chart's book — 5 for New Order, 1 for the Grand
+ * Master phase. Exported so combat.ts's rank-tier thresholds (Sun Lord, Grand Crown, Sun Prince) can
+ * be phase-aware instead of comparing raw Discipline counts, which only happen to line up with the
+ * Grand Master phase's baseline of 1 (see combat.ts's SUN_LORD_RANK_INDEX and friends, added in Book
+ * 23 once a New Order character could reach 7 raw Disciplines - the same raw number the Grand Master
+ * phase uses for Sun Lord - without being anywhere near that rank on the New Order ladder).
+ */
+export function getGrandMasterBaseline(chart: ActionChart): number {
+  return getBook(chart.bookId).phase === 'new_order' ? NEW_ORDER_RANK_BASELINE : 1;
+}
+
 /** Picks the right rank ladder for this chart's book phase — the only place that needs to know all four exist. */
 export function getRankForChart(chart: ActionChart): string {
   const phase = getBook(chart.bookId).phase;
-  if (phase === 'new_order') return getGrandMasterRank(chart.grandMasterDisciplines.length, NEW_ORDER_RANK_BASELINE);
-  if (phase === 'grand_master') return getGrandMasterRank(chart.grandMasterDisciplines.length);
+  if (phase === 'new_order' || phase === 'grand_master') {
+    return getGrandMasterRank(chart.grandMasterDisciplines.length, getGrandMasterBaseline(chart));
+  }
   if (phase === 'magnakai') return getMagnakaiRank(chart.magnakaiDisciplines.length);
   return getKaiRank(chart.disciplines.length);
 }

@@ -350,3 +350,25 @@ describe('book 22 (The Buccaneers of Shadaki) sections - second book of the New 
     expect(deadEnds).toEqual([9, 27, 44, 158, 162, 236, 303, 316, 321]);
   });
 });
+
+describe('book 23 (Mydnight\'s Hero) sections - third book of the New Order phase', () => {
+  const sections = loadSections('mh');
+
+  it('flags sect113, sect178 and sect306 as puzzles, each with a real fallback choice', () => {
+    for (const num of [113, 178, 306]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isDeadEnd, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length, `sect${num}`).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350), forward-linking to Book 24', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+
+  it('has exactly the 7 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([36, 147, 162, 225, 319, 339, 343]);
+  });
+});
