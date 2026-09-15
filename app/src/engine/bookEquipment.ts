@@ -892,6 +892,58 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
       { name: 'Firefall', weaponType: 'Broadsword' },
     ],
   },
+  tbs: {
+    // "add 20 to the number you have picked" - same as every Grand Master-era/New Order book.
+    goldRollBonus: 20,
+    // Never actually read for tbs — same reasoning as tkt above.
+    weaponPool: ALL_WEAPONS,
+    healingPotionLabel: 'Potion of Laumspur',
+    // "you may keep a maximum of ten articles, including Meals, in your Backpack" - unchanged.
+    maxBackpackItems: 10,
+    applyBaseEquipment: (c) => {
+      addSpecialItem(c, { name: 'Map of Southeastern Magnamund' });
+    },
+    // Same choose-five, 10-item list as vm (Book 21) - confirmed byte-identical in equipmnt.htm.
+    chooseCount: 5,
+    chooseOptions: [
+      { id: 'quarterstaff', label: 'Quarterstaff', apply: (c) => addWeaponIfRoom(c, 'Quarterstaff') },
+      { id: 'bow', label: 'Bow', apply: (c) => addWeaponIfRoom(c, 'Bow') },
+      {
+        id: 'quiver',
+        label: 'Quiver (6 Arrows)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Quiver', knownEffects: 'Holds up to 6 Arrows' });
+          addArrows(c, 6);
+        },
+      },
+      { id: 'flute', label: 'Flute', apply: (c) => addBackpackItemIfRoom(c, 'Flute') },
+      { id: 'dagger', label: 'Dagger', apply: (c) => addWeaponIfRoom(c, 'Dagger') },
+      { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
+      {
+        id: 'meals',
+        label: '2 Meals',
+        apply: (c) => { for (let i = 0; i < 2; i++) addMealIfRoom(c); },
+      },
+      { id: 'rope', label: 'Rope', apply: (c) => addBackpackItemIfRoom(c, 'Rope') },
+      { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: (c) => grantHealingPotion(c) },
+      { id: 'axe', label: 'Axe', apply: (c) => addWeaponIfRoom(c, 'Axe') },
+    ],
+    // Same Kai Weapon Table as vm (Book 21) - confirmed byte-identical (same 10 named weapons, same
+    // order) in equipmnt.htm. A carried-over character already has one and skips this step - see the
+    // needsKaiWeapon fix in CharacterCreationScreen.tsx.
+    kaiWeaponTable: [
+      { name: 'Spawnsmite', weaponType: 'Axe' },
+      { name: 'Alema', weaponType: 'Axe' },
+      { name: 'Magnara', weaponType: 'Axe' },
+      { name: 'Sunstrike', weaponType: 'Sword' },
+      { name: 'Kaistar', weaponType: 'Sword' },
+      { name: 'Valiance', weaponType: 'Sword' },
+      { name: 'Ulnarias', weaponType: 'Sword' },
+      { name: 'Raumas', weaponType: 'Broadsword' },
+      { name: 'Illuminatus', weaponType: 'Broadsword' },
+      { name: 'Firefall', weaponType: 'Broadsword' },
+    ],
+  },
 };
 
 export function getBookEquipment(bookId: string): BookEquipmentConfig {

@@ -4,6 +4,30 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.25.0] — 2026-09-15
+
+Livro 22, *The Buccaneers of Shadaki*, adicionado — **segunda entrega da fase New Order**, com carry-over
+normal a partir do Livro 21. Ver ADR-0007 (seção "Atualização — Livro 22") para o detalhamento completo.
+
+- **Nenhuma Disciplina nova**: mesmo pool de 16 Disciplinas do Livro 21 (12 Grand Master + Astrology/
+  Herbmastery/Elementalism/Bardsmanship) — confirmado, sem mudança em `types.ts`.
+- **`imprvdsc.htm` tem conteúdo real pela primeira vez** — o rank "Kai Grand Master Superior" (6
+  Disciplinas: 5 do início + 1 do carry-over do Livro 21) recebe texto próprio no livro, todo
+  narrativo (sem bônus de Combat Skill/Endurance). Validação cruzada independente de que a fórmula de
+  rank com base 5 (`NEW_ORDER_RANK_BASELINE`, introduzida no Livro 21) está correta.
+- **Correção de bug**: `needsKaiWeapon` na tela de criação de personagem perguntava novamente pela Arma
+  Kai mesmo quando o personagem já tinha uma (vindo de carry-over do Livro 21) — o Livro 22 também
+  define uma tabela de Armas Kai (pra suportar início do zero direto nele), o que expôs a falha.
+  Corrigido para `equipmentConfig.kaiWeaponTable !== undefined && !isCarryOver`, no mesmo padrão já
+  usado por `needsKaiName`.
+- Carry-over do Livro 21 confirmado normal (mantém CS/EP, Itens Especiais, Arma Kai, Nome Kai,
+  Armas normais e Itens de Mochila; ganha +1 Disciplina Grand Master e +1 CS/+2 EP) — sem mudança de
+  código, mecanismo já existente reaproveitado.
+- 350 seções, 9 becos sem saída, 2 seções-quebra-cabeça com alternativa de escolha, final único que
+  aponta para o Livro 23 "Mydnight's Hero" (série contínua confirmada).
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.24.0] — 2026-09-15
 
 Novos botões "Baixar Backup" e "Importar Backup" — um backup do save independente tanto do

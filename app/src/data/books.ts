@@ -50,6 +50,7 @@ export const BOOKS: BookMeta[] = [
   { id: 'wb', code: '19wb', title: "Wolf's Bane", order: 19, equipmentMode: 'choose-four', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
   { id: 'tcn', code: '20tcon', title: 'The Curse of Naar', order: 20, equipmentMode: 'choose-four', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
   { id: 'vm', code: '21votm', title: 'Voyage of the Moonstone', order: 21, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 350, finalSection: 350, initialDisciplineCount: 5, allowsCarryOver: false },
+  { id: 'tbs', code: '22tbos', title: 'The Buccaneers of Shadaki', order: 22, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 350, finalSection: 350, initialDisciplineCount: 5 },
 ];
 
 export function getBook(id: string): BookMeta {
