@@ -22,6 +22,8 @@ export interface BookMeta {
   contentDirName?: string;
   /** How many Grand Master Disciplines a fresh character picks when entering this phase for the first time (applyGrandMasterDisciplines). Only set on the first book of a phase that uses this discipline pool - Book 13 (Grand Master) defaults to 4 when unset, Book 21 (New Order) sets 5. */
   initialDisciplineCount?: number;
+  /** Whether a character can be carried over FROM the immediately preceding book (by order) INTO this one. Defaults to true - every phase transition so far (Book 6 into Magnakai, Book 13 into Grand Master) has explicit carry-over rules in its own gamerulz.htm (keep CS/EP, apply a Special Item whitelist, etc.), so carryOverCharacterToBook handles them. Book 21 (New Order) is the first book whose own rules give NO carry-over path at all - CS/EP/Disciplines/equipment are all rolled fresh, with zero reference to a Book 20 Action Chart - so it sets this to false, hiding the "Transferir personagem" option instead of silently offering a transfer the source material never describes. */
+  allowsCarryOver?: boolean;
 }
 
 export const BOOKS: BookMeta[] = [
@@ -47,6 +49,7 @@ export const BOOKS: BookMeta[] = [
   { id: 'dd', code: '18dotd', title: 'Dawn of the Dragons', order: 18, equipmentMode: 'choose-four', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
   { id: 'wb', code: '19wb', title: "Wolf's Bane", order: 19, equipmentMode: 'choose-four', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
   { id: 'tcn', code: '20tcon', title: 'The Curse of Naar', order: 20, equipmentMode: 'choose-four', contentRoot: 'grand_master', phase: 'grand_master', sectionCount: 350, finalSection: 350 },
+  { id: 'vm', code: '21votm', title: 'Voyage of the Moonstone', order: 21, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 350, finalSection: 350, initialDisciplineCount: 5, allowsCarryOver: false },
 ];
 
 export function getBook(id: string): BookMeta {

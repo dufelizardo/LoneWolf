@@ -90,6 +90,7 @@ function App() {
           book={getBook(activeBookId)}
           previousChart={(() => {
             const book = getBook(activeBookId);
+            if (book.allowsCarryOver === false) return null;
             const previousEntry = Object.values(campaign.completedBooks).find((c) => {
               // previous book = the one whose order is exactly one less than this book's
               return getBook(c.bookId).order === book.order - 1;
@@ -108,7 +109,7 @@ function App() {
           book={getBook(activeBookId)}
           creationMode={creationMode}
           previousChart={
-            creationMode === 'carryover'
+            creationMode === 'carryover' && getBook(activeBookId).allowsCarryOver !== false
               ? Object.values(campaign.completedBooks).find(
                   (c) => getBook(c.bookId).order === getBook(activeBookId).order - 1,
                 ) ?? null

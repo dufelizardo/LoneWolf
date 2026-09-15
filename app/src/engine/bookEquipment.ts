@@ -7,6 +7,12 @@ export interface EquipmentOption {
   apply: (chart: ActionChart) => void;
 }
 
+/** One entry of a book's Kai Weapon Table (Book 21+) - a named weapon with a fixed underlying type, granting a flat Combat Skill bonus while equipped (see ActionChart.kaiWeaponType). */
+export interface KaiWeaponOption {
+  name: string;
+  weaponType: WeaponType;
+}
+
 export interface BookEquipmentConfig {
   /** Added on top of the random(0-9) gold roll every book grants at its equipment stage. */
   goldRollBonus: number;
@@ -28,6 +34,8 @@ export interface BookEquipmentConfig {
   chooseOptions?: EquipmentOption[];
   /** Exact number of chooseOptions the player must pick. Defaults to 2 for backward compatibility. */
   chooseCount?: number;
+  /** Book 21+ (New Order): the 10-entry Kai Weapon Table the player picks from (or rolls on) at character creation, on top of the normal chooseOptions equipment. */
+  kaiWeaponTable?: KaiWeaponOption[];
 }
 
 function addWeaponIfRoom(chart: ActionChart, weapon: WeaponType) {
@@ -827,6 +835,61 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
       { id: 'rope', label: 'Rope', apply: (c) => addBackpackItemIfRoom(c, 'Rope') },
       { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: (c) => grantHealingPotion(c) },
       { id: 'axe', label: 'Axe', apply: (c) => addWeaponIfRoom(c, 'Axe') },
+    ],
+  },
+  vm: {
+    // "add 20 to the number you have picked" - same as every Grand Master-era book.
+    goldRollBonus: 20,
+    // Never actually read for vm — same reasoning as tkt above.
+    weaponPool: ALL_WEAPONS,
+    healingPotionLabel: 'Potion of Laumspur',
+    // "you may keep a maximum of ten articles, including Meals, in your Backpack" - unchanged.
+    maxBackpackItems: 10,
+    applyBaseEquipment: (c) => {
+      addSpecialItem(c, { name: 'Map of the Coastal Route' });
+    },
+    // "You may also select five items from the list below, only two of which may be Weapons"
+    // (equipmnt.htm, Book 21) - same choose-five shape as Books 13-15, but from a 10-item list
+    // (Flute is new; Quarterstaff and Broadsword appear together, same as tcn).
+    chooseCount: 5,
+    chooseOptions: [
+      { id: 'quarterstaff', label: 'Quarterstaff', apply: (c) => addWeaponIfRoom(c, 'Quarterstaff') },
+      { id: 'bow', label: 'Bow', apply: (c) => addWeaponIfRoom(c, 'Bow') },
+      {
+        id: 'quiver',
+        label: 'Quiver (6 Arrows)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Quiver', knownEffects: 'Holds up to 6 Arrows' });
+          addArrows(c, 6);
+        },
+      },
+      { id: 'flute', label: 'Flute', apply: (c) => addBackpackItemIfRoom(c, 'Flute') },
+      { id: 'dagger', label: 'Dagger', apply: (c) => addWeaponIfRoom(c, 'Dagger') },
+      { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
+      {
+        id: 'meals',
+        label: '2 Meals',
+        apply: (c) => { for (let i = 0; i < 2; i++) addMealIfRoom(c); },
+      },
+      { id: 'rope', label: 'Rope', apply: (c) => addBackpackItemIfRoom(c, 'Rope') },
+      { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: (c) => grantHealingPotion(c) },
+      { id: 'axe', label: 'Axe', apply: (c) => addWeaponIfRoom(c, 'Axe') },
+    ],
+    // Kai Weapon Table (equipmnt.htm, Book 21) - a base +5 CS while equipped, in addition to the
+    // Grand Weaponmastery bonus if the type matches; the situational +6 to +9 CS bonus per weapon
+    // (vs. a specific enemy type/condition) is documented but not implemented (no engine hook for
+    // enemy-type/condition matching).
+    kaiWeaponTable: [
+      { name: 'Spawnsmite', weaponType: 'Axe' },
+      { name: 'Alema', weaponType: 'Axe' },
+      { name: 'Magnara', weaponType: 'Axe' },
+      { name: 'Sunstrike', weaponType: 'Sword' },
+      { name: 'Kaistar', weaponType: 'Sword' },
+      { name: 'Valiance', weaponType: 'Sword' },
+      { name: 'Ulnarias', weaponType: 'Sword' },
+      { name: 'Raumas', weaponType: 'Broadsword' },
+      { name: 'Illuminatus', weaponType: 'Broadsword' },
+      { name: 'Firefall', weaponType: 'Broadsword' },
     ],
   },
 };

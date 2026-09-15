@@ -4,6 +4,37 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.23.0] — 2026-09-15
+
+Livro 21, *Voyage of the Moonstone*, adicionado — **primeiro livro da nova fase "New Order"**, que
+sucede a fase Grand Master (Livros 13-20, completa). Ver ADR-0007 para o detalhamento completo.
+
+- **Sem sistema de Disciplinas paralelo, diferente de toda transição de fase anterior**: o New Order
+  reaproveita literalmente o mesmo pool de 12 Disciplinas Grand Master (mesmos números, mesmo
+  `combat.ts`) e adiciona só 4 novas, puramente narrativas: Astrology, Herbmastery, Elementalism,
+  Bardsmanship. `applyGrandMasterDisciplines` agora aceita uma contagem inicial configurável (4 pro
+  Grand Master, 5 pro New Order).
+- **Rank recalculado com base deslocada**: a mesma escada de 12 nomes já usada no Grand Master, só que
+  reindexada — um personagem novo do Livro 21 começa com 5 Disciplinas e mostra rank "Kai Grand Master
+  Senior" (confirmado verbatim em `levels.htm`), não "Kai Grand Guardian" como a fórmula antiga
+  produziria. `getGrandMasterRank` agora aceita uma base configurável.
+- **Personagem começa 100% do zero** — sem carry-over do Livro 20 (confirmado: `gamerulz.htm` rola
+  CS/EP do zero, sem nenhuma referência à Ficha de Aventura do livro anterior). A tela de introdução
+  não oferece mais a opção "Transferir personagem" pro Livro 21 — novo campo `BookMeta.allowsCarryOver`
+  (default `true`) evita que a lógica genérica de "livro anterior por ordem" ofereça uma transferência
+  que o próprio livro não prevê.
+- **Nome Kai (novidade real, nunca vista antes na série)**: o personagem pode se nomear livremente ou
+  sortear um nome das duas tabelas de 10 entradas de `kainame.htm`. Exige campo novo persistente
+  (`kaiName`), por isso **`SAVE_VERSION` sobe de 7 para 8**.
+- **Arma Kai**: escolhida (ou sorteada) entre 10 armas nomeadas, dando +5 Combat Skill enquanto
+  equipada — confirmado que esse bônus **soma** com o do Grand Weaponmastery quando o tipo de arma
+  bate, em vez de substituir (novo campo `kaiWeaponType`, não afeta `SAVE_VERSION` porque já estava
+  incluído no bump acima). O bônus situacional maior (+6 a +9 CS contra um tipo de inimigo/condição
+  específica) fica documentado, não implementado — mesma categoria de pendência do bônus de
+  Weaponmastery+Bow.
+- Equipamento: escolha 5 de 10 itens (Flute é novo). Mapa automático: Map of the Coastal Route.
+- Pendência do Kai-surge "atacar 3 inimigos simultaneamente" (issue #61/JOGOS-92) segue sem novidade.
+
 ## [0.22.0] — 2026-09-15
 
 Tela de seleção de livros agora agrupa os títulos por fase — Kai, Magnakai, Grand Master, New Order, e

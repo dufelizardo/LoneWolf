@@ -53,6 +53,13 @@ describe('getGrandMasterRank', () => {
   it('clamps non-positive counts to the lowest rank', () => {
     expect(getGrandMasterRank(0)).toBe('Kai Grand Master Senior');
   });
+
+  it('accepts a configurable baseline (5, for the New Order phase, Book 21+)', () => {
+    expect(getGrandMasterRank(5, 5)).toBe('Kai Grand Master Senior');
+    expect(getGrandMasterRank(6, 5)).toBe('Kai Grand Master Superior');
+    expect(getGrandMasterRank(7, 5)).toBe('Kai Grand Sentinel');
+    expect(getGrandMasterRank(4, 5)).toBe('Kai Grand Master Senior'); // below baseline, clamps low
+  });
 });
 
 describe('getRankForChart', () => {
@@ -73,5 +80,14 @@ describe('getRankForChart', () => {
     chart.magnakaiDisciplines = ['Curing', 'Huntmastery', 'Divination', 'Weaponmastery', 'Nexus'];
     chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis'];
     expect(getRankForChart(chart)).toBe('Kai Grand Defender');
+  });
+
+  it('uses the baseline-5 Grand Master ladder for a New Order-phase book (Book 21+)', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology'];
+    expect(getRankForChart(chart)).toBe('Kai Grand Master Senior');
+
+    chart.grandMasterDisciplines.push('Herbmastery');
+    expect(getRankForChart(chart)).toBe('Kai Grand Master Superior');
   });
 });

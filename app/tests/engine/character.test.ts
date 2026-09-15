@@ -11,10 +11,14 @@ import {
   carryOverCharacterToBook,
   chooseEquipmentOptions,
   chooseGrandMasteredWeapons,
+  chooseKaiWeapon,
   chooseMasteredWeapons,
   createFreshCharacterForBook,
+  rollKaiWeapon,
+  rollKaiName,
+  setKaiName,
 } from '../../src/engine/character';
-import { ALL_DISCIPLINES, ALL_MAGNAKAI_DISCIPLINES, MAX_BACKPACK_ITEMS, MAX_WEAPONS } from '../../src/engine/types';
+import { ALL_DISCIPLINES, ALL_MAGNAKAI_DISCIPLINES, MAX_BACKPACK_ITEMS, MAX_WEAPONS, type GrandMasterDiscipline } from '../../src/engine/types';
 
 function fixedRng(...values: number[]): () => number {
   let i = 0;
@@ -1139,6 +1143,108 @@ describe('chooseEquipmentOptions (book "tcn", choose-four)', () => {
   });
 });
 
+describe('chooseEquipmentOptions (book "vm", choose-five) - first book of the New Order phase', () => {
+  const fiveOptions = ['bow', 'quiver', 'flute', 'meals', 'potion-of-laumspur'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants the new Flute backpack item (never offered before)', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.backpackItems).toContain('Flute');
+  });
+
+  it('grants 2 Meals from the Meals option', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.meals).toBe(2);
+  });
+
+  it('grants a Potion of Laumspur dose', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.healingPotionDoses).toBe(1);
+  });
+
+  it('offers Quarterstaff and Broadsword together, same as tcn', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    const equipped = chooseEquipmentOptions(chart, ['quarterstaff', 'quiver', 'flute', 'meals', 'potion-of-laumspur']);
+    expect(equipped.weapons).toContain('Quarterstaff');
+  });
+
+  it('always starts with the Map of the Coastal Route', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of the Coastal Route');
+  });
+
+  it('rolls gold with a +20 bonus, same as every Grand Master-era book', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    expect(chart.goldCrowns).toBe(20);
+  });
+
+  it('rejects a selection that is not exactly five options', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fiveOptions.slice(0, 4))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
+  });
+});
+
+describe('chooseKaiWeapon / rollKaiWeapon (Book 21+)', () => {
+  it('sets kaiWeaponType and adds the named weapon to specialItems', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    const equipped = chooseKaiWeapon(chart, 'Illuminatus');
+    expect(equipped.kaiWeaponType).toBe('Broadsword');
+    expect(equipped.specialItems.map((i) => i.name)).toContain('Illuminatus');
+  });
+
+  it('throws for an unknown weapon name', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    expect(() => chooseKaiWeapon(chart, 'Excalibur')).toThrow();
+  });
+
+  it('rolls a deterministic entry from the table given a fixed rng', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    const equipped = rollKaiWeapon(chart, () => 0);
+    expect(equipped.kaiWeaponType).toBe('Axe');
+    expect(equipped.specialItems.map((i) => i.name)).toContain('Spawnsmite');
+  });
+
+  it('throws for a book with no Kai Weapon Table', () => {
+    const chart = createFreshCharacterForBook('tcn', () => 0);
+    expect(() => chooseKaiWeapon(chart, 'Illuminatus')).toThrow();
+  });
+});
+
+describe('setKaiName / rollKaiName (Book 21+)', () => {
+  it('sets a trimmed, non-empty name', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    const named = setKaiName(chart, '  Swiftblade  ');
+    expect(named.kaiName).toBe('Swiftblade');
+  });
+
+  it('rejects an empty or whitespace-only name', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    expect(() => setKaiName(chart, '')).toThrow();
+    expect(() => setKaiName(chart, '   ')).toThrow();
+  });
+
+  it('rolls a deterministic prefix+suffix from the two tables given a fixed rng', () => {
+    const chart = createFreshCharacterForBook('vm', () => 0);
+    const named = rollKaiName(chart, () => 0);
+    expect(named.kaiName).toBe('SwiftBlade');
+  });
+});
+
 describe('carryOverCharacterToBook within the Grand Master phase, book "tplr" -> "tcok" (regression)', () => {
   it('does NOT re-apply the Special Item carry-over whitelist (it only gates the Magnakai->Grand Master boundary)', () => {
     const chart = {
@@ -1178,6 +1284,14 @@ describe('applyGrandMasterDisciplines', () => {
     expect(equipped.grandMasterDisciplines).toEqual(['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis']);
     expect(equipped.combatSkill).toBe(chart.combatSkill);
     expect(equipped.enduranceMax).toBe(chart.enduranceMax);
+  });
+
+  it('accepts a configurable expected count (5, for the New Order phase, Book 21)', () => {
+    const chart = createFreshCharacterForBook('vm', fixedRng(0, 0, 0, 0));
+    const five: GrandMasterDiscipline[] = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology'];
+    expect(() => applyGrandMasterDisciplines(chart, five.slice(0, 4), 5)).toThrow();
+    const equipped = applyGrandMasterDisciplines(chart, five, 5);
+    expect(equipped.grandMasterDisciplines).toEqual(five);
   });
 });
 

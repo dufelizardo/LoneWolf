@@ -84,7 +84,15 @@ export const MAGNAKAI_DISCIPLINE_LABELS: Record<MagnakaiDiscipline, string> = {
  * bonuses keep applying wherever the character did not pick the corresponding Grand Master upgrade
  * (confirmed in discplnz.htm's errata: "Weaponmastery bonuses are replaced by Grand Weaponmastery
  * bonuses, not added cumulatively" - i.e. the new upgrade supersedes the old bonus when both would
- * apply, rather than stacking with it; the old one is a live fallback otherwise). */
+ * apply, rather than stacking with it; the old one is a live fallback otherwise).
+ *
+ * The New Order phase (Book 21+) reuses this exact same pool rather than introducing a parallel
+ * discipline system of its own (confirmed in Book 21's discplnz.htm: "New Order Kai Grand Master
+ * Disciplines" lists the same 12 plus 4 wholly new ones below - Astrology, Herbmastery, Elementalism,
+ * Bardsmanship - all purely narrative, no numeric effects). A New Order character just picks from a
+ * wider 16-item pool starting from 5 instead of 4; see kaiRank.ts's baseline-aware rank lookup and
+ * character.ts's applyGrandMasterDisciplines for how the two phases share this type with different
+ * starting counts. */
 export type GrandMasterDiscipline =
   | 'GrandWeaponmastery'
   | 'AnimalMastery'
@@ -97,7 +105,11 @@ export type GrandMasterDiscipline =
   | 'GrandNexus'
   | 'Telegnosis'
   | 'MagiMagic'
-  | 'KaiAlchemy';
+  | 'KaiAlchemy'
+  | 'Astrology'
+  | 'Herbmastery'
+  | 'Elementalism'
+  | 'Bardsmanship';
 
 export const ALL_GRAND_MASTER_DISCIPLINES: GrandMasterDiscipline[] = [
   'GrandWeaponmastery',
@@ -112,6 +124,10 @@ export const ALL_GRAND_MASTER_DISCIPLINES: GrandMasterDiscipline[] = [
   'Telegnosis',
   'MagiMagic',
   'KaiAlchemy',
+  'Astrology',
+  'Herbmastery',
+  'Elementalism',
+  'Bardsmanship',
 ];
 
 export const GRAND_MASTER_DISCIPLINE_LABELS: Record<GrandMasterDiscipline, string> = {
@@ -127,6 +143,10 @@ export const GRAND_MASTER_DISCIPLINE_LABELS: Record<GrandMasterDiscipline, strin
   Telegnosis: 'Telegnosis',
   MagiMagic: 'Magi-magic',
   KaiAlchemy: 'Kai-alchemy',
+  Astrology: 'Astrology',
+  Herbmastery: 'Herbmastery',
+  Elementalism: 'Elementalism',
+  Bardsmanship: 'Bardsmanship',
 };
 
 export type WeaponType =
@@ -195,6 +215,18 @@ export interface ActionChart {
   currentSection: number;
   visitedSections: number[];
   isAlive: boolean;
+  /** The character's personal name, chosen (freely or via the two-table random roll) at character
+   * creation. Introduced in Book 21 (kainame.htm) — the first book in the whole series to ask for
+   * one. Empty string for every phase before New Order, which never prompts for it. */
+  kaiName: string;
+  /** The WeaponType of the character's named Kai Weapon (Book 21+), or null if they don't have one.
+   * Tracked separately from `grandMasteredWeapons`/`weapons` because its +5 Combat Skill bonus only
+   * applies while THIS specific weapon is equipped, and explicitly stacks with the Grand Weaponmastery
+   * bonus rather than replacing it ("If you possess the Discipline of Grand Weaponmastery for a weapon
+   * type which is the same as your unique Kai Weapon, you may add the Grand Weaponmastery bonus of +5
+   * ... This is in addition to the bonus gained when you use your Kai Weapon in combat." -
+   * equipmnt.htm, Book 21). The named item itself is also added to `specialItems` for display. */
+  kaiWeaponType: WeaponType | null;
 }
 
 export interface Enemy {
@@ -207,7 +239,7 @@ export interface Enemy {
   mindblastImmune?: boolean;
 }
 
-export const SAVE_VERSION = 7;
+export const SAVE_VERSION = 8;
 
 /** The ActionChart snapshot as it stood the moment a book's canonical ending was reached. */
 export interface CampaignProgress {
