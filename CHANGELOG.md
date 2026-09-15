@@ -4,6 +4,31 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.28.0] — 2026-09-15
+
+Livro 25, *Trail of the Wolf*, adicionado — **quinta entrega da fase New Order**, com carry-over normal
+a partir do Livro 24. Ver ADR-0007 (seção "Atualização — Livro 25") para o detalhamento completo.
+
+- **Confirmado, via `tssf.htm`, que é uma continuação direta da história** — a abertura retoma
+  literalmente a cena final do Livro 24 (a notícia do desaparecimento de Lone Wolf). Segue a regra
+  normal de desbloqueio.
+- **Nenhuma Disciplina nova**: mesmo pool de 16 dos Livros 21-24.
+- **Lista de equipamento reverte a troca do Livro 24**: Flute volta a substituir a Lute (Broadsword,
+  introduzido no Livro 24, permanece — Quarterstaff não retorna).
+- Rank "Kai Grand Guardian" (9 Disciplinas) ganha conteúdo real (narrativo) em `imprvdsc.htm`,
+  validando de forma cruzada a fórmula de rank com base 5 introduzida no Livro 21.
+- **Reconfirma, sem novidade, a pendência já registrada do Kai-surge "atacar até 3 inimigos
+  simultaneamente"** (issue #61/JOGOS-92, ADR-0006) — o mesmo texto ambíguo do Livro 14 (fase Grand
+  Master) reaparece aqui no rank equivalente da fase New Order; continua deliberadamente não
+  implementado.
+- Carry-over do Livro 24 confirmado normal (mantém CS/EP, Itens Especiais, Arma Kai, Nome Kai, Armas
+  normais e Itens de Mochila; ganha +1 Disciplina Grand Master e +1 CS/+2 EP).
+- 350 seções, 7 becos sem saída, 7 seções-quebra-cabeça com fallback de escolha, final canônico único
+  em `sect350` (sem a peculiaridade de "vitória pírrica" vista no Livro 24), apontando para o Livro 26
+  "The Fall of Blood Mountain".
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.27.0] — 2026-09-15
 
 Livro 24, *Rune War*, adicionado — **quarta entrega da fase New Order**, com carry-over normal a partir

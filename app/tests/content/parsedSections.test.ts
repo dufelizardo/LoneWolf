@@ -394,3 +394,25 @@ describe('book 24 (Rune War) sections - fourth book of the New Order phase', () 
     expect(endings).toEqual([42, 111, 267, 300, 350]);
   });
 });
+
+describe('book 25 (Trail of the Wolf) sections - fifth book of the New Order phase', () => {
+  const sections = loadSections('tw');
+
+  it('flags the 7 known puzzle sections, each with a real fallback choice', () => {
+    for (const num of [11, 39, 219, 256, 293, 300, 348]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isDeadEnd, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length, `sect${num}`).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350), forward-linking to Book 26', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+
+  it('has exactly the 7 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([61, 227, 249, 269, 297, 323, 336]);
+  });
+});

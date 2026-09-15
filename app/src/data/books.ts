@@ -53,6 +53,7 @@ export const BOOKS: BookMeta[] = [
   { id: 'tbs', code: '22tbos', title: 'The Buccaneers of Shadaki', order: 22, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 350, finalSection: 350, initialDisciplineCount: 5 },
   { id: 'mh', code: '23mh', title: "Mydnight's Hero", order: 23, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 350, finalSection: 350, initialDisciplineCount: 5 },
   { id: 'rw', code: '24rw', title: 'Rune War', order: 24, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 350, finalSection: 350, initialDisciplineCount: 5 },
+  { id: 'tw', code: '25totw', title: 'Trail of the Wolf', order: 25, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 350, finalSection: 350, initialDisciplineCount: 5 },
 ];
 
 export function getBook(id: string): BookMeta {
