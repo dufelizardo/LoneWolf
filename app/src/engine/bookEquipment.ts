@@ -996,6 +996,61 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
       { name: 'Firefall', weaponType: 'Broadsword' },
     ],
   },
+  rw: {
+    // "add 20 to the number you have picked" - same as every Grand Master-era/New Order book.
+    goldRollBonus: 20,
+    // Never actually read for rw — same reasoning as tkt above.
+    weaponPool: ALL_WEAPONS,
+    healingPotionLabel: 'Potion of Laumspur',
+    // "you may keep a maximum of ten articles, including Meals, in your Backpack" - unchanged.
+    maxBackpackItems: 10,
+    applyBaseEquipment: (c) => {
+      addSpecialItem(c, { name: 'Map of the Stornlands' });
+    },
+    // Choose-five, 10-item list - first genuine change since vm (Book 21): Quarterstaff is swapped
+    // for Broadsword and Flute for Lute (same categories, same non-effect - Lute is a plain Backpack
+    // Item exactly like every Flute before it). Everything else (count, gold bonus, Kai Weapon table)
+    // is unchanged from tbs/mh.
+    chooseCount: 5,
+    chooseOptions: [
+      { id: 'axe', label: 'Axe', apply: (c) => addWeaponIfRoom(c, 'Axe') },
+      { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
+      {
+        id: 'quiver',
+        label: 'Quiver (6 Arrows)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Quiver', knownEffects: 'Holds up to 6 Arrows' });
+          addArrows(c, 6);
+        },
+      },
+      { id: 'lute', label: 'Lute', apply: (c) => addBackpackItemIfRoom(c, 'Lute') },
+      { id: 'dagger', label: 'Dagger', apply: (c) => addWeaponIfRoom(c, 'Dagger') },
+      { id: 'bow', label: 'Bow', apply: (c) => addWeaponIfRoom(c, 'Bow') },
+      {
+        id: 'meals',
+        label: '2 Meals',
+        apply: (c) => { for (let i = 0; i < 2; i++) addMealIfRoom(c); },
+      },
+      { id: 'rope', label: 'Rope', apply: (c) => addBackpackItemIfRoom(c, 'Rope') },
+      { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: (c) => grantHealingPotion(c) },
+      { id: 'broadsword', label: 'Broadsword', apply: (c) => addWeaponIfRoom(c, 'Broadsword') },
+    ],
+    // Same Kai Weapon Table as vm/tbs/mh (Books 21-23) - confirmed byte-identical (same 10 named
+    // weapons, same order) in equipmnt.htm. A carried-over character already has one and skips this
+    // step - see the needsKaiWeapon fix in CharacterCreationScreen.tsx.
+    kaiWeaponTable: [
+      { name: 'Spawnsmite', weaponType: 'Axe' },
+      { name: 'Alema', weaponType: 'Axe' },
+      { name: 'Magnara', weaponType: 'Axe' },
+      { name: 'Sunstrike', weaponType: 'Sword' },
+      { name: 'Kaistar', weaponType: 'Sword' },
+      { name: 'Valiance', weaponType: 'Sword' },
+      { name: 'Ulnarias', weaponType: 'Sword' },
+      { name: 'Raumas', weaponType: 'Broadsword' },
+      { name: 'Illuminatus', weaponType: 'Broadsword' },
+      { name: 'Firefall', weaponType: 'Broadsword' },
+    ],
+  },
 };
 
 export function getBookEquipment(bookId: string): BookEquipmentConfig {
