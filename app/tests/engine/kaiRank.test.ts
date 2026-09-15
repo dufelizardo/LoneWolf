@@ -114,6 +114,12 @@ describe('getRankForChart', () => {
     chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery', 'Elementalism', 'Bardsmanship', 'KaiSurge'];
     expect(getRankForChart(chart)).toBe('Kai Grand Guardian');
   });
+
+  it('a character who completed Books 21-25 (10 Disciplines) carried into Book 26 maps to "Sun Knight", matching Book 26 imprvdsc.htm\'s real content tier', () => {
+    const chart = createFreshCharacterForBook('tfbm', () => 0);
+    chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery', 'Elementalism', 'Bardsmanship', 'KaiSurge', 'KaiAlchemy'];
+    expect(getRankForChart(chart)).toBe('Sun Knight');
+  });
 });
 
 describe('getGrandMasterBaseline', () => {

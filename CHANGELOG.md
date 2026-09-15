@@ -4,6 +4,29 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.29.0] — 2026-09-15
+
+Livro 26, *The Fall of Blood Mountain*, adicionado — **sexta entrega da fase New Order**, com
+carry-over normal a partir do Livro 25. Ver ADR-0007 (seção "Atualização — Livro 26") para o
+detalhamento completo.
+
+- **Carry-over normal confirmado apesar de um salto temporal na narrativa**: diferente dos Livros
+  22-25 (que retomavam a cena exata do final anterior), o `tssf.htm` deste livro tem "um ano se passou"
+  antes de introduzir a nova missão, referenciando os Livros 24/25 via notas de rodapé. `gamerulz.htm`
+  confirma que o mecanismo de carry-over continua o mesmo de sempre — critério refinado: o teste
+  decisivo é o `gamerulz.htm`, não a estrutura narrativa do `tssf.htm`.
+- **Nenhuma Disciplina nova**: mesmo pool de 16 dos Livros 21-25.
+- Rank "Sun Knight" (10 Disciplinas) ganha conteúdo real (narrativo) em `imprvdsc.htm`, validando de
+  forma cruzada a fórmula de rank com base 5 introduzida no Livro 21.
+- Lista de equipamento reordenada na página, sem troca de item (mesmos 10 itens do Livro 25).
+- Primeiro livro da fase New Order **sem nenhuma seção-quebra-cabeça**.
+- Carry-over do Livro 25 confirmado normal (mantém CS/EP, Itens Especiais, Arma Kai, Nome Kai, Armas
+  normais e Itens de Mochila; ganha +1 Disciplina Grand Master e +1 CS/+2 EP).
+- 350 seções, 5 becos sem saída, final canônico único e limpo em `sect350`, apontando para o Livro 27
+  "Vampirium".
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.28.0] — 2026-09-15
 
 Livro 25, *Trail of the Wolf*, adicionado — **quinta entrega da fase New Order**, com carry-over normal

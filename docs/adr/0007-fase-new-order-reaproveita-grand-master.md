@@ -3,8 +3,9 @@
 ## Status
 
 **Implementada.** Livros 21 (*Voyage of the Moonstone*), 22 (*The Buccaneers of Shadaki*), 23
-(*Mydnight's Hero*), 24 (*Rune War*) e 25 (*Trail of the Wolf*) jogáveis de ponta a ponta — cinco
-primeiras entregas da fase New Order, sucedendo a fase Grand Master (Livros 13-20, completa).
+(*Mydnight's Hero*), 24 (*Rune War*), 25 (*Trail of the Wolf*) e 26 (*The Fall of Blood Mountain*)
+jogáveis de ponta a ponta — seis primeiras entregas da fase New Order, sucedendo a fase Grand Master
+(Livros 13-20, completa).
 
 ## Contexto
 
@@ -303,3 +304,45 @@ anterior ao anterior" — cada `equipmnt.htm` é a fonte de verdade.
 Nenhuma Disciplina nova, nenhuma mudança de mecânica de combate, nenhum novo limiar em `combat.ts`
 disparado (9 Disciplinas, base 5, está bem abaixo do limiar de Sun Lord ajustado, 11). Sem mudança de
 `SAVE_VERSION`.
+
+## Atualização — Livro 26
+
+O Livro 26 (*The Fall of Blood Mountain*) é a sexta entrega da fase New Order.
+
+### Critério de continuação refinado: `gamerulz.htm`, não a estrutura do `tssf.htm`
+
+Diferente dos Livros 22-25 (cujo `tssf.htm` sempre retomava literalmente a cena final do livro
+anterior), o `tssf.htm` deste livro introduz um salto temporal — "a year has elapsed since your
+triumph at Gazad Helkona... it has been a peaceful and rewarding time... training new recruits" —
+antes de apresentar a nova missão via Lord Rimoah, referenciando os Livros 24 e 25 por meio de notas
+de rodapé (eventos passados), não como continuação imediata de cena. Isso levantou a dúvida se seria
+um ponto de entrada novo (como o Livro 21).
+
+**Resolvido lendo `gamerulz.htm` diretamente**, que confirma o carry-over normal de sempre: *"If you
+have successfully completed previous adventures in the Lone Wolf New Order series (Books 21–25), you
+can carry your current scores..."* — idêntico ao mecanismo já implementado. **Critério refinado pra
+decidir `allowsCarryOver` em livros futuros**: o teste decisivo não é "o `tssf.htm` retoma a cena exata
+do final anterior" (esse sinal narrativo pode variar por causa de saltos temporais legítimos na
+história, como aqui), e sim **"o `gamerulz.htm` ainda descreve o carry-over normal com base nos livros
+anteriores da série"** — esse é o teste mecânico que realmente determina o comportamento do app. O
+Livro 21 continua sendo o único caso de `allowsCarryOver: false` porque foi o único cujo `gamerulz.htm`
+não menciona nenhum carry-over.
+
+### Confirmação cruzada do rank "Sun Knight"
+
+`imprvdsc.htm` ganha o próximo patamar de conteúdo real: **Sun Knight** (índice 5 do array
+`GRAND_MASTER_RANKS`) — 8 melhorias narrativas, nenhuma com bônus numérico. Um personagem que completou
+os Livros 21-25 sequencialmente chega ao Livro 26 com 10 Disciplinas Grand Master, e
+`getGrandMasterRank(10, 5)` já produzia esse rank antes mesmo dessa confirmação existir.
+
+### Equipamento reordenado, sem troca de item
+
+Ao contrário dos Livros 24 e 25 (que trocaram itens de fato — Quarterstaff↔Broadsword, Flute↔Lute), o
+Livro 26 mantém exatamente os mesmos 10 itens do Livro 25, só reordenados na página (Broadsword listado
+primeiro). Primeira vez na fase New Order sem nenhuma seção-quebra-cabeça.
+
+### Sem mudança de código
+
+Nenhuma Disciplina nova, nenhuma mudança de mecânica de combate. 10 Disciplinas (base 5) está a apenas
+1 Disciplina do limiar de Sun Lord ajustado (11) — vale conferir no próximo livro se esse limiar
+finalmente é alcançável por um personagem totalmente sequencial. Sem mudança de `SAVE_VERSION`.
