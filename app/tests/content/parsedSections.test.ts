@@ -416,3 +416,22 @@ describe('book 25 (Trail of the Wolf) sections - fifth book of the New Order pha
     expect(deadEnds).toEqual([61, 227, 249, 269, 297, 323, 336]);
   });
 });
+
+describe('book 26 (The Fall of Blood Mountain) sections - sixth book of the New Order phase', () => {
+  const sections = loadSections('tfbm');
+
+  it('has no puzzle sections - the first New Order book with none', () => {
+    const puzzles = Object.values(sections).filter((s) => s.hasPuzzle);
+    expect(puzzles).toHaveLength(0);
+  });
+
+  it('has exactly one real ending, at the canonical final section (350), forward-linking to Book 27', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+
+  it('has exactly the 5 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([104, 149, 249, 271, 329]);
+  });
+});

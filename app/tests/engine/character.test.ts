@@ -1423,6 +1423,63 @@ describe('carryOverCharacterToBook within the New Order phase, book "rw" -> "tw"
   });
 });
 
+describe('chooseEquipmentOptions (book "tfbm", choose-five) - sixth book of the New Order phase', () => {
+  // Same 10 items as tw (Book 25), just reordered on the page - no item swap this time.
+  const fiveOptions = ['bow', 'quiver', 'flute', 'meals', 'potion-of-laumspur'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('tfbm', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('tfbm', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('still offers Broadsword and Flute, same categories as tw', () => {
+    const chart = createFreshCharacterForBook('tfbm', () => 0);
+    const equipped = chooseEquipmentOptions(chart, ['broadsword', 'quiver', 'flute', 'meals', 'potion-of-laumspur']);
+    expect(equipped.weapons).toContain('Broadsword');
+    expect(equipped.backpackItems).toContain('Flute');
+  });
+
+  it('always starts with the Map of Bor and its Surrounding Territories', () => {
+    const chart = createFreshCharacterForBook('tfbm', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of Bor and its Surrounding Territories');
+  });
+
+  it('rolls gold with a +20 bonus, same as vm/tbs/mh/rw/tw', () => {
+    const chart = createFreshCharacterForBook('tfbm', () => 0);
+    expect(chart.goldCrowns).toBe(20);
+  });
+
+  it('rejects a selection that is not exactly five options', () => {
+    const chart = createFreshCharacterForBook('tfbm', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fiveOptions.slice(0, 4))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
+  });
+});
+
+describe('carryOverCharacterToBook within the New Order phase, book "tw" -> "tfbm" (regression)', () => {
+  it('preserves kaiName and kaiWeaponType without resetting them - the character-creation screen must not re-prompt for either (see needsKaiWeapon/needsKaiName)', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('tw', fixedRng(0, 0, 0, 0)),
+      kaiName: 'SwiftBlade',
+      kaiWeaponType: 'Broadsword',
+      specialItems: [{ name: 'Illuminatus' }],
+      grandMasterDisciplines: ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery', 'Elementalism', 'Bardsmanship', 'KaiSurge'],
+    };
+    const carried = carryOverCharacterToBook(chart, 'tfbm', fixedRng(0));
+    expect(carried.kaiName).toBe('SwiftBlade');
+    expect(carried.kaiWeaponType).toBe('Broadsword');
+    expect(carried.specialItems.map((i) => i.name)).toContain('Illuminatus');
+    expect(carried.grandMasterDisciplines).toEqual(chart.grandMasterDisciplines);
+  });
+});
+
 describe('chooseKaiWeapon / rollKaiWeapon (Book 21+)', () => {
   it('sets kaiWeaponType and adds the named weapon to specialItems', () => {
     const chart = createFreshCharacterForBook('vm', () => 0);
