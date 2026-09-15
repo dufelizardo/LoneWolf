@@ -5,10 +5,8 @@ import { ALL_MAGICAL_POWERS, WIZARDS_STAFF, type GreyStarActionChart, type Magic
 /**
  * Creates a fresh Grey Star character with rolled stats and the fixed starting kit, before Magical
  * Power selection and the one-time gift choice. Mirrors character.ts's createFreshCharacterForBook
- * shape, but Grey Star's kit is entirely fixed (gamerulz.htm/equipmnt.htm) - no bookEquipment.ts-style
- * per-book "choose N of a list" config, since there's currently only one book in this phase and its
- * equipment section describes a flat, non-optional kit (plus the separate one-time gift, see
- * chooseStartingGift).
+ * shape, but Grey Star's kit is entirely fixed (gamerulz.htm/equipmnt.htm) - see greyStarBookEquipment.ts
+ * for the one per-book equipment difference found so far (the Book 1-only starting gift).
  */
 export function createFreshGreyStarCharacter(bookId: string, rng: Rng = Math.random): GreyStarActionChart {
   const combatSkill = rollRandomNumber(rng) + 10;
@@ -19,6 +17,9 @@ export function createFreshGreyStarCharacter(bookId: string, rng: Rng = Math.ran
     bookId,
     combatSkill,
     willpowerCurrent,
+    // The roll above, before any later gift bonus or in-game spend - see willpowerStarting's doc
+    // comment in greyStarTypes.ts (needed for a Book 2+ carry-over method).
+    willpowerStarting: willpowerCurrent,
     enduranceMax: enduranceRoll,
     enduranceCurrent: enduranceRoll,
     magicalPowers: [],
@@ -43,6 +44,20 @@ export function createFreshGreyStarCharacter(bookId: string, rng: Rng = Math.ran
   return chart;
 }
 
+// "If you have chosen Alchemy as one of your Magical Powers, then you will have a leather pouch for
+// herbs and potions... 2 empty Vials... 1 Vial containing Saltpetre... 1 Vial containing Sulphur"
+// (equipmnt.htm) - shared by chooseMagicalPowers (fresh 5-power choice) and addExtraMagicalPower
+// (Book 2+ carry-over, gaining Alchemy as the 6th power) since both can be the moment Alchemy is
+// first chosen.
+function grantHerbPouchStartingContents(chart: GreyStarActionChart): GreyStarActionChart {
+  let next = chart;
+  next = addHerbPouchItem(next, 'Empty Vial');
+  next = addHerbPouchItem(next, 'Empty Vial');
+  next = addHerbPouchItem(next, 'Vial of Saltpetre');
+  next = addHerbPouchItem(next, 'Vial of Sulphur');
+  return next;
+}
+
 /** Exactly five of the seven ALL_MAGICAL_POWERS (discplnz.htm-equivalent: powers.htm). Throws on any other count, matching applyGrandMasterDisciplines's validation style. */
 export function chooseMagicalPowers(chart: GreyStarActionChart, powers: MagicalPower[]): GreyStarActionChart {
   if (powers.length !== 5) throw new Error(`Expected exactly 5 Magical Powers, got ${powers.length}`);
@@ -53,17 +68,26 @@ export function chooseMagicalPowers(chart: GreyStarActionChart, powers: MagicalP
   }
 
   let next: GreyStarActionChart = { ...chart, magicalPowers: [...powers] };
+  if (powers.includes('Alchemy')) next = grantHerbPouchStartingContents(next);
+  return next;
+}
 
-  // "If you have chosen Alchemy as one of your Magical Powers, then you will have a leather pouch for
-  // herbs and potions... 2 empty Vials... 1 Vial containing Saltpetre... 1 Vial containing Sulphur"
-  // (equipmnt.htm) - the Herb Pouch and its starting contents are conditional on this one choice.
-  if (powers.includes('Alchemy')) {
-    next = addHerbPouchItem(next, 'Empty Vial');
-    next = addHerbPouchItem(next, 'Empty Vial');
-    next = addHerbPouchItem(next, 'Vial of Saltpetre');
-    next = addHerbPouchItem(next, 'Vial of Sulphur');
+/**
+ * Book 2+'s gamerulz.htm, for a character carried over from a previous Grey Star book: "your powers
+ * of wizardry have grown... choose one more Magical Power" - the 6th, from the 2 not already known.
+ * If you choose Alchemy as this new power, you also receive a Herb Pouch now (footnote 2).
+ */
+export function addExtraMagicalPower(chart: GreyStarActionChart, power: MagicalPower): GreyStarActionChart {
+  if (chart.magicalPowers.length !== 5) {
+    throw new Error(`Expected a character with exactly 5 Magical Powers, got ${chart.magicalPowers.length}`);
   }
+  if (chart.magicalPowers.includes(power)) {
+    throw new Error(`Character already has the ${power} Magical Power`);
+  }
+  if (!ALL_MAGICAL_POWERS.includes(power)) throw new Error(`Unknown Magical Power: ${power}`);
 
+  let next: GreyStarActionChart = { ...chart, magicalPowers: [...chart.magicalPowers, power] };
+  if (power === 'Alchemy') next = grantHerbPouchStartingContents(next);
   return next;
 }
 
@@ -83,4 +107,42 @@ export function chooseStartingGift(chart: GreyStarActionChart, gift: StartingGif
     case 'VialOfLaumspur':
       return addBackpackItem(chart, 'Vial of Laumspur');
   }
+}
+
+export type GreyStarWillpowerCarryOverMethod = 'keepCurrent' | 'reroll' | 'useStarting';
+
+/**
+ * Carries a Grey Star character over into the next book of the mini-series (Book 2+ only - Book 1 is
+ * always a fresh start). gamerulz.htm's main text says "add 10 to your WILLPOWER total", but footnote 1
+ * admits this "doesn't seem fair" (WILLPOWER is typically near zero by the end of a book, having been
+ * spent on magic/the Staff) and offers 2 alternatives - rolling a brand new WILLPOWER score, or reusing
+ * the previous book's own starting score - leaving the choice to the player. Everything else
+ * (COMBAT SKILL, ENDURANCE, weapons, Backpack/Herb Pouch items, Special Items, Nobles) carries over
+ * unchanged via the spread - gamerulz.htm's own carry-over text only mentions "weapons and Special
+ * Items", but the book's own errata (Section 17 note, about a Bundle of Azawood Leaves bought in Book 1
+ * and used in Book 2) confirms Backpack/Herb Pouch items survive too in practice.
+ */
+export function carryOverGreyStarCharacterToBook(
+  previous: GreyStarActionChart,
+  bookId: string,
+  willpowerMethod: GreyStarWillpowerCarryOverMethod,
+  rng: Rng = Math.random,
+): GreyStarActionChart {
+  const bonus = 10;
+  const newWillpower =
+    willpowerMethod === 'reroll'
+      ? rollRandomNumber(rng) + 20 + bonus
+      : willpowerMethod === 'useStarting'
+        ? previous.willpowerStarting + bonus
+        : previous.willpowerCurrent + bonus;
+
+  return {
+    ...previous,
+    bookId,
+    willpowerCurrent: newWillpower,
+    willpowerStarting: newWillpower,
+    currentSection: 1,
+    visitedSections: [],
+    isAlive: true,
+  };
 }

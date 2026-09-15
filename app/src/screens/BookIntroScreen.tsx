@@ -1,13 +1,14 @@
 import bookIntros from '../data/book-intros.json';
 import type { BookMeta } from '../data/books';
 import type { ActionChart } from '../engine/types';
+import type { GreyStarActionChart } from '../engine/greyStarTypes';
 import type { CreationMode } from '../App';
 
 const INTROS = bookIntros as unknown as Record<string, { html: string }>;
 
 interface Props {
   book: BookMeta;
-  previousChart: ActionChart | null;
+  previousChart: ActionChart | GreyStarActionChart | null;
   onContinue: (mode: CreationMode) => void;
 }
 
