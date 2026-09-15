@@ -578,3 +578,42 @@ describe('resolveCombatRound with Kai-ray (Book 20, Sun Prince rank)', () => {
     expect(kaiBlastResult.kaiRayCost).toBe(0);
   });
 });
+
+describe('Kai Weapon bonus (Book 21+)', () => {
+  const enemy: Enemy = { name: 'Giak', combatSkill: 5, endurance: 20 };
+
+  it('adds +5 Combat Skill while the Kai Weapon is equipped', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('vm', fixedRng(0, 0, 0)),
+      combatSkill: 10,
+      kaiWeaponType: 'Broadsword',
+      equippedWeapon: 'Broadsword',
+      weapons: ['Broadsword'],
+    };
+    expect(getEffectiveCombatSkill(chart, enemy)).toBe(15);
+  });
+
+  it('does not apply while a different weapon is equipped', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('vm', fixedRng(0, 0, 0)),
+      combatSkill: 10,
+      kaiWeaponType: 'Broadsword',
+      equippedWeapon: 'Sword',
+      weapons: ['Sword'],
+    };
+    expect(getEffectiveCombatSkill(chart, enemy)).toBe(10);
+  });
+
+  it('stacks with the Grand Weaponmastery bonus when the weapon type matches both', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('vm', fixedRng(0, 0, 0)),
+      combatSkill: 10,
+      grandMasterDisciplines: ['GrandWeaponmastery'],
+      grandMasteredWeapons: ['Broadsword'],
+      kaiWeaponType: 'Broadsword',
+      equippedWeapon: 'Broadsword',
+      weapons: ['Broadsword'],
+    };
+    expect(getEffectiveCombatSkill(chart, enemy)).toBe(20); // 10 base + 5 Grand Weaponmastery + 5 Kai Weapon
+  });
+});

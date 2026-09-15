@@ -11,8 +11,12 @@ import {
   carryOverCharacterToBook,
   chooseEquipmentOptions,
   chooseGrandMasteredWeapons,
+  chooseKaiWeapon,
   chooseMasteredWeapons,
   createFreshCharacterForBook,
+  KAI_NAME_PREFIXES,
+  KAI_NAME_SUFFIXES,
+  setKaiName,
 } from '../engine/character';
 import { getBookEquipment } from '../engine/bookEquipment';
 import { getRankForChart } from '../engine/kaiRank';
@@ -43,7 +47,11 @@ interface Props {
 export function CharacterCreationScreen({ book, creationMode, previousChart, onReady }: Props) {
   const isCarryOver = creationMode === 'carryover' && previousChart !== null;
   const isMagnakaiPhase = book.phase === 'magnakai';
-  const isGrandMasterPhase = book.phase === 'grand_master';
+  // The New Order phase (Book 21+) reuses the exact same Grand Master Discipline pool and Grand
+  // Weaponmastery growth mechanics rather than introducing a parallel system - see the
+  // GrandMasterDiscipline doc comment in types.ts. It only differs in its starting discipline count
+  // (book.initialDisciplineCount) and rank-ladder baseline (see kaiRank.ts).
+  const isGrandMasterPhase = book.phase === 'grand_master' || book.phase === 'new_order';
 
   const [baseChart] = useState<ActionChart>(() =>
     isCarryOver ? carryOverCharacterToBook(previousChart!, book.id) : createFreshCharacterForBook(book.id),
@@ -88,7 +96,8 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
   // (no conversion from Magnakai — magnakaiDisciplines simply keeps applying its own bonuses
   // wherever no Grand Master upgrade supersedes them, see types.ts's GrandMasterDiscipline comment).
   const grandMasterFirstEntry = isGrandMasterPhase && baseChart.grandMasterDisciplines.length === 0;
-  const requiredGrandMasterDisciplines = grandMasterFirstEntry ? 4 : 1;
+  const initialGrandMasterDisciplineCount = book.initialDisciplineCount ?? 4;
+  const requiredGrandMasterDisciplines = grandMasterFirstEntry ? initialGrandMasterDisciplineCount : 1;
   const availableGrandMasterDisciplines = ALL_GRAND_MASTER_DISCIPLINES.filter(
     (d) => !baseChart.grandMasterDisciplines.includes(d),
   );
@@ -110,6 +119,25 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
   const needsEquipmentChoice = equipmentConfig.chooseOptions !== undefined;
   const requiredEquipment = equipmentConfig.chooseCount ?? 2;
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
+
+  // Kai Weapon (Book 21+) — a named weapon chosen (or randomly rolled) once, on top of the normal
+  // equipment choice above. Grants a flat Combat Skill bonus while equipped (see combat.ts).
+  const needsKaiWeapon = equipmentConfig.kaiWeaponTable !== undefined;
+  const [selectedKaiWeapon, setSelectedKaiWeapon] = useState<string | null>(null);
+  const rollRandomKaiWeapon = () => {
+    const table = equipmentConfig.kaiWeaponTable!;
+    setSelectedKaiWeapon(table[Math.floor(Math.random() * table.length)].name);
+  };
+
+  // Kai Name (Book 21+, kainame.htm) — freely chosen or rolled from two 10-entry tables. No earlier
+  // phase's character creation ever prompts for this.
+  const needsKaiName = book.phase === 'new_order' && !isCarryOver;
+  const [kaiNameInput, setKaiNameInput] = useState('');
+  const rollRandomKaiName = () => {
+    const prefix = KAI_NAME_PREFIXES[Math.floor(Math.random() * KAI_NAME_PREFIXES.length)];
+    const suffix = KAI_NAME_SUFFIXES[Math.floor(Math.random() * KAI_NAME_SUFFIXES.length)];
+    setKaiNameInput(`${prefix}${suffix}`);
+  };
 
   const toggleDiscipline = (discipline: Discipline) => {
     setSelectedDisciplines((prev) => {
@@ -168,6 +196,8 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
   const grandMasteredWeaponsReady =
     !needsGrandMasteredWeapons || selectedGrandMasteredWeapons.length === requiredGrandMasteredWeapons;
   const equipmentReady = !needsEquipmentChoice || selectedEquipment.length === requiredEquipment;
+  const kaiWeaponReady = !needsKaiWeapon || selectedKaiWeapon !== null;
+  const kaiNameReady = !needsKaiName || kaiNameInput.trim().length > 0;
 
   const previewRank = isGrandMasterPhase
     ? getRankForChart({
@@ -182,12 +212,20 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
       : getRankForChart({ ...baseChart, disciplines: [...baseChart.disciplines, ...selectedDisciplines] });
 
   const confirm = () => {
-    if (!disciplinesReady || !masteredWeaponsReady || !grandMasteredWeaponsReady || !equipmentReady) return;
+    if (
+      !disciplinesReady ||
+      !masteredWeaponsReady ||
+      !grandMasteredWeaponsReady ||
+      !equipmentReady ||
+      !kaiWeaponReady ||
+      !kaiNameReady
+    )
+      return;
 
     let chart: ActionChart;
     if (isGrandMasterPhase) {
       chart = grandMasterFirstEntry
-        ? applyGrandMasterDisciplines(baseChart, selectedGrandMasterDisciplines)
+        ? applyGrandMasterDisciplines(baseChart, selectedGrandMasterDisciplines, initialGrandMasterDisciplineCount)
         : addExtraGrandMasterDiscipline(baseChart, selectedGrandMasterDisciplines[0]);
       if (needsFreshGrandMasteredWeapons) {
         chart = chooseGrandMasteredWeapons(chart, selectedGrandMasteredWeapons);
@@ -211,6 +249,14 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
 
     if (needsEquipmentChoice) {
       chart = chooseEquipmentOptions(chart, selectedEquipment);
+    }
+
+    if (needsKaiWeapon && selectedKaiWeapon) {
+      chart = chooseKaiWeapon(chart, selectedKaiWeapon);
+    }
+
+    if (needsKaiName) {
+      chart = setKaiName(chart, kaiNameInput);
     }
 
     onReady(chart);
@@ -407,10 +453,61 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
         </section>
       )}
 
+      {needsKaiName && (
+        <section>
+          <h3>Seu Nome Kai</h3>
+          <p className="item-detail">Crie seu próprio nome Kai ou sorteie um aleatoriamente.</p>
+          <input
+            type="text"
+            value={kaiNameInput}
+            onChange={(e) => setKaiNameInput(e.target.value)}
+            placeholder="Digite um nome"
+          />
+          <button type="button" onClick={rollRandomKaiName}>
+            Sortear aleatoriamente
+          </button>
+        </section>
+      )}
+
+      {needsKaiWeapon && (
+        <section>
+          <h3>Escolha sua Arma Kai</h3>
+          <p className="item-detail">
+            Concede +5 Combat Skill enquanto equipada (soma com o bônus de Grand Weaponmastery, se o
+            tipo de arma coincidir).
+          </p>
+          <ul className="discipline-picker">
+            {equipmentConfig.kaiWeaponTable!.map((w) => (
+              <li key={w.name}>
+                <label>
+                  <input
+                    type="radio"
+                    name="kai-weapon"
+                    checked={selectedKaiWeapon === w.name}
+                    onChange={() => setSelectedKaiWeapon(w.name)}
+                  />
+                  {w.name} ({w.weaponType})
+                </label>
+              </li>
+            ))}
+          </ul>
+          <button type="button" onClick={rollRandomKaiWeapon}>
+            Sortear aleatoriamente
+          </button>
+        </section>
+      )}
+
       <button
         type="button"
         className="primary-button"
-        disabled={!disciplinesReady || !masteredWeaponsReady || !grandMasteredWeaponsReady || !equipmentReady}
+        disabled={
+          !disciplinesReady ||
+          !masteredWeaponsReady ||
+          !grandMasteredWeaponsReady ||
+          !equipmentReady ||
+          !kaiWeaponReady ||
+          !kaiNameReady
+        }
         onClick={confirm}
       >
         Começar Aventura

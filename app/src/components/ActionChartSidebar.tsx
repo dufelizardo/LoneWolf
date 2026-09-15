@@ -47,6 +47,7 @@ export function ActionChartSidebar({ chart, onChange }: Props) {
   return (
     <aside className="action-chart">
       <h2>Ficha de Aventura</h2>
+      {chart.kaiName && <p className="kai-name">{chart.kaiName}</p>}
 
       <section className="stat-block">
         <div className="stat-row">

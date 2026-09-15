@@ -78,6 +78,15 @@ const KAI_BLAST_COST = 4;
 // Grand Crown rank (10 Grand Master Disciplines) is reached.
 const GRAND_WEAPONMASTERY_UNARMED_BONUS = 3;
 const GRAND_CROWN_DISCIPLINE_COUNT = 10;
+// "When using this Kai Weapon in normal combat you may add +5 points to your COMBAT SKILL... If you
+// possess the Discipline of Grand Weaponmastery for a weapon type which is the same as your unique
+// Kai Weapon, you may add the Grand Weaponmastery bonus of +5... This is in addition to the bonus
+// gained when you use your Kai Weapon in combat." (equipmnt.htm, Book 21) - stacks with, rather than
+// replaces, the Weaponmastery/Grand Weaponmastery bonus above. Each Kai Weapon also has a higher
+// situational bonus (+6 to +9) against a specific enemy type/condition, not implemented here - the
+// engine has no structured "enemy type/condition" data to match against (same category of pendency as
+// the Weaponmastery+Bow Random Number Table bonus).
+const KAI_WEAPON_BONUS = 5;
 // "This ability can [be] used once during a combat to reduce an enemy's ENDURANCE score by 15
 // points. However, use of this Kai-ray will also reduce a Sun Prince's ENDURANCE score by 4 points.
 // It cannot be used if a Sun Prince's ENDURANCE score is 10 or less, and it cannot be used in
@@ -204,6 +213,12 @@ export function getEffectiveCombatSkill(chart: ActionChart, enemy: Enemy, option
     skill += GRAND_WEAPONMASTERY_BONUS;
   } else if (chart.masteredWeapons.includes(chart.equippedWeapon)) {
     skill += magnakaiDisciplineCount >= SCION_KAI_DISCIPLINE_COUNT ? WEAPONMASTERY_BONUS_SCION_KAI : WEAPONMASTERY_BONUS;
+  }
+
+  // Stacks with the branch above rather than replacing it - "This is in addition to the bonus gained
+  // when you use your Kai Weapon in combat" (equipmnt.htm, Book 21).
+  if (chart.kaiWeaponType && chart.equippedWeapon === chart.kaiWeaponType) {
+    skill += KAI_WEAPON_BONUS;
   }
 
   if (chart.disciplines.includes('Mindblast') && !enemy.mindblastImmune) {

@@ -25,7 +25,14 @@ export function BookSelectionScreen({ campaign, onSelectBook }: Props) {
                 {books.map((book) => {
                   const index = sorted.indexOf(book);
                   const previous = sorted[index - 1];
-                  const unlocked = index === 0 || (previous && Boolean(campaign.completedBooks[previous.id]));
+                  // A book that doesn't support carrying a character over (currently only Book 21,
+                  // the fresh-start opener of the New Order phase) is a standalone entry point in its
+                  // own right, same as Book 1 - the player can jump straight into it without having
+                  // completed anything before it.
+                  const unlocked =
+                    index === 0 ||
+                    book.allowsCarryOver === false ||
+                    (previous && Boolean(campaign.completedBooks[previous.id]));
                   const completed = Boolean(campaign.completedBooks[book.id]);
                   return (
                     <li key={book.id} className={`book-list-item ${unlocked ? 'unlocked' : 'locked'}`}>

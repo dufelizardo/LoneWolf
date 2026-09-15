@@ -58,6 +58,8 @@ export function createFreshCharacterForBook(bookId: string, rng: Rng = Math.rand
     currentSection: 1,
     visitedSections: [],
     isAlive: true,
+    kaiName: '',
+    kaiWeaponType: null,
   };
 
   config.applyBaseEquipment(chart);
@@ -183,21 +185,28 @@ export function addExtraMasteredWeapon(chart: ActionChart, weapon: WeaponType): 
   return { ...chart, masteredWeapons: [...chart.masteredWeapons, weapon] };
 }
 
-/** Applies the player's chosen Grand Master Disciplines for a character entering the phase for the first time (exactly 4, no stat bonus — the +1 CS/+2 EP bonus only applies to Disciplines gained "in excess of the original four", see addExtraGrandMasterDiscipline). */
-export function applyGrandMasterDisciplines(chart: ActionChart, disciplines: GrandMasterDiscipline[]): ActionChart {
-  if (disciplines.length !== 4) {
-    throw new Error(`Expected exactly 4 Grand Master Disciplines, got ${disciplines.length}`);
+/**
+ * Applies the player's chosen Grand Master Disciplines for a character entering a Grand-Master-style
+ * phase for the first time (no stat bonus — the +1 CS/+2 EP bonus only applies to Disciplines gained
+ * "in excess of the original" starting count, see addExtraGrandMasterDiscipline). `expectedCount`
+ * defaults to 4 (Grand Master, Book 13) but the New Order phase (Book 21) starts with 5 instead,
+ * reusing this same pool with a wider selection (see BookMeta.initialDisciplineCount).
+ */
+export function applyGrandMasterDisciplines(chart: ActionChart, disciplines: GrandMasterDiscipline[], expectedCount = 4): ActionChart {
+  if (disciplines.length !== expectedCount) {
+    throw new Error(`Expected exactly ${expectedCount} Grand Master Disciplines, got ${disciplines.length}`);
   }
   return { ...chart, grandMasterDisciplines: [...disciplines] };
 }
 
 /**
- * Adds exactly one new Grand Master Discipline to a carried-over character (4 -> 5, etc). Unlike
- * every earlier "+1 discipline" growth, this one carries a permanent stat bonus: "For every Grand
- * Master Discipline you possess, in excess of the original four disciplines you begin with, you may
- * add 1 point to your basic COMBAT SKILL score and 2 points to your basic ENDURANCE points score"
- * (discplnz.htm, Book 13) — applied once, permanently, same pattern as a fixed-bonus Special Item
- * (e.g. Book 1's Chainmail Waistcoat) rather than a combat-time conditional like every Magnakai bonus.
+ * Adds exactly one new Grand Master Discipline to a carried-over character. Unlike every earlier
+ * "+1 discipline" growth, this one carries a permanent stat bonus: "For every Grand Master Discipline
+ * you possess, in excess of the original [four/five] disciplines you begin with, you may add 1 point
+ * to your basic COMBAT SKILL score and 2 points to your basic ENDURANCE points score" (discplnz.htm,
+ * Book 13; reworded to "five" in Book 21's New Order phase, same mechanism either way) — applied once,
+ * permanently, same pattern as a fixed-bonus Special Item (e.g. Book 1's Chainmail Waistcoat) rather
+ * than a combat-time conditional like every Magnakai bonus.
  */
 export function addExtraGrandMasterDiscipline(chart: ActionChart, discipline: GrandMasterDiscipline): ActionChart {
   if (chart.grandMasterDisciplines.includes(discipline)) {
@@ -256,4 +265,44 @@ export function chooseEquipmentOptions(chart: ActionChart, optionIds: string[]):
   }
 
   return next;
+}
+
+/** Grants the player's chosen Kai Weapon (Book 21+) by name: sets kaiWeaponType (the +5 CS combat bonus gate) and adds the named item to specialItems for display. */
+export function chooseKaiWeapon(chart: ActionChart, weaponName: string): ActionChart {
+  const table = getBookEquipment(chart.bookId).kaiWeaponTable;
+  if (!table) throw new Error(`Book ${chart.bookId} does not have a Kai Weapon Table`);
+  const entry = table.find((w) => w.name === weaponName);
+  if (!entry) throw new Error(`Unknown Kai Weapon: ${weaponName}`);
+  return {
+    ...chart,
+    kaiWeaponType: entry.weaponType,
+    specialItems: [...chart.specialItems, { name: entry.name, knownEffects: '+5 Combat Skill while equipped (Kai Weapon)' }],
+  };
+}
+
+/** Randomly generates the player's Kai Weapon (Book 21+) - "pick a number from the Random Number Table and consult the first column" (equipmnt.htm). */
+export function rollKaiWeapon(chart: ActionChart, rng: Rng = Math.random): ActionChart {
+  const table = getBookEquipment(chart.bookId).kaiWeaponTable;
+  if (!table) throw new Error(`Book ${chart.bookId} does not have a Kai Weapon Table`);
+  const entry = table[rollRandomNumber(rng) % table.length];
+  return chooseKaiWeapon(chart, entry.name);
+}
+
+/** Kai name table A (prefix), Book 21's kainame.htm, indexed 0-9 by the Random Number Table. */
+export const KAI_NAME_PREFIXES = ['Swift', 'Sun', 'True', 'Bold', 'Moon', 'Sword', 'Wise', 'Storm', 'Rune', 'Brave'];
+/** Kai name table B (suffix), Book 21's kainame.htm, indexed 0-9 by the Random Number Table. */
+export const KAI_NAME_SUFFIXES = ['Blade', 'Fire', 'Hawk', 'Heart', 'Friend', 'Star', 'Dancer', 'Helm', 'Strider', 'Shield'];
+
+/** Sets the player's freely-chosen Kai name (Book 21+, kainame.htm: "You may create your own Kai name for yourself"). */
+export function setKaiName(chart: ActionChart, name: string): ActionChart {
+  const trimmed = name.trim();
+  if (!trimmed) throw new Error('Kai name cannot be empty');
+  return { ...chart, kaiName: trimmed };
+}
+
+/** Randomly generates a Kai name from the two 10-entry tables ("pick a number... consult Table A... pick a second number... consult Table B... Put the prefix and the suffix together", kainame.htm). */
+export function rollKaiName(chart: ActionChart, rng: Rng = Math.random): ActionChart {
+  const prefix = KAI_NAME_PREFIXES[rollRandomNumber(rng)];
+  const suffix = KAI_NAME_SUFFIXES[rollRandomNumber(rng)];
+  return setKaiName(chart, `${prefix}${suffix}`);
 }
