@@ -4,6 +4,28 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.20.0] — 2026-09-15
+
+Livro 19, *Wolf's Bane*, adicionado — sétima entrega da fase Grand Master. Este livro é o penúltimo
+antes do final da série: a seção 350 encerra apontando pro Livro 20, "The Curse of Naar".
+
+- Equipamento: escolha 4 de 9 itens — Broadsword volta a aparecer (a mesma alternação já vista nos
+  Livros 17/18). Mapa automático: Map of Sommerlund and the Wildlands.
+- 6 seções-quebra-cabeça (18, 177, 210, 251, 252, 320) — o Livro 18 tinha sido o único sem nenhuma.
+- **Novo rank Grand Crown (10 Disciplinas)**, alcançável neste livro por quem carrega um personagem
+  com os 6 livros anteriores completados. Traz o **primeiro bônus numérico real desde o Sun Lord
+  (Livro 16)**:
+  - **Grand Weaponmastery**: +3 Combat Skill lutando desarmado — substitui completamente a
+    penalidade normal de -4, em vez de apenas reduzi-la (diferente de Tutelary/Scion-kai).
+    Implementado em `combat.ts`.
+  - **Kai-alchemy ganha o feitiço Teleport** (custa 1-5 Endurance por uso) — número real, mas sem
+    nenhum gancho no motor atual (o app não modela viagem/teleporte fora da navegação linear por
+    seções); documentado, não implementado, mesma categoria de todo o resto de Magi-magic/Kai-alchemy.
+- Pendência do Kai-surge "atacar 3 inimigos simultaneamente" (issue #61/JOGOS-92) segue sem nenhuma
+  informação nova.
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.19.0] — 2026-09-14
 
 Livro 18, *Dawn of the Dragons*, adicionado — sexta entrega da fase Grand Master. Nenhuma mudança em

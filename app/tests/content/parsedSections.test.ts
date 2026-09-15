@@ -256,3 +256,25 @@ describe('book 18 (Dawn of the Dragons) sections', () => {
     expect(deadEnds).toEqual([21, 53, 117, 218, 223, 224, 251, 258, 332]);
   });
 });
+
+describe('book 19 (Wolf\'s Bane) puzzle sections', () => {
+  const sections = loadSections('wb');
+
+  it('flags sect18, sect177, sect210, sect251, sect252 and sect320 as puzzles, each with a real fallback choice', () => {
+    for (const num of [18, 177, 210, 251, 252, 320]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isEnding, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350), forward-linking to Book 20', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+
+  it('has exactly the 9 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([89, 93, 158, 221, 222, 242, 269, 301, 303]);
+  });
+});

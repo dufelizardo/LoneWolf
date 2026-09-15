@@ -477,3 +477,43 @@ describe('resolveCombatRound with Kai-blast (Book 16, Sun Lord rank)', () => {
     expect(result.kaiBlastCost).toBe(0);
   });
 });
+
+describe('Grand Crown Grand Weaponmastery unarmed bonus (Book 19)', () => {
+  // Deliberately excludes KaiSurge: its free Mindblast-equivalent bonus applies unconditionally
+  // (even without the usePsiSurge toggle), which would confound the unarmed bonus assertions below.
+  const tenDisciplinesWithGrandWeaponmastery: ActionChart['grandMasterDisciplines'] = [
+    'GrandWeaponmastery', 'AnimalMastery', 'Deliverance', 'Assimilance', 'GrandHuntmastery',
+    'GrandPathsmanship', 'KaiScreen', 'GrandNexus', 'Telegnosis', 'MagiMagic',
+  ];
+
+  function chartWith(grandMasterDisciplines: ActionChart['grandMasterDisciplines']): ActionChart {
+    return {
+      ...createFreshCharacterForBook('wb', fixedRng(0, 0, 0)),
+      combatSkill: 10,
+      grandMasterDisciplines,
+      equippedWeapon: null,
+      weapons: [],
+    };
+  }
+
+  const enemy: Enemy = { name: 'Giak', combatSkill: 5, endurance: 20 };
+
+  it('adds +3 Combat Skill fighting unarmed at Grand Crown rank (10 Disciplines) with GrandWeaponmastery', () => {
+    const chart = chartWith(tenDisciplinesWithGrandWeaponmastery);
+    expect(getEffectiveCombatSkill(chart, enemy)).toBe(13); // 10 base + 3, not the usual -4 penalty
+  });
+
+  it('does not add the bonus below Grand Crown rank (only 9 Disciplines, Grand Thane)', () => {
+    const chart = chartWith(tenDisciplinesWithGrandWeaponmastery.slice(0, 9));
+    expect(getEffectiveCombatSkill(chart, enemy)).toBe(6); // 10 base - 4 usual no-weapon penalty
+  });
+
+  it('does not add the bonus at Grand Crown rank without the GrandWeaponmastery discipline', () => {
+    const withoutGrandWeaponmastery: ActionChart['grandMasterDisciplines'] = [
+      'AnimalMastery', 'Deliverance', 'Assimilance', 'GrandHuntmastery', 'GrandPathsmanship',
+      'KaiScreen', 'GrandNexus', 'Telegnosis', 'MagiMagic', 'KaiAlchemy',
+    ];
+    const chart = chartWith(withoutGrandWeaponmastery);
+    expect(getEffectiveCombatSkill(chart, enemy)).toBe(6); // 10 base - 4 usual no-weapon penalty
+  });
+});
