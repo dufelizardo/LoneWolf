@@ -970,6 +970,62 @@ describe('chooseEquipmentOptions (book "tdi", choose-four)', () => {
   });
 });
 
+describe('chooseEquipmentOptions (book "dd", choose-four)', () => {
+  const fourOptions = ['bow', 'quiver', 'meals', 'potion-of-laumspur'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('dd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('dd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants 2 Meals from the Meals option', () => {
+    const chart = createFreshCharacterForBook('dd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.meals).toBe(2);
+  });
+
+  it('grants a Potion of Laumspur dose', () => {
+    const chart = createFreshCharacterForBook('dd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fourOptions);
+    expect(equipped.healingPotionDoses).toBe(1);
+  });
+
+  it('offers Quarterstaff again, in place of tdi\'s Broadsword (a one-book swap, not a permanent replacement)', () => {
+    const chart = createFreshCharacterForBook('dd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, ['quarterstaff', 'quiver', 'meals', 'potion-of-laumspur']);
+    expect(equipped.weapons).toContain('Quarterstaff');
+  });
+
+  it('always starts with the Map of Northern Magnamund', () => {
+    const chart = createFreshCharacterForBook('dd', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of Northern Magnamund');
+  });
+
+  it('rolls gold with a +20 bonus, same as tplr/tcok/tdc/tlv/tdi', () => {
+    const chart = createFreshCharacterForBook('dd', () => 0);
+    expect(chart.goldCrowns).toBe(20);
+  });
+
+  it('allows carrying up to 10 Backpack Items instead of the usual 8', () => {
+    const chart = createFreshCharacterForBook('dd', () => 0);
+    const equipped = chooseEquipmentOptions(chart, [...fourOptions.slice(0, 3), 'rope']);
+    expect(equipped.backpackItems).toContain('Rope');
+  });
+
+  it('rejects a selection that is not exactly four options', () => {
+    const chart = createFreshCharacterForBook('dd', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fourOptions.slice(0, 3))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fourOptions, 'sword'])).toThrow();
+  });
+});
+
 describe('carryOverCharacterToBook within the Grand Master phase, book "tplr" -> "tcok" (regression)', () => {
   it('does NOT re-apply the Special Item carry-over whitelist (it only gates the Magnakai->Grand Master boundary)', () => {
     const chart = {

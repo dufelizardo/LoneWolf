@@ -237,3 +237,22 @@ describe('book 17 (The Deathlord of Ixia) puzzle sections', () => {
     expect(deadEnds).toEqual([5, 55, 65, 72, 99, 134, 173, 178, 212, 215, 238, 257, 269, 316, 319, 328]);
   });
 });
+
+describe('book 18 (Dawn of the Dragons) sections', () => {
+  const sections = loadSections('dd');
+
+  it('has zero puzzle sections - the first Grand Master book without any', () => {
+    const puzzles = Object.values(sections).filter((s) => s.hasPuzzle);
+    expect(puzzles).toHaveLength(0);
+  });
+
+  it('has exactly one real ending, at the canonical final section (350), forward-linking to Book 19', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+
+  it('has exactly the 9 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([21, 53, 117, 218, 223, 224, 251, 258, 332]);
+  });
+});

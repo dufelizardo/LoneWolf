@@ -310,3 +310,28 @@ não o início de uma escalada de bônus a cada rank.
 Livro 17 — texto idêntico ao dos Livros 14-16, não resolvida, não implementada.
 
 Sem mudança de `SAVE_VERSION`.
+
+## Atualização — Livro 18
+
+O Livro 18 (*Dawn of the Dragons*) segue o mesmo padrão do Livro 17: nenhuma mudança de regra em
+`gamerulz.htm`/`cmbtrulz.htm`/`discplnz.htm` — fórmulas de criação, Kai-surge, Grand Weaponmastery,
+whitelist de Itens Especiais, tudo verbatim-consistente com os livros anteriores. **Nenhuma mudança
+de código em `combat.ts`/`disciplines.ts`.**
+
+`imprvdsc.htm` repete os ranks Kai Grand Guardian (5), Sun Knight (6), Sun Lord (7) e Sun Thane (8)
+sem nenhuma mudança numérica — os dois bônus do Sun Lord (fogo do Grand Weaponmastery, Kai-blast)
+continuam exatamente iguais. **Surge um novo rank, Grand Thane (9 Disciplinas)** — suas 6 entradas
+(Deliverance, Assimilance, Kai-surge, Grand Nexus, Telegnosis, Magi-magic) são todas puramente
+narrativas, sem nenhum número de Combat Skill/Endurance, incluindo a entrada de Kai-surge nesse rank
+("focar o poder mental sobre objetos quebráveis inanimados... e fazê-los explodir") — uma habilidade
+narrativa nova, não uma extensão numérica do Kai-blast. Confirma que o salto numérico do Sun Lord
+segue sendo pontual, não uma escalada.
+
+**Curiosidade de conteúdo**: este é o primeiro livro da fase Grand Master sem nenhuma
+seção-quebra-cabeça (`class="puzzle"`) — confirmado via enumeração completa de todas as classes CSS
+usadas nas 350 seções.
+
+**Pendência do Kai-surge de 3 inimigos simultâneos (issue #61/JOGOS-92) segue sem nenhuma menção** no
+Livro 18 — não resolvida, não implementada.
+
+Sem mudança de `SAVE_VERSION`.

@@ -4,6 +4,25 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.19.0] — 2026-09-14
+
+Livro 18, *Dawn of the Dragons*, adicionado — sexta entrega da fase Grand Master. Nenhuma mudança em
+`combat.ts`/`disciplines.ts` foi necessária.
+
+- Equipamento: escolha 4 de 9 itens — Quarterstaff volta a aparecer (o Broadsword do Livro 17 foi uma
+  troca de um livro só, não uma substituição permanente). Mapa automático: Map of Northern Magnamund.
+- **Primeiro livro Grand Master sem nenhuma seção-quebra-cabeça** — confirmado via enumeração completa
+  de todas as classes CSS usadas nas 350 seções.
+- Ranks Sun Lord (7 Disciplinas) e Sun Thane (8 Disciplinas) repetidos sem nenhuma mudança numérica.
+- **Novo rank Grand Thane (9 Disciplinas)** aparece pela primeira vez em `imprvdsc.htm`, mas — lido na
+  íntegra — todas as 6 entradas (Deliverance, Assimilance, Kai-surge, Grand Nexus, Telegnosis,
+  Magi-magic) são puramente narrativas, confirmando que o salto numérico do Sun Lord no Livro 16
+  segue sendo pontual.
+- Pendência do Kai-surge "atacar 3 inimigos simultaneamente" (issue #61/JOGOS-92) segue sem nenhuma
+  informação nova.
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.18.0] — 2026-09-14
 
 Livro 17, *The Deathlord of Ixia*, adicionado — quinta entrega da fase Grand Master. O livro mais
