@@ -4,6 +4,23 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.24.0] — 2026-09-15
+
+Novos botões "Baixar Backup" e "Importar Backup" — um backup do save independente tanto do
+`localStorage` (preso a um navegador/dispositivo, apagado se o usuário limpar dados) quanto do save
+na nuvem (preso ao Postgres do servidor, que pode ser perdido por questões de infraestrutura no
+cluster k3s caseiro, independente de deploys normais da aplicação — investigado: o PVC do Postgres já
+está configurado corretamente com `strategy: Recreate`, então o motivo de uma eventual perda não está
+no código da aplicação).
+
+- "Baixar Backup" gera um arquivo `.json` com o save atual (mesmo formato usado no `localStorage`/
+  nuvem), pra guardar onde o usuário quiser.
+- "Importar Backup" lê esse arquivo, carrega o estado no app (mesmo caminho de "Carregar da Nuvem") e
+  **salva de volta no servidor automaticamente**, restaurando um save perdido na nuvem.
+- Validação clara pra arquivo inválido ou de uma versão de save incompatível.
+
+Sem mudança de `SAVE_VERSION` — usa o mesmo formato já existente.
+
 ## [0.23.0] — 2026-09-15
 
 Livro 21, *Voyage of the Moonstone*, adicionado — **primeiro livro da nova fase "New Order"**, que
