@@ -120,6 +120,12 @@ describe('getRankForChart', () => {
     chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery', 'Elementalism', 'Bardsmanship', 'KaiSurge', 'KaiAlchemy'];
     expect(getRankForChart(chart)).toBe('Sun Knight');
   });
+
+  it('a character who completed Books 21-26 (11 Disciplines) carried into Book 27 maps to "Sun Lord", matching Book 27 imprvdsc.htm\'s real content tier - the first New Order book reaching a rank with real numeric combat mechanics (Kai-blast)', () => {
+    const chart = createFreshCharacterForBook('v', () => 0);
+    chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery', 'Elementalism', 'Bardsmanship', 'KaiSurge', 'KaiAlchemy', 'AnimalMastery'];
+    expect(getRankForChart(chart)).toBe('Sun Lord');
+  });
 });
 
 describe('getGrandMasterBaseline', () => {

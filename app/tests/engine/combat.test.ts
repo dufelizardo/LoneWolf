@@ -661,3 +661,43 @@ describe('rank-tier thresholds are baseline-aware, not raw Discipline counts (Bo
     expect(result.enemyLoss).toBe(12); // ratio 10, roll 5 -> 12, no +1 fire bonus
   });
 });
+
+describe('Sun Lord rank is correctly reachable in the New Order phase (Book 27 positive-path regression)', () => {
+  // A character who completed Books 21-26 sequentially carries 11 Grand Master Disciplines into
+  // Book 27 - genuinely "Sun Lord" on the New Order ladder (baseline 5, index 6). Book 27's own
+  // imprvdsc.htm repeats the exact Book 16 Sun Lord text verbatim (Kai-blast, Grand Weaponmastery
+  // fire bonus), confirming with real content that the Book 23 baseline-aware fix's positive path
+  // (not just the negative path already covered above) works correctly for New Order too.
+  const elevenDisciplines: ActionChart['grandMasterDisciplines'] = [
+    'KaiSurge', 'GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology',
+    'Herbmastery', 'Elementalism', 'Bardsmanship', 'KaiAlchemy', 'AnimalMastery',
+  ];
+  const enemy: Enemy = { name: 'Giak', combatSkill: 5, endurance: 20 };
+
+  it('canUseKaiBlast is true for a New Order character with 11 raw Disciplines (genuinely Sun Lord under baseline 5)', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('v', fixedRng(0, 0, 0)),
+      grandMasterDisciplines: elevenDisciplines,
+    };
+    expect(canUseKaiBlast(chart)).toBe(true);
+  });
+
+  it('the Sun Lord Grand Weaponmastery fire bonus applies for a New Order character with 11 raw Disciplines', () => {
+    // No KaiSurge here (swapped for Assimilance, keeping the count at 11) - isolates the fire bonus,
+    // since KaiSurge's own free "Mindblast" sub-mode bonus (always-on, unrelated to rank) would
+    // otherwise shift the base ratio and muddy the +1-or-not comparison this test is making.
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('v', fixedRng(0, 0, 0)),
+      combatSkill: 10,
+      grandMasterDisciplines: [
+        'GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology',
+        'Herbmastery', 'Elementalism', 'Bardsmanship', 'KaiAlchemy', 'AnimalMastery', 'Assimilance',
+      ],
+      grandMasteredWeapons: ['Axe'],
+      equippedWeapon: 'Axe',
+      weapons: ['Axe'],
+    };
+    const result = resolveCombatRound(chart, enemy, fixedRng(0.5));
+    expect(result.enemyLoss).toBe(13); // ratio 10, roll 5 -> 12, +1 fire bonus
+  });
+});

@@ -4,6 +4,27 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.30.0] — 2026-09-15
+
+Livro 27, *Vampirium*, adicionado — **sétima entrega da fase New Order**, com carry-over normal a
+partir do Livro 26. Ver ADR-0007 (seção "Atualização — Livro 27") para o detalhamento completo.
+
+- **Nenhuma Disciplina nova**: mesmo pool de 16 dos Livros 21-26. Lista de equipamento e tabela de Arma
+  Kai idênticas às do Livro 26.
+- **Primeiro livro da fase New Order onde um personagem totalmente sequencial alcança o rank "Sun
+  Lord"** (11 Disciplinas) — o mesmo rank que já tem mecânica numérica real implementada no motor
+  desde o Livro 16 (Kai-blast, bônus de fogo do Grand Weaponmastery). O texto de `imprvdsc.htm` deste
+  livro é idêntico ao do Livro 16, confirmando com conteúdo real, pela primeira vez na fase New Order,
+  que a correção do bug de limiares de `combat.ts` (feita no Livro 23) funciona corretamente também no
+  caminho positivo — um personagem com 11 Disciplinas e Kai-surge agora ganha acesso ao Kai-blast
+  corretamente.
+- Carry-over do Livro 26 confirmado normal (mantém CS/EP, Itens Especiais, Arma Kai, Nome Kai, Armas
+  normais e Itens de Mochila; ganha +1 Disciplina Grand Master e +1 CS/+2 EP).
+- 350 seções, 13 becos sem saída, 2 seções-quebra-cabeça com fallback de escolha, final canônico único
+  em `sect350`, apontando para o Livro 28 "The Hunger of Sejanoz".
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.29.0] — 2026-09-15
 
 Livro 26, *The Fall of Blood Mountain*, adicionado — **sexta entrega da fase New Order**, com
