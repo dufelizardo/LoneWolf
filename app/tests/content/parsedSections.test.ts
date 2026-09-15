@@ -328,3 +328,25 @@ describe('book 21 (Voyage of the Moonstone) sections - first book of the New Ord
     expect(deadEnds).toEqual([16, 18, 304, 320]);
   });
 });
+
+describe('book 22 (The Buccaneers of Shadaki) sections - second book of the New Order phase', () => {
+  const sections = loadSections('tbs');
+
+  it('flags sect2 and sect107 as puzzles, each with a real fallback choice', () => {
+    for (const num of [2, 107]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isDeadEnd, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length, `sect${num}`).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350), forward-linking to Book 23', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+
+  it('has exactly the 9 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([9, 27, 44, 158, 162, 236, 303, 316, 321]);
+  });
+});

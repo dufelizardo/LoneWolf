@@ -2,8 +2,9 @@
 
 ## Status
 
-**Implementada.** Livro 21 (*Voyage of the Moonstone*) jogável de ponta a ponta — primeiro livro da
-fase New Order, sucedendo a fase Grand Master (Livros 13-20, completa).
+**Implementada.** Livros 21 (*Voyage of the Moonstone*) e 22 (*The Buccaneers of Shadaki*) jogáveis de
+ponta a ponta — primeira e segunda entregas da fase New Order, sucedendo a fase Grand Master (Livros
+13-20, completa).
 
 ## Contexto
 
@@ -136,3 +137,38 @@ Weaponmastery+Bow (aberto desde o Livro 6).
   numérico nesse patamar.
 - `SAVE_VERSION` sobe pra 8 só por causa do Nome Kai — nenhuma outra mudança desta ADR toca dado
   persistido (Arma Kai reaproveita `specialItems` + um campo simples, contagens/rank são derivados).
+
+## Atualização — Livro 22
+
+O Livro 22 (*The Buccaneers of Shadaki*) é a segunda entrega da fase New Order, e — diferente do Livro
+21, que era o abridor de fase sem nenhum carry-over — **tem um caminho de carry-over normal e explícito**
+a partir do Livro 21, confirmado em `gamerulz.htm`: mantém CS/EP, Itens Especiais, Arma Kai, Nome Kai,
+Armas normais e Itens de Mochila, e ganha +1 Disciplina Grand Master (+1 CS/+2 EP). Início do zero
+direto no Livro 22 também é suportado (`discplnz.htm` confirma a mesma exigência de 5 Disciplinas
+iniciais do Livro 21).
+
+Investigação (leitura direta de `discplnz.htm`, `equipmnt.htm`, `imprvdsc.htm`, `gamerulz.htm`,
+`kainame.htm`, e diff de arquivos contra o Livro 21) confirmou que **nenhuma arquitetura nova foi
+necessária** — só dados novos (`books.ts`, `bookEquipment.ts`), com uma exceção real: um bug de UI.
+
+- **Nenhuma Disciplina nova**: mesmo pool de 16 do Livro 21. Nenhuma mudança em `types.ts`.
+- **Confirmação cruzada da fórmula de rank base 5**: `imprvdsc.htm` do Livro 21 era um stub vazio;
+  no Livro 22 tem conteúdo real pela primeira vez, exatamente no rank "Kai Grand Master Superior" (6
+  Disciplinas = 5 iniciais + 1 do carry-over) — a mesma posição que `getGrandMasterRank(6, 5)` já
+  produzia antes desta confirmação existir. Validação independente da arquitetura, não uma mudança
+  nela.
+- **Tabelas de Nome Kai e de Arma Kai são byte-idênticas** às do Livro 21 (confirmado por leitura
+  linha a linha de ambos os `kainame.htm`/`equipmnt.htm`) — nenhuma tabela precisou virar dado
+  por-livro, `KAI_NAME_PREFIXES`/`KAI_NAME_SUFFIXES` continuam constantes compartilhadas.
+- **Bug real encontrado e corrigido**: `needsKaiWeapon` em `CharacterCreationScreen.tsx` checava
+  apenas `equipmentConfig.kaiWeaponTable !== undefined`, sem checar se o personagem já tinha uma Arma
+  Kai. Como o Livro 22 também define `kaiWeaponTable` (pra suportar início do zero), um personagem
+  carregado do Livro 21 (já com `kaiWeaponType` preenchido) seria incorretamente questionado de novo —
+  contradizendo `equipmnt.htm`: *"If you have completed the previous... adventure, you already possess
+  a Kai Weapon."* Corrigido para `equipmentConfig.kaiWeaponTable !== undefined && !isCarryOver`, o
+  mesmo padrão já usado por `needsKaiName` desde o Livro 21.
+- **Dívida técnica dos limiares de `combat.ts` ainda não se aplica**: o máximo de Disciplinas
+  alcançável no Livro 22 é 6 (carry-over do Livro 21), bem abaixo do primeiro limiar
+  (`SUN_LORD_DISCIPLINE_COUNT = 7`). Continua registrada, não resolvida, para quando um livro New
+  Order futuro ultrapassar esse ponto.
+- Sem mudança de `SAVE_VERSION` — nenhum campo novo persistente.

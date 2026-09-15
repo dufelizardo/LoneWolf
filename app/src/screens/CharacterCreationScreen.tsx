@@ -122,7 +122,12 @@ export function CharacterCreationScreen({ book, creationMode, previousChart, onR
 
   // Kai Weapon (Book 21+) — a named weapon chosen (or randomly rolled) once, on top of the normal
   // equipment choice above. Grants a flat Combat Skill bonus while equipped (see combat.ts).
-  const needsKaiWeapon = equipmentConfig.kaiWeaponTable !== undefined;
+  // `!isCarryOver` matters from Book 22 onward: it also defines a kaiWeaponTable to support a fresh
+  // start, but a character carried over from a prior New Order book already has one (kaiWeaponType
+  // survives the carryOverCharacterToBook spread) and must not be asked to pick a new one - confirmed
+  // in Book 22's equipmnt.htm: "If you have completed the previous... adventure, you already possess
+  // a Kai Weapon." Same pattern as needsKaiName below.
+  const needsKaiWeapon = equipmentConfig.kaiWeaponTable !== undefined && !isCarryOver;
   const [selectedKaiWeapon, setSelectedKaiWeapon] = useState<string | null>(null);
   const rollRandomKaiWeapon = () => {
     const table = equipmentConfig.kaiWeaponTable!;

@@ -1199,6 +1199,55 @@ describe('chooseEquipmentOptions (book "vm", choose-five) - first book of the Ne
   });
 });
 
+describe('chooseEquipmentOptions (book "tbs", choose-five) - second book of the New Order phase', () => {
+  const fiveOptions = ['bow', 'quiver', 'flute', 'meals', 'potion-of-laumspur'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('tbs', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('tbs', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('always starts with the Map of Southeastern Magnamund', () => {
+    const chart = createFreshCharacterForBook('tbs', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of Southeastern Magnamund');
+  });
+
+  it('rolls gold with a +20 bonus, same as vm', () => {
+    const chart = createFreshCharacterForBook('tbs', () => 0);
+    expect(chart.goldCrowns).toBe(20);
+  });
+
+  it('rejects a selection that is not exactly five options', () => {
+    const chart = createFreshCharacterForBook('tbs', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fiveOptions.slice(0, 4))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
+  });
+});
+
+describe('carryOverCharacterToBook within the New Order phase, book "vm" -> "tbs" (regression)', () => {
+  it('preserves kaiName and kaiWeaponType without resetting them - the character-creation screen must not re-prompt for either (see needsKaiWeapon/needsKaiName)', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('vm', fixedRng(0, 0, 0, 0)),
+      kaiName: 'SwiftBlade',
+      kaiWeaponType: 'Broadsword',
+      specialItems: [{ name: 'Illuminatus' }],
+      grandMasterDisciplines: ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology'],
+    };
+    const carried = carryOverCharacterToBook(chart, 'tbs', fixedRng(0));
+    expect(carried.kaiName).toBe('SwiftBlade');
+    expect(carried.kaiWeaponType).toBe('Broadsword');
+    expect(carried.specialItems.map((i) => i.name)).toContain('Illuminatus');
+    expect(carried.grandMasterDisciplines).toEqual(chart.grandMasterDisciplines);
+  });
+});
+
 describe('chooseKaiWeapon / rollKaiWeapon (Book 21+)', () => {
   it('sets kaiWeaponType and adds the named weapon to specialItems', () => {
     const chart = createFreshCharacterForBook('vm', () => 0);

@@ -90,4 +90,10 @@ describe('getRankForChart', () => {
     chart.grandMasterDisciplines.push('Herbmastery');
     expect(getRankForChart(chart)).toBe('Kai Grand Master Superior');
   });
+
+  it('a Book 21-completing character (6 Disciplines) carried into Book 22 maps to "Kai Grand Master Superior", matching Book 22 imprvdsc.htm\'s real content tier', () => {
+    const chart = createFreshCharacterForBook('tbs', () => 0);
+    chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery'];
+    expect(getRankForChart(chart)).toBe('Kai Grand Master Superior');
+  });
 });
