@@ -1216,6 +1216,62 @@ export const BOOK_EQUIPMENT: Record<string, BookEquipmentConfig> = {
       { name: 'Firefall', weaponType: 'Broadsword' },
     ],
   },
+  ths: {
+    // "add 20 to the number you have picked" - same as every Grand Master-era/New Order book.
+    goldRollBonus: 20,
+    // Never actually read for ths — same reasoning as tkt above.
+    weaponPool: ALL_WEAPONS,
+    healingPotionLabel: 'Potion of Laumspur',
+    // "you may keep a maximum of ten articles, including Meals, in your Backpack" - unchanged.
+    maxBackpackItems: 10,
+    // map.htm's own <h2> drops the "&" ("Chai  The Great Lissan Plain", a double space where the
+    // ampersand should be) - same source encoding defect seen in tw's map.htm. The <title> tag has
+    // it correctly escaped (&amp;), so that's the name used here instead.
+    applyBaseEquipment: (c) => {
+      addSpecialItem(c, { name: 'Map of Chai & The Great Lissan Plain' });
+    },
+    // Same choose-five, 10-item list as v (Book 27), same order - confirmed byte-identical in
+    // equipmnt.htm.
+    chooseCount: 5,
+    chooseOptions: [
+      { id: 'broadsword', label: 'Broadsword', apply: (c) => addWeaponIfRoom(c, 'Broadsword') },
+      { id: 'sword', label: 'Sword', apply: (c) => addWeaponIfRoom(c, 'Sword') },
+      {
+        id: 'quiver',
+        label: 'Quiver (6 Arrows)',
+        apply: (c) => {
+          addSpecialItem(c, { name: 'Quiver', knownEffects: 'Holds up to 6 Arrows' });
+          addArrows(c, 6);
+        },
+      },
+      { id: 'flute', label: 'Flute', apply: (c) => addBackpackItemIfRoom(c, 'Flute') },
+      { id: 'dagger', label: 'Dagger', apply: (c) => addWeaponIfRoom(c, 'Dagger') },
+      { id: 'axe', label: 'Axe', apply: (c) => addWeaponIfRoom(c, 'Axe') },
+      { id: 'bow', label: 'Bow', apply: (c) => addWeaponIfRoom(c, 'Bow') },
+      {
+        id: 'meals',
+        label: '2 Meals',
+        apply: (c) => { for (let i = 0; i < 2; i++) addMealIfRoom(c); },
+      },
+      { id: 'rope', label: 'Rope', apply: (c) => addBackpackItemIfRoom(c, 'Rope') },
+      { id: 'potion-of-laumspur', label: 'Potion of Laumspur', apply: (c) => grantHealingPotion(c) },
+    ],
+    // Same Kai Weapon Table as vm/tbs/mh/rw/tw/tfbm/v (Books 21-27) - confirmed byte-identical (same
+    // 10 named weapons, same order) in equipmnt.htm. A carried-over character already has one and
+    // skips this step - see the needsKaiWeapon fix in CharacterCreationScreen.tsx.
+    kaiWeaponTable: [
+      { name: 'Spawnsmite', weaponType: 'Axe' },
+      { name: 'Alema', weaponType: 'Axe' },
+      { name: 'Magnara', weaponType: 'Axe' },
+      { name: 'Sunstrike', weaponType: 'Sword' },
+      { name: 'Kaistar', weaponType: 'Sword' },
+      { name: 'Valiance', weaponType: 'Sword' },
+      { name: 'Ulnarias', weaponType: 'Sword' },
+      { name: 'Raumas', weaponType: 'Broadsword' },
+      { name: 'Illuminatus', weaponType: 'Broadsword' },
+      { name: 'Firefall', weaponType: 'Broadsword' },
+    ],
+  },
 };
 
 export function getBookEquipment(bookId: string): BookEquipmentConfig {
