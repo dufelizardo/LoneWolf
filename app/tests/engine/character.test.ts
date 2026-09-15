@@ -1360,6 +1360,69 @@ describe('carryOverCharacterToBook within the New Order phase, book "mh" -> "rw"
   });
 });
 
+describe('chooseEquipmentOptions (book "tw", choose-five) - fifth book of the New Order phase', () => {
+  // Flute reverts back from Lute (rw, Book 24); Broadsword stays, Quarterstaff does not come back.
+  const fiveOptions = ['bow', 'quiver', 'flute', 'meals', 'potion-of-laumspur'];
+
+  it('grants the new Bow weapon', () => {
+    const chart = createFreshCharacterForBook('tw', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.weapons).toContain('Bow');
+  });
+
+  it('grants 6 Arrows from the Quiver option', () => {
+    const chart = createFreshCharacterForBook('tw', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.arrows).toBe(6);
+  });
+
+  it('grants the Flute as a Backpack Item again (Lute was only used in rw, Book 24)', () => {
+    const chart = createFreshCharacterForBook('tw', () => 0);
+    const equipped = chooseEquipmentOptions(chart, fiveOptions);
+    expect(equipped.backpackItems).toContain('Flute');
+  });
+
+  it('still offers Broadsword (kept from rw), not Quarterstaff', () => {
+    const chart = createFreshCharacterForBook('tw', () => 0);
+    const equipped = chooseEquipmentOptions(chart, ['broadsword', 'quiver', 'flute', 'meals', 'potion-of-laumspur']);
+    expect(equipped.weapons).toContain('Broadsword');
+    expect(() => chooseEquipmentOptions(chart, ['quarterstaff', 'quiver', 'flute', 'meals', 'potion-of-laumspur'])).toThrow();
+  });
+
+  it('always starts with the Map of Gazad Helkona & Surrounding Territories', () => {
+    const chart = createFreshCharacterForBook('tw', () => 0);
+    expect(chart.specialItems.map((i) => i.name)).toContain('Map of Gazad Helkona & Surrounding Territories');
+  });
+
+  it('rolls gold with a +20 bonus, same as vm/tbs/mh/rw', () => {
+    const chart = createFreshCharacterForBook('tw', () => 0);
+    expect(chart.goldCrowns).toBe(20);
+  });
+
+  it('rejects a selection that is not exactly five options', () => {
+    const chart = createFreshCharacterForBook('tw', () => 0);
+    expect(() => chooseEquipmentOptions(chart, fiveOptions.slice(0, 4))).toThrow();
+    expect(() => chooseEquipmentOptions(chart, [...fiveOptions, 'sword'])).toThrow();
+  });
+});
+
+describe('carryOverCharacterToBook within the New Order phase, book "rw" -> "tw" (regression)', () => {
+  it('preserves kaiName and kaiWeaponType without resetting them - the character-creation screen must not re-prompt for either (see needsKaiWeapon/needsKaiName)', () => {
+    const chart: ActionChart = {
+      ...createFreshCharacterForBook('rw', fixedRng(0, 0, 0, 0)),
+      kaiName: 'SwiftBlade',
+      kaiWeaponType: 'Broadsword',
+      specialItems: [{ name: 'Illuminatus' }],
+      grandMasterDisciplines: ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery', 'Elementalism', 'Bardsmanship'],
+    };
+    const carried = carryOverCharacterToBook(chart, 'tw', fixedRng(0));
+    expect(carried.kaiName).toBe('SwiftBlade');
+    expect(carried.kaiWeaponType).toBe('Broadsword');
+    expect(carried.specialItems.map((i) => i.name)).toContain('Illuminatus');
+    expect(carried.grandMasterDisciplines).toEqual(chart.grandMasterDisciplines);
+  });
+});
+
 describe('chooseKaiWeapon / rollKaiWeapon (Book 21+)', () => {
   it('sets kaiWeaponType and adds the named weapon to specialItems', () => {
     const chart = createFreshCharacterForBook('vm', () => 0);

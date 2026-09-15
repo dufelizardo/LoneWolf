@@ -3,8 +3,8 @@
 ## Status
 
 **Implementada.** Livros 21 (*Voyage of the Moonstone*), 22 (*The Buccaneers of Shadaki*), 23
-(*Mydnight's Hero*) e 24 (*Rune War*) jogáveis de ponta a ponta — quatro primeiras entregas da fase New
-Order, sucedendo a fase Grand Master (Livros 13-20, completa).
+(*Mydnight's Hero*), 24 (*Rune War*) e 25 (*Trail of the Wolf*) jogáveis de ponta a ponta — cinco
+primeiras entregas da fase New Order, sucedendo a fase Grand Master (Livros 13-20, completa).
 
 ## Contexto
 
@@ -174,47 +174,6 @@ necessária** — só dados novos (`books.ts`, `bookEquipment.ts`), com uma exce
   Order futuro ultrapassar esse ponto.
 - Sem mudança de `SAVE_VERSION` — nenhum campo novo persistente.
 
-## Atualização — Livro 24
-
-O Livro 24 (*Rune War*) é a quarta entrega da fase New Order. **Critério usado para confirmar que é uma
-continuação, não uma aventura nova**: leitura de `tssf.htm` — a abertura ("the sleek royal Siyenese
-clipper glided into Holmgard harbour") retoma literalmente a cena final do `sect350` do Livro 23
-(retorno a Holmgard após a sucessão de Karvas), antes de introduzir a nova missão. Esse é o teste que
-deve ser aplicado a cada novo livro da fase: só um livro cujo `tssf.htm` **não** retoma a cena final do
-anterior (como o Livro 21, que rola CS/EP do zero sem qualquer referência ao Livro 20) justifica
-`allowsCarryOver: false`. Livro 24 confirma o padrão normal: `gamerulz.htm` mantém a linguagem "de
-qualquer um dos livros anteriores (21-23)" já vista no Livro 23, sem mudança de mecanismo.
-
-### Confirmação cruzada do rank "Kai Grand Defender"
-
-`imprvdsc.htm` ganha o próximo patamar de conteúdo real: **Kai Grand Defender** (melhorias narrativas
-pra Deliverance, Telegnosis, Astrology, Herbmastery, Elementalism, Bardsmanship, sem bônus numérico).
-Um personagem que completou os Livros 21, 22 e 23 sequencialmente chega ao Livro 24 com 8 Disciplinas
-Grand Master, e `getGrandMasterRank(8, 5)` já produzia o índice 3 — `GRAND_MASTER_RANKS[3]` = `'Kai
-Grand Defender'` — antes mesmo dessa confirmação existir. A dívida técnica dos limiares de `combat.ts`
-(resolvida no Livro 23) continua sem disparar aqui: 8 Disciplinas está bem abaixo do limiar de Sun Lord
-ajustado pra base 5 (11).
-
-### Primeira lista de equipamento genuinamente diferente desde o Livro 21
-
-Todo livro anterior da fase New Order (21-23) reaproveitava a mesma lista de 10 itens de equipamento
-(só o mapa automático mudava). O Livro 24 troca 2 itens pela primeira vez: Quarterstaff sai, Broadsword
-entra; Flute sai, Lute entra (mesmas categorias, mesma ausência de efeito mecânico — Lute é só um Item
-de Mochila, igual toda Flute anterior). Isso confirma que `bookEquipment.ts` precisa continuar sendo
-uma entrada por livro (não uma constante compartilhada) mesmo dentro da mesma fase — decisão que já era
-a arquitetura usada, sem mudança necessária.
-
-### Peculiaridade de conteúdo encontrada: finais "vitória pírrica" sem a classe `deadend`
-
-4 seções (42, 111, 267, 300) narram a morte do personagem **depois** de cumprir a missão ("you have
-paid for with your life") — mecanicamente equivalentes a um beco sem saída (o personagem não sobrevive
-pra continuar a campanha) — mas o HTML de origem não marca essas seções com `class="deadend"` como
-todo outro final de morte da série. Sem escolhas e sem a marcação de puzzle, o parser as classifica
-como `isEnding`. **Não é um bug do motor**: `GameScreen.tsx` já trata qualquer `isEnding` que não seja
-a seção final canônica do livro como derrota (`onGameOver('deadend')`), o mesmo mecanismo documentado
-desde antes pra finais não-canônicos como `tck sect61`. Só documentado em teste (`parsedSections.test.ts`),
-sem mudança de código.
-
 ## Atualização — Livro 23
 
 O Livro 23 (*Mydnight's Hero*) é a terceira entrega da fase New Order, com carry-over normal a partir
@@ -264,3 +223,83 @@ o rank "Sun Lord" na escada compartilhada ganha as habilidades correspondentes.
 - Equipamento: mesma lista de 10 itens, escolha 5, mesmo ouro/mochila — só muda o mapa automático
   (`'Map of Central Southern Magnamund'`).
 - Sem mudança de `SAVE_VERSION` — nenhum campo novo persistente.
+
+## Atualização — Livro 24
+
+O Livro 24 (*Rune War*) é a quarta entrega da fase New Order. **Critério usado para confirmar que é uma
+continuação, não uma aventura nova**: leitura de `tssf.htm` — a abertura ("the sleek royal Siyenese
+clipper glided into Holmgard harbour") retoma literalmente a cena final do `sect350` do Livro 23
+(retorno a Holmgard após a sucessão de Karvas), antes de introduzir a nova missão. Esse é o teste que
+deve ser aplicado a cada novo livro da fase: só um livro cujo `tssf.htm` **não** retoma a cena final do
+anterior (como o Livro 21, que rola CS/EP do zero sem qualquer referência ao Livro 20) justifica
+`allowsCarryOver: false`. Livro 24 confirma o padrão normal: `gamerulz.htm` mantém a linguagem "de
+qualquer um dos livros anteriores (21-23)" já vista no Livro 23, sem mudança de mecanismo.
+
+### Confirmação cruzada do rank "Kai Grand Defender"
+
+`imprvdsc.htm` ganha o próximo patamar de conteúdo real: **Kai Grand Defender** (melhorias narrativas
+pra Deliverance, Telegnosis, Astrology, Herbmastery, Elementalism, Bardsmanship, sem bônus numérico).
+Um personagem que completou os Livros 21, 22 e 23 sequencialmente chega ao Livro 24 com 8 Disciplinas
+Grand Master, e `getGrandMasterRank(8, 5)` já produzia o índice 3 — `GRAND_MASTER_RANKS[3]` = `'Kai
+Grand Defender'` — antes mesmo dessa confirmação existir. A dívida técnica dos limiares de `combat.ts`
+(resolvida neste mesmo livro, ver abaixo) continua sem disparar aqui: 8 Disciplinas está bem abaixo do
+limiar de Sun Lord ajustado pra base 5 (11).
+
+### Primeira lista de equipamento genuinamente diferente desde o Livro 21
+
+Todo livro anterior da fase New Order (21-23) reaproveitava a mesma lista de 10 itens de equipamento
+(só o mapa automático mudava). O Livro 24 troca 2 itens pela primeira vez: Quarterstaff sai, Broadsword
+entra; Flute sai, Lute entra (mesmas categorias, mesma ausência de efeito mecânico — Lute é só um Item
+de Mochila, igual toda Flute anterior). Isso confirma que `bookEquipment.ts` precisa continuar sendo
+uma entrada por livro (não uma constante compartilhada) mesmo dentro da mesma fase — decisão que já era
+a arquitetura usada, sem mudança necessária.
+
+### Peculiaridade de conteúdo encontrada: finais "vitória pírrica" sem a classe `deadend`
+
+4 seções (42, 111, 267, 300) narram a morte do personagem **depois** de cumprir a missão ("you have
+paid for with your life") — mecanicamente equivalentes a um beco sem saída (o personagem não sobrevive
+pra continuar a campanha) — mas o HTML de origem não marca essas seções com `class="deadend"` como
+todo outro final de morte da série. Sem escolhas e sem a marcação de puzzle, o parser as classifica
+como `isEnding`. **Não é um bug do motor**: `GameScreen.tsx` já trata qualquer `isEnding` que não seja
+a seção final canônica do livro como derrota (`onGameOver('deadend')`), o mesmo mecanismo documentado
+desde antes pra finais não-canônicos como `tck sect61`. Só documentado em teste (`parsedSections.test.ts`),
+sem mudança de código.
+
+## Atualização — Livro 25
+
+O Livro 25 (*Trail of the Wolf*) é a quinta entrega da fase New Order — continuação direta confirmada
+via `tssf.htm` (retoma literalmente a notícia do desaparecimento de Lone Wolf, final do Livro 24), mesmo
+critério usado desde a atualização do Livro 24.
+
+### Confirmação cruzada do rank "Kai Grand Guardian"
+
+`imprvdsc.htm` ganha o próximo patamar de conteúdo real: **Kai Grand Guardian** (índice 4 do array
+`GRAND_MASTER_RANKS`). Um personagem que completou os Livros 21-24 sequencialmente chega ao Livro 25
+com 9 Disciplinas Grand Master, e `getGrandMasterRank(9, 5)` já produzia esse rank antes mesmo dessa
+confirmação existir.
+
+### Reconfirmação da pendência do Kai-surge de 3 inimigos simultâneos (issue #61/JOGOS-92)
+
+A entrada de Kai-surge no rank Kai Grand Guardian repete **literalmente o mesmo texto** já registrado
+na ADR-0006 pro Livro 14 (fase Grand Master, mesmo índice de rank): *"able to attack up to three
+enemies in psychic combat simultaneously"* — sem detalhar a resolução mecânica (dano de volta
+simultâneo de todos os 3? Combat Ratio calculado uma vez contra os 3 ou uma vez por inimigo?). Nenhuma
+informação nova surge aqui pra resolver a ambiguidade de design já registrada — a pendência permanece
+deliberadamente não implementada, mesma categoria do bônus de Weaponmastery+Bow (pendente desde o
+Livro 6). Esta é a primeira vez que essa pendência reaparece na fase New Order, confirmando que ela é
+uma característica do rank "Kai Grand Guardian" em si (compartilhado entre as duas fases via
+`GRAND_MASTER_RANKS`), não uma peculiaridade isolada do Livro 14.
+
+### Equipamento: Flute volta a substituir a Lute
+
+O Livro 24 havia trocado Flute por Lute (mesma categoria, mesma ausência de efeito). O Livro 25 reverte
+essa troca especificamente — Flute volta à lista, mas Broadsword (também introduzido no Livro 24)
+permanece, Quarterstaff não retorna. Confirma que a lista de equipamento de cada livro precisa ser lida
+integralmente a cada nova entrega, sem assumir "reaproveita o livro anterior" nem "reaproveita o livro
+anterior ao anterior" — cada `equipmnt.htm` é a fonte de verdade.
+
+### Sem mudança de código
+
+Nenhuma Disciplina nova, nenhuma mudança de mecânica de combate, nenhum novo limiar em `combat.ts`
+disparado (9 Disciplinas, base 5, está bem abaixo do limiar de Sun Lord ajustado, 11). Sem mudança de
+`SAVE_VERSION`.
