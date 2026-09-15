@@ -435,3 +435,25 @@ describe('book 26 (The Fall of Blood Mountain) sections - sixth book of the New 
     expect(deadEnds).toEqual([104, 149, 249, 271, 329]);
   });
 });
+
+describe('book 27 (Vampirium) sections - seventh book of the New Order phase', () => {
+  const sections = loadSections('v');
+
+  it('flags sect137 and sect226 as puzzles, each with a real fallback choice', () => {
+    for (const num of [137, 226]) {
+      expect(sections[num].hasPuzzle, `sect${num}`).toBe(true);
+      expect(sections[num].isDeadEnd, `sect${num}`).toBe(false);
+      expect(sections[num].choices.length, `sect${num}`).toBeGreaterThan(0);
+    }
+  });
+
+  it('has exactly one real ending, at the canonical final section (350), forward-linking to Book 28', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+
+  it('has exactly the 13 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([8, 19, 50, 123, 141, 142, 160, 163, 191, 279, 294, 308, 336]);
+  });
+});

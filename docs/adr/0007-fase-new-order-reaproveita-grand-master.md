@@ -3,9 +3,9 @@
 ## Status
 
 **Implementada.** Livros 21 (*Voyage of the Moonstone*), 22 (*The Buccaneers of Shadaki*), 23
-(*Mydnight's Hero*), 24 (*Rune War*), 25 (*Trail of the Wolf*) e 26 (*The Fall of Blood Mountain*)
-jogáveis de ponta a ponta — seis primeiras entregas da fase New Order, sucedendo a fase Grand Master
-(Livros 13-20, completa).
+(*Mydnight's Hero*), 24 (*Rune War*), 25 (*Trail of the Wolf*), 26 (*The Fall of Blood Mountain*) e 27
+(*Vampirium*) jogáveis de ponta a ponta — sete primeiras entregas da fase New Order, sucedendo a fase
+Grand Master (Livros 13-20, completa).
 
 ## Contexto
 
@@ -346,3 +346,33 @@ primeiro). Primeira vez na fase New Order sem nenhuma seção-quebra-cabeça.
 Nenhuma Disciplina nova, nenhuma mudança de mecânica de combate. 10 Disciplinas (base 5) está a apenas
 1 Disciplina do limiar de Sun Lord ajustado (11) — vale conferir no próximo livro se esse limiar
 finalmente é alcançável por um personagem totalmente sequencial. Sem mudança de `SAVE_VERSION`.
+
+## Atualização — Livro 27
+
+O Livro 27 (*Vampirium*) é a sétima entrega da fase New Order — continuação confirmada pelo mesmo
+critério do Livro 26 (`gamerulz.htm` descreve carry-over normal, apesar de outro salto temporal no
+`tssf.htm`, "Three months after you returned from Bor...").
+
+### Validação real do rank "Sun Lord" — primeira vez que um limiar numérico é alcançado na fase New Order
+
+`imprvdsc.htm` ganha o próximo patamar: **Sun Lord** (índice 6 do array `GRAND_MASTER_RANKS`). Um
+personagem que completou os Livros 21-26 sequencialmente chega ao Livro 27 com **11 Disciplinas Grand
+Master** — exatamente o limiar ajustado pra base 5 que `SUN_LORD_RANK_INDEX` em `combat.ts` já usava
+desde a correção do Livro 23 (`disciplineCount - getGrandMasterBaseline(chart) >= 6` ⟺ `11` Disciplinas
+brutas pra New Order).
+
+**Isso é significativo**: diferente dos ranks anteriores (Sentinel, Defender, Guardian, Knight), que
+só tinham conteúdo narrativo, "Sun Lord" já tinha mecânica numérica real implementada desde o Livro 16
+(fase Grand Master) — Kai-blast (`KAI_BLAST_COST = 4`, dano de 2 números do Random Number Table) e o
+bônus de fogo do Grand Weaponmastery (`GRAND_WEAPONMASTERY_FIRE_BONUS = 1`). O texto do `imprvdsc.htm`
+deste livro é **verbatim idêntico** ao do Livro 16. Isso confirma, com conteúdo real pela primeira vez
+na fase New Order, que a correção baseline-aware do Livro 23 funciona corretamente também no **caminho
+positivo** (antes só validado no caminho negativo, com um personagem de 7 Disciplinas que NÃO deveria
+ganhar Kai-blast) — um personagem New Order com 11 Disciplinas brutas e Kai-surge agora corretamente
+ganha acesso ao Kai-blast e ao bônus de fogo, verificado tanto por teste unitário quanto por Playwright
+manual (rank exibido como "Sun Lord" após escolher a Disciplina extra, corretamente).
+
+### Sem mudança de código
+
+Nenhuma Disciplina nova, mesma lista de equipamento e tabela de Arma Kai do Livro 26 (sem reordenar
+nem trocar item desta vez). Sem mudança de `SAVE_VERSION`.
