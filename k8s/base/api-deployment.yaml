@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: lonewolf-api
-          image: ghcr.io/dufelizardo/lonewolf-api:193e141d4dd13e8cdabf6680aa8732d161a5419c
+          image: ghcr.io/dufelizardo/lonewolf-api:380886ee7c70c74b72315c75a37734f4ba6b8adf
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
