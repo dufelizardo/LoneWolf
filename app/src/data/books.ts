@@ -56,6 +56,8 @@ export const BOOKS: BookMeta[] = [
   { id: 'tw', code: '25totw', title: 'Trail of the Wolf', order: 25, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 350, finalSection: 350, initialDisciplineCount: 5 },
   { id: 'tfbm', code: '26tfobm', title: 'The Fall of Blood Mountain', order: 26, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 350, finalSection: 350, initialDisciplineCount: 5 },
   { id: 'v', code: '27v', title: 'Vampirium', order: 27, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 350, finalSection: 350, initialDisciplineCount: 5 },
+  // First New Order book with a section count other than 350 - confirmed via direct file count.
+  { id: 'ths', code: '28thos', title: 'The Hunger of Sejanoz', order: 28, equipmentMode: 'choose-five', contentRoot: 'new_order', phase: 'new_order', sectionCount: 300, finalSection: 300, initialDisciplineCount: 5 },
 ];
 
 export function getBook(id: string): BookMeta {

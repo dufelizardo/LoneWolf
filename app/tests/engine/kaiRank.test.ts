@@ -126,6 +126,12 @@ describe('getRankForChart', () => {
     chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery', 'Elementalism', 'Bardsmanship', 'KaiSurge', 'KaiAlchemy', 'AnimalMastery'];
     expect(getRankForChart(chart)).toBe('Sun Lord');
   });
+
+  it('a character who completed Books 21-27 (12 Disciplines) carried into Book 28 maps to "Sun Thane", matching Book 28 imprvdsc.htm\'s real content tier', () => {
+    const chart = createFreshCharacterForBook('ths', () => 0);
+    chart.grandMasterDisciplines = ['GrandWeaponmastery', 'Deliverance', 'GrandHuntmastery', 'Telegnosis', 'Astrology', 'Herbmastery', 'Elementalism', 'Bardsmanship', 'KaiSurge', 'KaiAlchemy', 'AnimalMastery', 'Assimilance'];
+    expect(getRankForChart(chart)).toBe('Sun Thane');
+  });
 });
 
 describe('getGrandMasterBaseline', () => {

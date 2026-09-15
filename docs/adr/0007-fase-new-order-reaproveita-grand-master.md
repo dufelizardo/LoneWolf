@@ -3,9 +3,9 @@
 ## Status
 
 **Implementada.** Livros 21 (*Voyage of the Moonstone*), 22 (*The Buccaneers of Shadaki*), 23
-(*Mydnight's Hero*), 24 (*Rune War*), 25 (*Trail of the Wolf*), 26 (*The Fall of Blood Mountain*) e 27
-(*Vampirium*) jogáveis de ponta a ponta — sete primeiras entregas da fase New Order, sucedendo a fase
-Grand Master (Livros 13-20, completa).
+(*Mydnight's Hero*), 24 (*Rune War*), 25 (*Trail of the Wolf*), 26 (*The Fall of Blood Mountain*), 27
+(*Vampirium*) e 28 (*The Hunger of Sejanoz*) jogáveis de ponta a ponta — oito primeiras entregas da fase
+New Order, sucedendo a fase Grand Master (Livros 13-20, completa).
 
 ## Contexto
 
@@ -376,3 +376,33 @@ manual (rank exibido como "Sun Lord" após escolher a Disciplina extra, corretam
 
 Nenhuma Disciplina nova, mesma lista de equipamento e tabela de Arma Kai do Livro 26 (sem reordenar
 nem trocar item desta vez). Sem mudança de `SAVE_VERSION`.
+
+## Atualização — Livro 28
+
+O Livro 28 (*The Hunger of Sejanoz*) é a oitava entrega da fase New Order — continuação direta
+confirmada por `tssf.htm` (retoma sem salto temporal a fuga do Khea-khan de Chai, final do Livro 27) e
+por `gamerulz.htm` (carry-over normal, "Books 21–27").
+
+### Primeira vez na fase New Order com uma contagem de seções diferente de 350
+
+Todo livro anterior da fase (21-27) tinha exatamente 350 seções. Este é o primeiro com **300 seções**
+— confirmado por contagem direta de arquivos e por verificação cruzada de que toda seção com zero
+`choices` é ou um dos 4 dead-ends conhecidos (23, 93, 226, 271) ou a seção final (300) — sem a
+peculiaridade de "vitória pírrica" do Livro 24 desta vez. `books.ts` já suporta `sectionCount`/
+`finalSection` por livro desde sempre (usado, por exemplo, pelas 400 seções de *Shadow on the Sand*,
+Livro 5) — nenhuma mudança de schema necessária, só o valor correto pra este livro.
+
+### Confirmação cruzada do rank "Sun Thane"
+
+`imprvdsc.htm` ganha o próximo patamar de conteúdo real: **Sun Thane** (índice 7 do array
+`GRAND_MASTER_RANKS`) — 8 melhorias narrativas, nenhuma com bônus numérico (diferente do Sun Lord do
+Livro 27, que tinha Kai-blast). Um personagem que completou os Livros 21-27 sequencialmente chega ao
+Livro 28 com 12 Disciplinas Grand Master, e `getGrandMasterRank(12, 5)` já produzia esse rank antes
+mesmo dessa confirmação existir — validado também por Playwright manual (rank atualiza de "Sun Lord"
+pra "Sun Thane" corretamente após a escolha da Disciplina extra).
+
+### Sem mudança de código
+
+Nenhuma Disciplina nova, mesma lista de equipamento e tabela de Arma Kai do Livro 27. 12 Disciplinas
+(base 5, índice 7) continua bem abaixo dos limiares de Grand Crown (índice 9) e Sun Prince (índice 10)
+em `combat.ts`. Sem mudança de `SAVE_VERSION`.

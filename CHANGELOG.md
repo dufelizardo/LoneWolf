@@ -4,6 +4,26 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.31.0] — 2026-09-15
+
+Livro 28, *The Hunger of Sejanoz*, adicionado — **oitava entrega da fase New Order**, com carry-over
+normal a partir do Livro 27. Ver ADR-0007 (seção "Atualização — Livro 28") para o detalhamento
+completo.
+
+- **Primeira vez na fase New Order com uma contagem de seções diferente de 350**: este livro tem
+  **300 seções**.
+- **Nenhuma Disciplina nova**: mesmo pool de 16 dos Livros 21-27. Mesma lista de equipamento e tabela
+  de Arma Kai do Livro 27.
+- Rank "Sun Thane" (12 Disciplinas) ganha conteúdo real (só narrativo, sem mecânica numérica desta
+  vez) em `imprvdsc.htm`, validando de forma cruzada a fórmula de rank com base 5 introduzida no
+  Livro 21.
+- Carry-over do Livro 27 confirmado normal (mantém CS/EP, Itens Especiais, Arma Kai, Nome Kai, Armas
+  normais e Itens de Mochila; ganha +1 Disciplina Grand Master e +1 CS/+2 EP).
+- 4 becos sem saída, zero seções-quebra-cabeça, final canônico único e limpo em `sect300`, apontando
+  para o Livro 29 "The Storms of Chai".
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.30.0] — 2026-09-15
 
 Livro 27, *Vampirium*, adicionado — **sétima entrega da fase New Order**, com carry-over normal a

@@ -457,3 +457,26 @@ describe('book 27 (Vampirium) sections - seventh book of the New Order phase', (
     expect(deadEnds).toEqual([8, 19, 50, 123, 141, 142, 160, 163, 191, 279, 294, 308, 336]);
   });
 });
+
+describe('book 28 (The Hunger of Sejanoz) sections - eighth book of the New Order phase, first with a section count other than 350', () => {
+  const sections = loadSections('ths');
+
+  it('has exactly 300 sections', () => {
+    expect(Object.keys(sections)).toHaveLength(300);
+  });
+
+  it('has no puzzle sections', () => {
+    const puzzles = Object.values(sections).filter((s) => s.hasPuzzle);
+    expect(puzzles).toHaveLength(0);
+  });
+
+  it('has exactly one real ending, at the canonical final section (300), forward-linking to Book 29', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([300]);
+  });
+
+  it('has exactly the 4 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([23, 93, 226, 271]);
+  });
+});
