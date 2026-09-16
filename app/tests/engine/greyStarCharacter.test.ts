@@ -2,14 +2,21 @@ import { describe, expect, it } from 'vitest';
 import {
   addExtraMagicalPower,
   carryOverGreyStarCharacterToBook,
+  chooseHigherMagicalPowers,
   chooseMagicalPowers,
   chooseStartingGift,
+  computeMoonstoneCarryOver,
   computeThreeMethodWillpowerCarryOver,
   createFreshGreyStarCharacter,
   rollWillpowerForLaterBookCarryOver,
 } from '../../src/engine/greyStarCharacter';
 import { addBackpackItem, addWeapon } from '../../src/engine/greyStarInventory';
-import { WIZARDS_STAFF, type GreyStarActionChart, type MagicalPower } from '../../src/engine/greyStarTypes';
+import {
+  WIZARDS_STAFF,
+  type GreyStarActionChart,
+  type HigherMagicalPower,
+  type MagicalPower,
+} from '../../src/engine/greyStarTypes';
 import { MAX_BACKPACK_ITEMS, MAX_WEAPONS } from '../../src/engine/types';
 
 function fixedRng(...values: number[]): () => number {
@@ -38,6 +45,22 @@ describe('createFreshGreyStarCharacter', () => {
     expect(chart.magicalPowers).toEqual([]);
     expect(chart.herbPouchItems).toEqual([]);
     expect(chart.isAlive).toBe(true);
+  });
+
+  it('ww (Book 4): WILLPOWER/ENDURANCE are fixed at 50/30, not rolled, and the Moonstone is granted', () => {
+    // Only the COMBAT SKILL roll is consumed - fixedRng would throw on an unexpected 2nd/3rd read if
+    // willpower/endurance were still being rolled, since only one value is provided.
+    const chart = createFreshGreyStarCharacter('ww', fixedRng(0.4));
+    expect(chart.combatSkill).toBe(14);
+    expect(chart.willpowerCurrent).toBe(50);
+    expect(chart.willpowerStarting).toBe(50);
+    expect(chart.enduranceCurrent).toBe(30);
+    expect(chart.enduranceMax).toBe(30);
+    expect(chart.specialItems).toEqual([
+      { name: 'Map of the Shadakine Empire' },
+      { name: 'The Moonstone', knownEffects: 'Pode teletransportar você até Shasarak uma única vez durante a aventura' },
+    ]);
+    expect(chart.higherMagicalPowers).toEqual([]);
   });
 });
 
@@ -159,20 +182,96 @@ describe('rollWillpowerForLaterBookCarryOver (Book 3+)', () => {
   });
 });
 
+describe('computeMoonstoneCarryOver (Book 4+)', () => {
+  it('adds a flat +50 to WILLPOWER and +30 to ENDURANCE, with no dice roll and no player choice', () => {
+    const previous = { ...endOfBookOneChart(), willpowerCurrent: 3, enduranceCurrent: 18, enduranceMax: 22 };
+    const result = computeMoonstoneCarryOver(previous);
+    expect(result.willpowerCurrent).toBe(53);
+    expect(result.enduranceCurrent).toBe(48);
+  });
+
+  it('raises the ENDURANCE ceiling too - the only carry-over rule in the series that does this', () => {
+    const previous = { ...endOfBookOneChart(), enduranceCurrent: 18, enduranceMax: 22 };
+    const result = computeMoonstoneCarryOver(previous);
+    expect(result.enduranceMax).toBe(48); // previous CURRENT (18) + 30, not previous max (22) + 30
+    expect(result.enduranceMax).toBe(result.enduranceCurrent);
+  });
+});
+
+describe('chooseHigherMagicalPowers (Book 4+)', () => {
+  const baseChart = createFreshGreyStarCharacter('ww', fixedRng(0));
+  const FOUR_HIGHER_NO_THEURGY: HigherMagicalPower[] = ['Thaumaturgy', 'Telergy', 'Physiurgy', 'Visionary'];
+
+  it('rejects the wrong count', () => {
+    expect(() => chooseHigherMagicalPowers(baseChart, FOUR_HIGHER_NO_THEURGY.slice(0, 3), 4)).toThrow();
+    expect(() => chooseHigherMagicalPowers(baseChart, [...FOUR_HIGHER_NO_THEURGY, 'Theurgy'], 4)).toThrow();
+  });
+
+  it('rejects duplicates and unknown powers', () => {
+    expect(() =>
+      chooseHigherMagicalPowers(baseChart, ['Thaumaturgy', 'Thaumaturgy', 'Telergy', 'Physiurgy'], 4),
+    ).toThrow();
+    expect(() =>
+      chooseHigherMagicalPowers(baseChart, ['NotAPower' as HigherMagicalPower, 'Telergy', 'Physiurgy', 'Visionary'], 4),
+    ).toThrow();
+  });
+
+  it('accepts exactly `expectedCount` distinct valid powers (4 for a fresh start)', () => {
+    const chart = chooseHigherMagicalPowers(baseChart, FOUR_HIGHER_NO_THEURGY, 4);
+    expect(chart.higherMagicalPowers).toEqual(FOUR_HIGHER_NO_THEURGY);
+  });
+
+  it('accepts 5 for a carry-over character', () => {
+    const chart = chooseHigherMagicalPowers(baseChart, [...FOUR_HIGHER_NO_THEURGY, 'Theurgy'], 5);
+    expect(chart.higherMagicalPowers).toHaveLength(5);
+  });
+
+  it('grants the Herb Pouch when Theurgy is chosen and the character does not already have Alchemy', () => {
+    const chart = chooseHigherMagicalPowers(baseChart, ['Theurgy', 'Telergy', 'Physiurgy', 'Visionary'], 4);
+    expect(chart.herbPouchItems).toEqual(['Empty Vial', 'Empty Vial', 'Vial of Saltpetre', 'Vial of Sulphur']);
+  });
+
+  it('does not re-grant the Herb Pouch when Theurgy is chosen but the character already has Alchemy', () => {
+    const withAlchemy: GreyStarActionChart = { ...baseChart, magicalPowers: [...FIVE_POWERS_NO_ALCHEMY.slice(0, 4), 'Alchemy'] };
+    const chart = chooseHigherMagicalPowers(withAlchemy, ['Theurgy', 'Telergy', 'Physiurgy', 'Visionary'], 4);
+    expect(chart.herbPouchItems).toEqual([]);
+  });
+
+  it('does not grant the Herb Pouch when Theurgy is not chosen', () => {
+    const chart = chooseHigherMagicalPowers(baseChart, FOUR_HIGHER_NO_THEURGY, 4);
+    expect(chart.herbPouchItems).toEqual([]);
+  });
+});
+
 describe('carryOverGreyStarCharacterToBook', () => {
   it('applies the given new WILLPOWER value as both current and starting', () => {
-    const chart = carryOverGreyStarCharacterToBook(endOfBookOneChart(), 'tfc', 12);
+    const chart = carryOverGreyStarCharacterToBook(endOfBookOneChart(), 'tfc', { willpowerCurrent: 12 });
     expect(chart.willpowerCurrent).toBe(12);
     expect(chart.willpowerStarting).toBe(12);
   });
 
-  it('carries everything else over unchanged: bookId, CS, ENDURANCE, powers, weapons, items, Nobles', () => {
+  it('leaves ENDURANCE untouched when the patch omits it (Books 2-3)', () => {
     const previous = endOfBookOneChart();
-    const chart = carryOverGreyStarCharacterToBook(previous, 'tfc', 12);
-    expect(chart.bookId).toBe('tfc');
-    expect(chart.combatSkill).toBe(previous.combatSkill);
+    const chart = carryOverGreyStarCharacterToBook(previous, 'tfc', { willpowerCurrent: 12 });
     expect(chart.enduranceCurrent).toBe(previous.enduranceCurrent);
     expect(chart.enduranceMax).toBe(previous.enduranceMax);
+  });
+
+  it('applies ENDURANCE current/max from the patch when present (Book 4+)', () => {
+    const chart = carryOverGreyStarCharacterToBook(endOfBookOneChart(), 'ww', {
+      willpowerCurrent: 60,
+      enduranceCurrent: 45,
+      enduranceMax: 45,
+    });
+    expect(chart.enduranceCurrent).toBe(45);
+    expect(chart.enduranceMax).toBe(45);
+  });
+
+  it('carries everything else over unchanged: bookId, CS, powers, weapons, items, Nobles', () => {
+    const previous = endOfBookOneChart();
+    const chart = carryOverGreyStarCharacterToBook(previous, 'tfc', { willpowerCurrent: 12 });
+    expect(chart.bookId).toBe('tfc');
+    expect(chart.combatSkill).toBe(previous.combatSkill);
     expect(chart.magicalPowers).toEqual(previous.magicalPowers);
     expect(chart.weapons).toEqual(previous.weapons);
     expect(chart.equippedWeapon).toBe(previous.equippedWeapon);
@@ -183,7 +282,7 @@ describe('carryOverGreyStarCharacterToBook', () => {
 
   it('resets currentSection to 1, clears visitedSections, and marks the character alive', () => {
     const previous = { ...endOfBookOneChart(), currentSection: 217, visitedSections: [1, 2, 3], isAlive: false };
-    const chart = carryOverGreyStarCharacterToBook(previous, 'tfc', 12);
+    const chart = carryOverGreyStarCharacterToBook(previous, 'tfc', { willpowerCurrent: 12 });
     expect(chart.currentSection).toBe(1);
     expect(chart.visitedSections).toEqual([]);
     expect(chart.isAlive).toBe(true);

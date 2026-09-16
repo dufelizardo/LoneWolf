@@ -2,7 +2,9 @@
   "1": {
     "number": 1,
     "bodyHtml": "\n\n\n<p>It is a grim, chill morning, your last on the Isle of Lorn. With quaking heart, you enter the sacred temple of Amida to receive the silent blessing of your Shianti masters. They stand around you, heads bowed in meditation. At length, the ceremony ends and Maiteya, your old friend and teacher, steps forward, and grasps you firmly by the shoulders. You look into his glittering eyes and see yourself reflected there, for the eyes of the Shianti race are not coloured like man’s but have pupils that cast reflections like mirrored glass.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"321\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill1.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"321\" width=\"193\" src=\"ill1.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"321\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n<p>‘Grey Star,’ he says, a warm smile lighting his serene face, ‘the time has come for you to leave. Far will you travel and perilous is your course. Be not afraid, yet do not fear caution. Though you go with the teaching and blessing of the Shianti and carry the might of the Wizard’s Staff, stealth and secrecy will be your allies. Let not courage defeat wisdom. Go now and seek the Kundi race that is called the Lost Tribe of Lara. You are the instrument of our will, bearer of our hope. Ever will your quest be in our minds and hearts.’</p>\n<p>Without a word, you turn and leave the temple, not looking back until you reach the shore, where a sail boat awaits you. With a gentle sigh, you bid farewell to the island of your youth and push the little craft into the cold waters of the Sea of Dreams. You jump into the boat and set sail, making a westward course for the distant mainland of the Shadakine Empire.</p>\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill1.png"
+    ],
     "combats": [],
     "choices": [
       {
@@ -325,7 +327,9 @@
   "18": {
     "number": 18,
     "bodyHtml": "\n\n\n<p>It appears your new companions put great faith in your leadership: a faith that is only slightly shaken when you admit that you have very little idea of where to go. You explain that your quest is to find the Lost Tribe of Lara (though you do not tell them its origin or true purpose), and suggest that Shan guides you. ‘There is no obligation upon you to remain with me, though,’ you tell Tanith and Shan. ‘You are free to do as you please.’</p>\n<p>‘I, for one, have no other place to go,’ says Tanith. ‘Mother Magri was a cruel mistress and I would gladly aid any opponent of the rule of the Wytch-king and his servants.’</p>\n<p>‘And I, too,’ says Shan. ‘But which way shall we go? We must keep moving, for it is certain that the Shadakine are searching for us.’</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"322\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill2.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"322\" width=\"193\" src=\"ill2.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"322\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n<p>There is a pause while you all consider the problem. Finally you ask if they have any suggestions. Shan’s advice is to journey south to the Azanam, which he believes to be the most likely haunt of the lost tribe, and he offers to guide you there.</p>\n<p>‘But if you are wrong,’ says Tanith, ‘we will have journeyed far and into great danger unnecessarily. We need guidance. Three days’ travel to the north of here lives Jnana the Wise, a hermit sage, “He Who Serves No Master”. I can take you to him.’</p>\n\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill2.png"
+    ],
     "combats": [],
     "choices": [
       {
@@ -566,7 +570,9 @@
   "29": {
     "number": 29,
     "bodyHtml": "\n\n\n<p>As the river begins to narrow, the once clear waters of the Azan River become a murky brown. Close to the banks, there are many shallow inlets where stagnant pools and swamps are overgrown with clumps of rope-like tendrils. These tendrils form the branches of a large plant called the Yaku. The tendrils are sensitized vines that snake across the ground towards a pool or into the main river, for the rest of the limestone canyon is arid. At the heart of the Yaku plant is a cluster of sharp points, and Shan warns you to keep well clear of these poisoned barbs.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"301\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill3.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"301\" width=\"193\" src=\"ill3.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"301\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n<p>It becomes increasingly hard to remain close to the river’s edge without clusters of Yaku tendrils blocking your path.</p>\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill3.png"
+    ],
     "combats": [],
     "choices": [
       {
@@ -768,7 +774,9 @@
   "39": {
     "number": 39,
     "bodyHtml": "\n\n\n<p>Moving under cover of the forest’s edge, Shan leads the way along a worn path. Unexpectedly, he stops, head tilted to one side, listening intently. ‘What is it?’ you whisper.</p>\n<p>‘I heard a shout, ahead of us. Listen!’ In the distance, you can hear angry voices and the ring of steel against steel. Cautiously, you creep forward and peer through the dense undergrowth.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"311\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill4.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"311\" width=\"193\" src=\"ill4.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"311\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n<p>Six armoured knights, clad in blue and red robes, are battling with twenty Shadakine warriors. The knights are defending a heavily laden wagon that stands in the middle of a wide stone bridge. Perched on the wagon sits an unarmed man, richly clothed, looking fearfully upon the battle. He and his knights are outnumbered. Though skilled swordsmen, as the many Shadakine dead attest, they are hard-pressed and have little chance of holding the bridge.</p>\n<p>‘They don’t stand a chance,’ you murmur.</p>\n<p>‘But these are no ordinary soldiers,’ replies Shan. ‘Look at the design on their shields—a mountain crowned with two stars. They bear the Royal Arms of Durenor. These are Knights of the White Mountain, warrior lords of Durenor, a free kingdom in the far north.’</p>\n<p>If you are to continue your journey south along the Azan River, you will have to somehow pass this battle without the Shadakine seeing you.</p>\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill4.png"
+    ],
     "combats": [],
     "choices": [
       {
@@ -1765,7 +1773,9 @@
   "87": {
     "number": 87,
     "bodyHtml": "\n\n\n<p>With a shudder, you step outside the pentacle and speak the sibilant words of the ‘forbidden tome’ known as the Song of the Dead. The ghost of the priest sighs and says, ‘It is done. Take the Amulet from the body of my former life. It will serve as a charm against the evil dead.’ You take the Amulet, which hangs by a silver chain around the dead priest’s neck, and place it around your own. (Mark this Amulet as a Special Item on your <a href=\"action.htm\">Action Chart</a>.)</p>\n<p>All is silent. Slowly, the cell grows colder. The sound of distant moaning fills your ears, followed by a mournful wailing that chills the soul, which gradually rises in pitch and volume. The dead have come to claim their vengeance. The use of the Power of Evocation has cost you 2 <span class=\"smallcaps\">WILLPOWER</span> points. A howling wind sweeps through the cell and the door bursts open. You turn and grab Shan’s arm. He has stood, pale and rigid with fear, throughout your exchange with the dead.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"329\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill5.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"329\" width=\"193\" src=\"ill5.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"329\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n<p>‘Quickly,’ you hiss. ‘Come with me.’ You run through the door and into the corridor outside. Shadow forms are flowing out of the walls and floor, and everywhere spirit shapes fly in all directions. You turn to your right and see the horribly mutilated corpse of the gaoler. Still clenched in his mortifying fist is a small Dagger. You may take this item if you wish. (Remember to mark it on your <a href=\"action.htm\">Action Chart</a> under the Weapons section.)</p>\n\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill5.png"
+    ],
     "combats": [],
     "choices": [
       {
@@ -2058,7 +2068,9 @@
   "101": {
     "number": 101,
     "bodyHtml": "\n\n\n<p>The first of the Najin is almost upon you when you unleash the power of the Wizard’s Staff, killing one of the shrieking creatures in mid-air and scattering the others in all directions; you have used up 2 <span class=\"smallcaps\">WILLPOWER</span> points.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"329\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill6.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"329\" width=\"193\" src=\"ill6.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"329\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n<p>‘No!’ screams Tanith, running off into the barren hills. The Najin rally and gather around you, hovering. Yammering wildly, the first of the little creatures attacks you.</p>\n<p>There are nine Najin and they attack one at a time, attempting to claw and bite you. If you have another weapon, you pass it to Shan who then adds 2 to your <span class=\"smallcaps\">COMBAT SKILL</span>. (Remember to delete this weapon from your <a href=\"action.htm\">Action Chart</a>.<a href=\"#sect101-1-foot\" name=\"sect101-1\">15</a>)</p>\n\n\n\n\n\n\n\n\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill6.png"
+    ],
     "combats": [
       {
         "enemyName": "Najin 1",
@@ -2175,7 +2187,9 @@
   "105": {
     "number": 105,
     "bodyHtml": "\n\n\n<p>You notice a spare seat and sit down. Also seated at the table are three others, one of whom may be able to help you locate the Lost Tribe of Lara. You try to decide with whom to attempt a conversation.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"322\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill7.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"322\" width=\"193\" src=\"ill7.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"322\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n\n\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill7.png"
+    ],
     "combats": [],
     "choices": [
       {
@@ -2923,7 +2937,9 @@
   "140": {
     "number": 140,
     "bodyHtml": "\n\n\n<p>The sun has begun to set. Far ahead of you, heading west, you sight a small group of fishing boats. You see growing numbers of these craft as you continue on your way, occasionally spotting larger seagoing vessels. Then your heart gives a leap of joy. You can make out the distant shape of a coastline and a harbour full of hundreds of fishing boats and sail ships. In the orange glow of the setting sun, the domes and spires of a city point challengingly towards the sky. This is the Port of Suhn, the first city you have ever seen.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"318\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill8.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"318\" width=\"193\" src=\"ill8.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"318\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill8.png"
+    ],
     "combats": [],
     "choices": [
       {
@@ -3129,7 +3145,9 @@
   "149": {
     "number": 149,
     "bodyHtml": "\n\n\n<p>‘A Kleasá!’ Tanith screams. ‘A Soul-eater!’</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"325\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill9.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"325\" width=\"193\" src=\"ill9.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"325\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n<p>You must fight the Kleasá to the death. For every round of combat, subtract 1 <span class=\"smallcaps\">WILLPOWER</span> point and 2 <span class=\"smallcaps\">ENDURANCE</span> points from your total. If you have erected a magical shield of Sorcery, subtract 1 <span class=\"smallcaps\">WILLPOWER</span> point and 1 <span class=\"smallcaps\">ENDURANCE</span> point for every round of combat as the Kleasá tries to claw at your soul.</p>\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill9.png"
+    ],
     "combats": [
       {
         "enemyName": "Kleasá",
@@ -3689,7 +3707,9 @@
   "175": {
     "number": 175,
     "bodyHtml": "\n\n\n<p>‘You have power, young stranger,’ murmurs Mother Magri. ‘I sense some wizardry in you. How came this to be I wonder? Whom do you serve?’</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"320\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill10.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"320\" width=\"193\" src=\"ill10.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"320\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n<p>If you do not resist the power of the Kazim Stone, your quest and its origin will be revealed to this servant of the Wytch-king.</p>\n\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill10.png"
+    ],
     "combats": [],
     "choices": [
       {
@@ -4140,7 +4160,9 @@
   "197": {
     "number": 197,
     "bodyHtml": "\n\n\n<p>The speed and ferocity of the soldier Mantiz is astonishing. The creature attacks. You cannot evade combat and must fight this deadly opponent to the death.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"320\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill11.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"320\" width=\"193\" src=\"ill11.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"320\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill11.png"
+    ],
     "combats": [
       {
         "enemyName": "Soldier Mantiz",
@@ -4709,7 +4731,9 @@
   "224": {
     "number": 224,
     "bodyHtml": "\n\n\n<p>‘Death to the Shadakine!’ you scream, caught up in the berserk fury of the mob. With a triumphant cry, the crowd deposits you on the ground and then withdraws to form a circle around you and the warrior. The Shadakine stands sweating and panting before you; his eyes dart wildly in every direction but he sees no escape. As the jeering crowd hurls insults and taunts at the trapped soldier, you notice that the shaven-headed warrior’s eyes are totally white, completely lacking pupils. Resolutely, he steps forward, sword and teeth bared, snarling his defiance. ‘To the death then, boy,’ he spits.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"320\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill12.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"320\" width=\"193\" src=\"ill12.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"320\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n<p>You cannot avoid the combat owing to the circle of people around you and must fight the Shadakine to the death.</p>\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill12.png"
+    ],
     "combats": [
       {
         "enemyName": "Shadakine Warrior",
@@ -4890,7 +4914,9 @@
   "233": {
     "number": 233,
     "bodyHtml": "\n\n\n<p>Standing your ground, you wait as the Quoku draws near, bracing yourself against attack. It stops a few yards away, regarding you with a baleful expression.</p>\n<p>Suddenly, and without warning, the Quoku opens its mouth and grabs at Shan with a long proboscis-like tongue that wraps tightly around his arms and chest. Shan screams with fear and revulsion as he is dragged towards the venomous mouth of the Quoku. You have seconds in which to act.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"314\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill13.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"314\" width=\"193\" src=\"ill13.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"314\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill13.png"
+    ],
     "combats": [],
     "choices": [
       {
@@ -5041,7 +5067,9 @@
   "241": {
     "number": 241,
     "bodyHtml": "\n\n\n<p>You turn into a street leading from the square and break into a run. Behind, you hear the cry of a Shadakine, ordering you to halt.</p>\n<p>You have turned into a busy high street, crowded with people, and try as you may you cannot clear a way through them. Suddenly the crowd scatters, diving for cover. Twenty yards ahead stand three Shadakine warriors: an officer and two crossbowmen with weapons loaded and aimed at your heart.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"319\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill14.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"319\" width=\"193\" src=\"ill14.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"319\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n<p>‘Halt, or you’re dead!’ shouts the Shadakine officer, savagely.</p>\n\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill14.png"
+    ],
     "combats": [],
     "choices": [
       {
@@ -5582,7 +5610,9 @@
   "266": {
     "number": 266,
     "bodyHtml": "\n\n\n<p>The evening is full of the sound of the throaty Quoku call. You both put on a burst of speed, glancing over your shoulders at your pursuers. To your horror, you see that they are no longer on the ground! Instead, they are gliding up into the air, limbs thrust out to reveal large flaps of membrane that stretch from their forelegs to their back legs to form gigantic wings. ‘You didn’t tell me they could fly!’ you shout to Shan.</p>\n<p>‘I didn’t know they even existed until an hour ago,’ he apologizes, wheezing, already short of breath. ‘We’ll never outrun them now.’</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"322\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill15.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"322\" width=\"193\" src=\"ill15.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"322\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n<p>More Quoku are leaping from their towers of stone, pushing high into the air with their powerful back legs and then gliding in circles around their columns, drifting with the warm air currents. The first of the creatures climbs gently, rolls to one side and then pulls into a steep dive. The Quoku hurtles towards you with astonishing speed: a hawk in pursuit of its prey.</p>\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill15.png"
+    ],
     "combats": [],
     "choices": [
       {
@@ -6132,7 +6162,9 @@
   "292": {
     "number": 292,
     "bodyHtml": "\n\n\n<p>The dark passage seems interminably long, and the three of you are panting for breath before you reach its end. The winding tunnel opens into a large, natural cavern. You rush through the cave mouth and down the steep slope of a hill, stopping only when you reach the bottom. You gasp for breath, your chest heaving and your limbs aching.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"322\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill16.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"322\" width=\"193\" src=\"ill16.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"322\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill16.png"
+    ],
     "combats": [],
     "choices": [
       {
@@ -7138,7 +7170,9 @@
   "344": {
     "number": 344,
     "bodyHtml": "\n\n\n<p>Soon, you come to a wide basin below the Shenwu Falls and the Great Wall of Azakawa. You are standing by the banks of Lake Shenwu, and in the eerie darkness it is a strange and disturbing sight.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"291\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill17.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"291\" width=\"193\" src=\"ill17.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"291\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill17.png"
+    ],
     "combats": [],
     "choices": [
       {
@@ -7250,7 +7284,10 @@
   "350": {
     "number": 350,
     "bodyHtml": "\n\n\n<p>A great hooting yell signifies the presence of others in the leaf-green light of the tree tops. Some forty ape­like men with long tails swing bundles of smoking leaves at the end of lengths of vine. The smoke gives off a choking stench that throws the huge insects into confusion. Within a few moments, they have dropped from the branches of the tree or are scurrying back along the trunk, fleeing from the swirling fumes.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"313\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill18.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"313\" width=\"193\" src=\"ill18.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"313\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n<p>Through watering eyes, you watch the strange, stunted men using their tails to swing from tree limb to branch with astonishing agility, flushing out the insect invaders with practised ease. These are the Kundi. You have found the Lost Tribe of Lara.</p>\n<p>As you watch the one-sided battle draw to a close, two sets of hairy arms grab you and lift you bodily into the air. Your ape-like abductors carry you through the giddy heights, leaping and swinging from tree to tree, tossing you like a bale of hay. You are being carried through a fine mist of cloud, from which the Azawood tree draws much of its moisture. Up here, in the highest levels of the forest, is a complex of wooden houses and platforms. You are dumped unceremoniously outside the largest of these tree houses: the house of the Kundi king.</p>\n<p>The old king regards you with undisguised displeasure. ‘I am Okosa, Kundi king—why you come and who are you?’</p>\n<p>Quietly you tell the king of your quest for the Moonstone of the Shianti, your search for the Shadow Gate and your need of the magical Kundi vision to guide you there.</p>\n<p>‘You no Shianti … You bring creeping death from below … Kundi guide you nowhere,’ he says, eyeing you suspiciously. No matter how you try, you cannot convince him that you are a Shianti wizard and that you were trying to escape from the terrible Mantiz attack, not leading it. He turns his back on you with a derisive snort.</p>\n<p>‘I can make great magic,’ you say hopefully, ‘ancient magic, The Way of the Shianti.’</p>\n<p>‘Wytch-king make magic, Shadakine make magic. This prove nothing,’ the king replies with a dismissive wave of the hand.</p>\n<p>‘How then, can I prove the truth of my words to you?’ you ask, helplessly.</p>\n<p>The Kundi King gives you a sly look over his shoulder, eyebrows raised. ‘Prove?’ he says. ‘Yes, you prove many things, I think, when Urik, wise elder of the Kundi Tribe, has words with you. Then you see some <em>Kundi</em> magic! Not Shadakine spells and whispers.’</p>\n<p>Patiently, you wait. Faintly, you can hear the jingling of tiny bells and a hoarse voice chanting a monotonous rhythm, tunelessly. At length, a wizened old Kundi is led into the room. He is covered in bird feathers and numerous small bells, and his mad, bulging eyes roll around their sockets. The Kundi king and the old Kundi’s escorts look to him with reverence, for he is their Shaman and a respected figure in their society. To your eyes, however, he looks faintly ridiculous, shambling around you in a comic, bow­legged dance, waving and rattling a strange, fur-covered talisman in your face and repeating his dissonant litany in an endless monotone. Your own instinctive powers tell you that no magic is being performed here, and you look with interest, curious to see what happens next. Suddenly the mad old Kundi falls silent. He is short of breath, his bony chest wheezing. He bares the blackened stumps of his rotten teeth, and pressing his face close to yours, so close that you can smell the stink of his fetid breath, he speaks to you.</p>\n<div align=\"center\">\n<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody><tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrtp.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrtpr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"309\" width=\"32\" src=\"brdrl.png\"></td>\n<td><a href=\"ill19.htm\"><img alt=\"illustration\" border=\"0\" align=\"middle\" height=\"309\" width=\"193\" src=\"ill19.png\"></a></td>\n<td><img alt=\"\" align=\"middle\" height=\"309\" width=\"32\" src=\"brdrr.png\"></td>\n</tr>\n<tr>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtl.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"193\" src=\"brdrbt.png\"></td>\n<td><img alt=\"\" align=\"middle\" height=\"32\" width=\"32\" src=\"brdrbtr.png\"></td>\n</tr>\n</tbody></table>\n</div>\n<p>‘You no look like Shianti,’ he says, looking you up and down with a theatrical gesture.</p>\n<p>‘Shianti <em>wizard</em>,’ you correct, drawing no response.</p>\n<p>‘You no feel like Shianti,’ Urik continues, running his leathery fingertips along the filthy, tattered remains of your robe. He wrinkles his nose. ‘You no smell like Shianti … smell more like swamp!’ he says, exploding into a great fit of hoarse laughter, clapping his hands with glee.</p>\n<p>‘You see Shianti, you say?’ he then asks, his eyes narrowing.</p>\n<p>You nod your assent.</p>\n<p>‘The youngest Kundi child knows the “riddle of the Shianti”. If you have truly looked upon them, then you will know the answer.’</p>\n<p>The fate of your quest hangs upon the words of a child’s nursery rhyme, it seems. Okosa, the Kundi king, agrees to grant you a guide to the Shadow Gate, only if you can answer the old Shaman’s rhyme. Anxiously, you listen to his words, burning them into your mind.</p>\n<p>‘Answer me this, wizard … ’</p>\n<blockquote>\n<p>\n         ‘Wise Shianti and Kundi man,<br>\n         Look eye to eye in tree,<br>\n         Shianti man see Kundi man,<br>\n         But what does Kundi see?’<br>\n        </p>\n\n</blockquote>\n<p>The solution to the rhyme can be found in part two of the Grey Star series:</p>\n<p><a href=\"../../gs/02tfc/title.htm\">The Forbidden City</a></p>\n\n",
-    "illustrations": [],
+    "illustrations": [
+      "ill18.png",
+      "ill19.png"
+    ],
     "combats": [],
     "choices": [],
     "isDeadEnd": false,

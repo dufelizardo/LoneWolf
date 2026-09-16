@@ -241,7 +241,7 @@ export interface Enemy {
   mindblastImmune?: boolean;
 }
 
-export const SAVE_VERSION = 10;
+export const SAVE_VERSION = 11;
 
 /**
  * The ActionChart snapshot as it stood the moment a book's canonical ending was reached. Widened to

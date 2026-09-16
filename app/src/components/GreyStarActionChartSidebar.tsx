@@ -14,7 +14,7 @@ import {
   removeSpecialItem,
   removeWeapon,
 } from '../engine/greyStarInventory';
-import { MAGICAL_POWER_LABELS, type GreyStarActionChart } from '../engine/greyStarTypes';
+import { HIGHER_MAGICAL_POWER_LABELS, MAGICAL_POWER_LABELS, type GreyStarActionChart } from '../engine/greyStarTypes';
 import { MAX_BACKPACK_ITEMS, MAX_WEAPONS } from '../engine/types';
 
 interface Props {
@@ -93,6 +93,17 @@ export function GreyStarActionChartSidebar({ chart, onChange }: Props) {
           ))}
         </ul>
       </section>
+
+      {chart.higherMagicalPowers.length > 0 && (
+        <section>
+          <h3>Higher Magicks</h3>
+          <ul className="plain-list">
+            {chart.higherMagicalPowers.map((p) => (
+              <li key={p}>{HIGHER_MAGICAL_POWER_LABELS[p]}</li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section>
         <h3>

@@ -583,3 +583,28 @@ describe('book bng (Beyond the Nightmare Gate) sections - third book of the Grey
     ]);
   });
 });
+
+describe('book ww (War of the Wizards) sections - fourth book of the Grey Star mini-series (World of Lone Wolf), a direct continuation of Book 3 (bng sect350 obtains the Moonstone and forward-links here; this book\'s tssf.htm/sect1 opens "At last you hold the fabled Moonstone...")', () => {
+  const sections = loadSections('ww');
+
+  it('has zero puzzle sections', () => {
+    const puzzles = Object.values(sections).filter((s) => s.hasPuzzle);
+    expect(puzzles).toHaveLength(0);
+  });
+
+  it('has exactly one real ending, at the canonical final section (360)', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([360]);
+  });
+
+  it('has exactly the 24 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([
+      2, 12, 27, 44, 54, 80, 94, 96, 130, 153, 160, 176, 192, 263, 299, 308, 315, 319, 322, 335, 339, 346, 349, 357,
+    ]);
+  });
+
+  it('extracts illustrations using the bracket-less alt="illustration" markup this book uses (unlike Books 1-3\'s alt="[illustration]")', () => {
+    expect(sections[1].illustrations).toEqual(['ill1.png']);
+  });
+});

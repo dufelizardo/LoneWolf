@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import sectionsGsw from '../data/sections.gsw.json';
 import sectionsTfc from '../data/sections.tfc.json';
 import sectionsBng from '../data/sections.bng.json';
+import sectionsWw from '../data/sections.ww.json';
 import type { SectionMap } from '../data/section-types';
 import { getFootnote } from '../data/footnotes';
 import { GreyStarActionChartSidebar } from '../components/GreyStarActionChartSidebar';
@@ -16,6 +17,7 @@ const SECTIONS_BY_BOOK: Record<string, SectionMap> = {
   gsw: sectionsGsw as unknown as SectionMap,
   tfc: sectionsTfc as unknown as SectionMap,
   bng: sectionsBng as unknown as SectionMap,
+  ww: sectionsWw as unknown as SectionMap,
 };
 
 const EVADE_KEYWORDS = /\bevad|\bflee|\bescape|\brun away\b/i;

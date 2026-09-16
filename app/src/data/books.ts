@@ -87,6 +87,12 @@ export const BOOKS: BookMeta[] = [
   // different WILLPOWER carry-over rule than Book 2 - see greyStarBookEquipment.ts's
   // willpowerCarryOverMode and greyStarCharacter.ts's rollWillpowerForLaterBookCarryOver.
   { id: 'bng', code: '03btng', title: 'Beyond the Nightmare Gate', order: 32, equipmentMode: 'choose-five', contentRoot: 'world_of_lone_wolf', phase: 'world_of_lone_wolf', sectionCount: 350, finalSection: 350, contentCodeSegment: 'gs', extraIntroFile: 'coming.htm' },
+  // Book 4 of the Grey Star mini-series - a direct continuation of Book 3 (confirmed: bng's sect350
+  // obtains the Moonstone and forward-links to "War of the Wizards"; this book's tssf.htm/sect1 opens
+  // "At last you hold the fabled Moonstone..."). The biggest mechanical jump since Book 1 itself - see
+  // greyStarBookEquipment.ts's ww entry (Higher Magicks, flat fresh-start stats, the "moonstoneBonus"
+  // carry-over mode) and ADR-0008's "Atualização - Livro 4" section.
+  { id: 'ww', code: '04wotw', title: 'War of the Wizards', order: 33, equipmentMode: 'choose-five', contentRoot: 'world_of_lone_wolf', phase: 'world_of_lone_wolf', sectionCount: 360, finalSection: 360, contentCodeSegment: 'gs', extraIntroFile: 'coming.htm' },
 ];
 
 export function getBook(id: string): BookMeta {
