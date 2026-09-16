@@ -4,7 +4,9 @@ import {
   carryOverGreyStarCharacterToBook,
   chooseMagicalPowers,
   chooseStartingGift,
+  computeThreeMethodWillpowerCarryOver,
   createFreshGreyStarCharacter,
+  rollWillpowerForLaterBookCarryOver,
 } from '../../src/engine/greyStarCharacter';
 import { addBackpackItem, addWeapon } from '../../src/engine/greyStarInventory';
 import { WIZARDS_STAFF, type GreyStarActionChart, type MagicalPower } from '../../src/engine/greyStarTypes';
@@ -123,36 +125,50 @@ describe('addExtraMagicalPower (Book 2+ carry-over: choose a 6th power)', () => 
   });
 });
 
-describe('carryOverGreyStarCharacterToBook (Book 2+)', () => {
-  function endOfBookOneChart(): GreyStarActionChart {
-    let chart = createFreshGreyStarCharacter('gsw', fixedRng(0.5, 0.9, 0.9)); // CS 15, WP 29 (starting), EP 22
-    chart = chooseMagicalPowers(chart, FIVE_POWERS_NO_ALCHEMY);
-    // Simulate WILLPOWER having been spent down over the course of the book.
-    chart = { ...chart, willpowerCurrent: 2 };
-    return chart;
-  }
+function endOfBookOneChart(): GreyStarActionChart {
+  let chart = createFreshGreyStarCharacter('gsw', fixedRng(0.5, 0.9, 0.9)); // CS 15, WP 29 (starting), EP 22
+  chart = chooseMagicalPowers(chart, FIVE_POWERS_NO_ALCHEMY);
+  // Simulate WILLPOWER having been spent down over the course of the book.
+  chart = { ...chart, willpowerCurrent: 2 };
+  return chart;
+}
 
-  it('"keepCurrent": new WILLPOWER = previous current + 10', () => {
-    const chart = carryOverGreyStarCharacterToBook(endOfBookOneChart(), 'tfc', 'keepCurrent');
+describe('computeThreeMethodWillpowerCarryOver (Book 2)', () => {
+  it('"keepCurrent": previous current + 10', () => {
+    expect(computeThreeMethodWillpowerCarryOver(endOfBookOneChart(), 'keepCurrent')).toBe(12);
+  });
+
+  it('"useStarting": previous willpowerStarting + 10, ignoring the current (spent-down) value', () => {
+    expect(computeThreeMethodWillpowerCarryOver(endOfBookOneChart(), 'useStarting')).toBe(39); // 29 + 10
+  });
+
+  it('"reroll": a fresh 20+d10 roll + 10', () => {
+    expect(computeThreeMethodWillpowerCarryOver(endOfBookOneChart(), 'reroll', fixedRng(0.3))).toBe(33); // 20+3+10
+  });
+});
+
+describe('rollWillpowerForLaterBookCarryOver (Book 3+)', () => {
+  it('uses a +25 bonus for a character with 5 Magical Powers (only completed Book 1)', () => {
+    const chart = endOfBookOneChart();
+    expect(rollWillpowerForLaterBookCarryOver(chart, fixedRng(0.3))).toBe(28); // 25 + 3
+  });
+
+  it('uses a +30 bonus for a character with 6 Magical Powers (already carried over once)', () => {
+    const chart = addExtraMagicalPower(endOfBookOneChart(), 'Evocation');
+    expect(rollWillpowerForLaterBookCarryOver(chart, fixedRng(0.3))).toBe(33); // 30 + 3
+  });
+});
+
+describe('carryOverGreyStarCharacterToBook', () => {
+  it('applies the given new WILLPOWER value as both current and starting', () => {
+    const chart = carryOverGreyStarCharacterToBook(endOfBookOneChart(), 'tfc', 12);
     expect(chart.willpowerCurrent).toBe(12);
     expect(chart.willpowerStarting).toBe(12);
   });
 
-  it('"useStarting": new WILLPOWER = previous willpowerStarting + 10, ignoring the current (spent-down) value', () => {
-    const chart = carryOverGreyStarCharacterToBook(endOfBookOneChart(), 'tfc', 'useStarting');
-    expect(chart.willpowerCurrent).toBe(39); // 29 (starting) + 10
-    expect(chart.willpowerStarting).toBe(39);
-  });
-
-  it('"reroll": new WILLPOWER = a fresh 20+d10 roll + 10', () => {
-    const chart = carryOverGreyStarCharacterToBook(endOfBookOneChart(), 'tfc', 'reroll', fixedRng(0.3));
-    expect(chart.willpowerCurrent).toBe(33); // 20 + 3 + 10
-    expect(chart.willpowerStarting).toBe(33);
-  });
-
   it('carries everything else over unchanged: bookId, CS, ENDURANCE, powers, weapons, items, Nobles', () => {
     const previous = endOfBookOneChart();
-    const chart = carryOverGreyStarCharacterToBook(previous, 'tfc', 'keepCurrent');
+    const chart = carryOverGreyStarCharacterToBook(previous, 'tfc', 12);
     expect(chart.bookId).toBe('tfc');
     expect(chart.combatSkill).toBe(previous.combatSkill);
     expect(chart.enduranceCurrent).toBe(previous.enduranceCurrent);
@@ -167,7 +183,7 @@ describe('carryOverGreyStarCharacterToBook (Book 2+)', () => {
 
   it('resets currentSection to 1, clears visitedSections, and marks the character alive', () => {
     const previous = { ...endOfBookOneChart(), currentSection: 217, visitedSections: [1, 2, 3], isAlive: false };
-    const chart = carryOverGreyStarCharacterToBook(previous, 'tfc', 'keepCurrent');
+    const chart = carryOverGreyStarCharacterToBook(previous, 'tfc', 12);
     expect(chart.currentSection).toBe(1);
     expect(chart.visitedSections).toEqual([]);
     expect(chart.isAlive).toBe(true);

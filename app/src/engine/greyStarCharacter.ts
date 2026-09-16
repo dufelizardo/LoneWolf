@@ -109,33 +109,22 @@ export function chooseStartingGift(chart: GreyStarActionChart, gift: StartingGif
   }
 }
 
-export type GreyStarWillpowerCarryOverMethod = 'keepCurrent' | 'reroll' | 'useStarting';
-
 /**
  * Carries a Grey Star character over into the next book of the mini-series (Book 2+ only - Book 1 is
- * always a fresh start). gamerulz.htm's main text says "add 10 to your WILLPOWER total", but footnote 1
- * admits this "doesn't seem fair" (WILLPOWER is typically near zero by the end of a book, having been
- * spent on magic/the Staff) and offers 2 alternatives - rolling a brand new WILLPOWER score, or reusing
- * the previous book's own starting score - leaving the choice to the player. Everything else
- * (COMBAT SKILL, ENDURANCE, weapons, Backpack/Herb Pouch items, Special Items, Nobles) carries over
- * unchanged via the spread - gamerulz.htm's own carry-over text only mentions "weapons and Special
- * Items", but the book's own errata (Section 17 note, about a Bundle of Azawood Leaves bought in Book 1
- * and used in Book 2) confirms Backpack/Herb Pouch items survive too in practice.
+ * always a fresh start). Takes the new WILLPOWER value already computed by the caller, since each
+ * target book can have its own recalculation policy (see greyStarBookEquipment.ts's
+ * willpowerCarryOverMode, and computeThreeMethodWillpowerCarryOver/rollWillpowerForLaterBookCarryOver
+ * below for the two policies found so far). Everything else (COMBAT SKILL, ENDURANCE, weapons,
+ * Backpack/Herb Pouch items, Special Items, Nobles) carries over unchanged via the spread -
+ * gamerulz.htm's own carry-over text only ever mentions "weapons and Special Items", but the Book 2
+ * errata (Section 17 note, about a Bundle of Azawood Leaves bought in Book 1 and used in Book 2)
+ * confirms Backpack/Herb Pouch items survive too in practice.
  */
 export function carryOverGreyStarCharacterToBook(
   previous: GreyStarActionChart,
   bookId: string,
-  willpowerMethod: GreyStarWillpowerCarryOverMethod,
-  rng: Rng = Math.random,
+  newWillpower: number,
 ): GreyStarActionChart {
-  const bonus = 10;
-  const newWillpower =
-    willpowerMethod === 'reroll'
-      ? rollRandomNumber(rng) + 20 + bonus
-      : willpowerMethod === 'useStarting'
-        ? previous.willpowerStarting + bonus
-        : previous.willpowerCurrent + bonus;
-
   return {
     ...previous,
     bookId,
@@ -145,4 +134,38 @@ export function carryOverGreyStarCharacterToBook(
     visitedSections: [],
     isAlive: true,
   };
+}
+
+export type GreyStarWillpowerCarryOverMethod = 'keepCurrent' | 'reroll' | 'useStarting';
+
+/**
+ * Book 2's gamerulz.htm: the main text says "add 10 to your WILLPOWER total", but footnote 1 admits
+ * this "doesn't seem fair" (WILLPOWER is typically near zero by the end of a book, having been spent on
+ * magic/the Staff) and offers 2 alternatives - rolling a brand new WILLPOWER score, or reusing the
+ * previous book's own starting score - leaving the choice to the player.
+ */
+export function computeThreeMethodWillpowerCarryOver(
+  previous: GreyStarActionChart,
+  method: GreyStarWillpowerCarryOverMethod,
+  rng: Rng = Math.random,
+): number {
+  const bonus = 10;
+  if (method === 'reroll') return rollRandomNumber(rng) + 20 + bonus;
+  if (method === 'useStarting') return previous.willpowerStarting + bonus;
+  return previous.willpowerCurrent + bonus;
+}
+
+/**
+ * Book 3's gamerulz.htm literally asks to re-pick all 3 attributes from scratch (with a WILLPOWER bonus
+ * that scales by progress: +20 first adventure, +25 completed Book 1, +30 completed Books 1 and 2), but
+ * footnote 1 calls this "without precedent in other books" and "appears to be a mistake", recommending
+ * instead: keep COMBAT SKILL/ENDURANCE from the carried-over character, and only reroll WILLPOWER (with
+ * the matching bonus) - no player choice, unlike Book 2's three methods. The "+20 first adventure" case
+ * never reaches this function (createFreshGreyStarCharacter covers it); magicalPowers.length is a
+ * reliable proxy for progress here since a character only ever reaches 6 Magical Powers by having gone
+ * through the one-time Book 1->2 carry-over bump (addExtraMagicalPower).
+ */
+export function rollWillpowerForLaterBookCarryOver(previous: GreyStarActionChart, rng: Rng = Math.random): number {
+  const bonus = previous.magicalPowers.length >= 6 ? 30 : 25;
+  return rollRandomNumber(rng) + bonus;
 }

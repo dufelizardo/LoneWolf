@@ -561,3 +561,25 @@ describe('book tfc (The Forbidden City) sections - second book of the Grey Star 
     ]);
   });
 });
+
+describe('book bng (Beyond the Nightmare Gate) sections - third book of the Grey Star mini-series (World of Lone Wolf), a direct continuation of Book 2 (tfc sect310 ends "you step through" the Shadow Gate, this book\'s sect1 opens "you step forward" into it)', () => {
+  const sections = loadSections('bng');
+
+  it('has zero puzzle sections', () => {
+    const puzzles = Object.values(sections).filter((s) => s.hasPuzzle);
+    expect(puzzles).toHaveLength(0);
+  });
+
+  it('has exactly one real ending, at the canonical final section (350)', () => {
+    const endings = Object.values(sections).filter((s) => s.isEnding).map((s) => s.number);
+    expect(endings).toEqual([350]);
+  });
+
+  it('has exactly the 28 known dead-end sections', () => {
+    const deadEnds = Object.values(sections).filter((s) => s.isDeadEnd).map((s) => s.number).sort((a, b) => a - b);
+    expect(deadEnds).toEqual([
+      7, 28, 40, 53, 63, 71, 80, 81, 83, 104, 109, 126, 129, 164, 165, 168, 189, 203, 233, 269, 270, 271, 272, 286,
+      292, 308, 328, 349,
+    ]);
+  });
+});

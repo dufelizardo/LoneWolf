@@ -2,8 +2,9 @@
 
 ## Status
 
-**Implementada.** Livro 1 (*Grey Star the Wizard*) jogável de ponta a ponta — primeira entrega da fase
-"World of Lone Wolf", um spin-off da série principal, não uma décima fase numérica.
+**Implementada.** Livros 1 (*Grey Star the Wizard*), 2 (*The Forbidden City*) e 3 (*Beyond the Nightmare
+Gate*) jogáveis de ponta a ponta — primeiras entregas da fase "World of Lone Wolf", um spin-off da série
+principal, não uma décima fase numérica.
 
 ## Contexto
 
@@ -237,3 +238,52 @@ personagem resultante chega à Seção 1 do Livro 2 com os itens herdados (ex: J
 
 Mecânica de combate inalterada (mesmas penalidades de arma, mesmo multiplicador de WILLPOWER) —
 `greyStarCombat.ts` não precisou de nenhuma mudança, sem novos testes de combate.
+
+## Atualização — Livro 3 (Beyond the Nightmare Gate)
+
+O Livro 3 (*Beyond the Nightmare Gate*, `world_of_lone_wolf/bng/en/xhtml/gs/03btng/`) é a terceira
+entrega da mini-série Grey Star — continuação direta do Livro 2, confirmada comparando `tfc` `sect310`
+("Tanith stands before you... you step through") com `bng` `sect1` ("Tanith takes you by the hand and
+you step forward...") — mesma cena, sem salto. Zero mudança de parser de novo (mesmo conjunto de tags,
+mesmo padrão de ilustração, CRT byte-idêntico por md5), 350 seções, 28 becos sem saída, 0 puzzles.
+
+### Uma segunda regra de carry-over de WILLPOWER, genuinamente diferente da do Livro 2
+
+`gamerulz.htm` deste livro pede, literalmente, pra **re-rolar os 3 atributos do zero** mesmo num
+personagem transferido — com o bônus de WILLPOWER escalando por progresso (+20 primeira aventura, +25
+completou o Livro 1, +30 completou os Livros 1 e 2). A própria nota de rodapé 1 chama isso de "sem
+precedente nos outros livros" e "aparenta ser um erro", recomendando a correção: manter COMBAT SKILL/
+ENDURANCE do personagem transferido, só re-rolar o WILLPOWER (com o bônus correspondente) — sem os 3
+métodos à escolha do jogador que o Livro 2 oferecia, aqui é uma rolagem automática sem escolha alguma.
+
+Isso expôs um acoplamento indevido na primeira versão de `carryOverGreyStarCharacterToBook`: a função
+calculava o WILLPOWER internamente a partir de um enum de 3 métodos específico do Livro 2, então não
+tinha como expressar essa segunda regra sem inventar um 4º "método" artificial que não existe no livro.
+**Refatorado**: a função central agora recebe o WILLPOWER **já calculado** (`newWillpower: number`) e só
+faz o trabalho verdadeiramente comum (aplicar o valor, propagar o resto via spread, resetar seção/estado
+de vida) — o cálculo de cada regra virou uma função pura própria (`computeThreeMethodWillpowerCarryOver`
+pro Livro 2, `rollWillpowerForLaterBookCarryOver` pro Livro 3+), selecionada por um novo campo
+`willpowerCarryOverMode` (`'threeMethods' | 'autoReroll'`) em `greyStarBookEquipment.ts`.
+
+`rollWillpowerForLaterBookCarryOver` usa `magicalPowers.length` como proxy de progresso (6 = já passou
+pela transferência 1→2, que sempre concede o 6º poder → bônus 30; 5 → bônus 25) em vez de consultar o
+histórico completo de `campaign.completedBooks` — evita plumbing novo (passar `campaign` pra
+`GreyStarCharacterCreationScreen`, que hoje só recebe o `previousChart` imediato) sem perder
+corretude: como o desbloqueio de livros já exige completar o livro anterior, o caso "+20 primeira
+aventura" nunca passa por esse caminho (só `createFreshGreyStarCharacter` cobre isso).
+
+### "Escolha mais 1 Magical Power" não se repete a cada livro
+
+`powers.htm`/nota de rodapé 5 confirma: o texto principal parece sugerir "escolher 6 de novo" a cada
+livro, mas a nota reconhece que isso "não tem precedente" e recomenda a mesma correção já usada no Livro
+2 — só um poder extra, **uma única vez na vida do personagem**. Como `addExtraMagicalPower` já exige
+`magicalPowers.length === 5` pra funcionar, ela já bloqueia sozinha uma segunda aplicação em quem chega
+ao Livro 3 com 6 poderes — nenhuma mudança nela, só a UI (`GreyStarCharacterCreationScreen.tsx`) passou a
+esconder esse passo quando `previousChart.magicalPowers.length !== 5`.
+
+### Sem mudança de equipamento fixo nem de combate
+
+`equipmnt.htm` (nota de rodapé 7) confirma o carry-over completo de equipamento sem mudança — mesmo
+padrão do Livro 2. Sem tabela de presente único (`grantsStartingGift: false`, igual ao Livro 2).
+`cmbtrulz.htm` mecanicamente idêntico. Sem mudança de `SAVE_VERSION` — nenhum campo novo persistido,
+só a refatoração da política de cálculo do WILLPOWER.

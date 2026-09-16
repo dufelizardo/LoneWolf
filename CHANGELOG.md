@@ -4,6 +4,27 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.35.0] — 2026-09-15
+
+Livro 3 da mini-série Grey Star, *Beyond the Nightmare Gate*, adicionado — **continuação direta do
+Livro 2** (a seção final do Livro 2 termina "you step through" o Shadow Gate; a seção 1 deste livro
+abre "you step forward" nele, mesma cena). Ver ADR-0008 (seção "Atualização — Livro 3") para o
+detalhamento completo.
+
+- **Segunda regra de carry-over de WILLPOWER, diferente da do Livro 2**: este livro pede pra re-rolar
+  os 3 atributos do zero, mas a própria nota de rodapé do livro reconhece isso como um erro e recomenda
+  manter COMBAT SKILL/ENDURANCE e só re-rolar o WILLPOWER (bônus escalado por progresso, sem escolha do
+  jogador — diferente dos 3 métodos do Livro 2).
+- Refatorado `carryOverGreyStarCharacterToBook` pra separar "calcular o novo WILLPOWER" (agora uma
+  função por regra, escolhida por um novo campo `willpowerCarryOverMode` em
+  `greyStarBookEquipment.ts`) de "aplicar o carry-over" (agora book-agnóstico).
+- Confirmado que "escolher mais 1 Magical Power" só acontece uma vez na vida do personagem (não se
+  repete a cada livro) — já garantido pela validação existente de `addExtraMagicalPower`.
+- Zero mudança de parser, zero mudança de combate/equipamento fixo. 350 seções, 28 becos sem saída,
+  zero seções-quebra-cabeça.
+
+Sem mudança de `SAVE_VERSION`.
+
 ## [0.34.0] — 2026-09-15
 
 Livro 2 da mini-série Grey Star, *The Forbidden City*, adicionado — **continuação direta do Livro 1**
