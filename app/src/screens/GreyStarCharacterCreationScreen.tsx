@@ -4,7 +4,9 @@ import {
   carryOverGreyStarCharacterToBook,
   chooseMagicalPowers,
   chooseStartingGift,
+  computeThreeMethodWillpowerCarryOver,
   createFreshGreyStarCharacter,
+  rollWillpowerForLaterBookCarryOver,
   type GreyStarWillpowerCarryOverMethod,
 } from '../engine/greyStarCharacter';
 import { getGreyStarBookEquipment } from '../data/greyStarBookEquipment';
@@ -38,6 +40,7 @@ const WILLPOWER_METHOD_LABELS: Record<GreyStarWillpowerCarryOverMethod, string> 
 export function GreyStarCharacterCreationScreen({ book, creationMode, previousChart, onReady }: Props) {
   const isCarryOver = creationMode === 'carryover' && previousChart !== null;
   const equipmentConfig = getGreyStarBookEquipment(book.id);
+  const usesThreeMethods = equipmentConfig.willpowerCarryOverMode === 'threeMethods';
 
   const [baseChart] = useState<GreyStarActionChart>(() =>
     isCarryOver ? previousChart! : createFreshGreyStarCharacter(book.id),
@@ -48,9 +51,18 @@ export function GreyStarCharacterCreationScreen({ book, creationMode, previousCh
   const needsGift = !isCarryOver && equipmentConfig.grantsStartingGift;
   const [selectedGift, setSelectedGift] = useState<StartingGift | null>(null);
 
-  // Carry-over state
+  // Carry-over state - WILLPOWER recalculation
   const [willpowerMethod, setWillpowerMethod] = useState<GreyStarWillpowerCarryOverMethod | null>(null);
-  const availableExtraPowers = isCarryOver
+  // 'autoReroll' books (Book 3+) have no player choice - roll once, up front, same pattern as the
+  // fresh-start attribute rolls in createFreshGreyStarCharacter.
+  const [autoRolledWillpower] = useState<number>(() =>
+    isCarryOver && !usesThreeMethods ? rollWillpowerForLaterBookCarryOver(previousChart!) : 0,
+  );
+
+  // Carry-over state - the one-time "6th Magical Power" step, which only ever applies the first time a
+  // character is carried over (a character already at 6 powers has already been through this once).
+  const needsExtraPower = isCarryOver && previousChart!.magicalPowers.length === 5;
+  const availableExtraPowers = needsExtraPower
     ? ALL_MAGICAL_POWERS.filter((p) => !previousChart!.magicalPowers.includes(p))
     : [];
   const [selectedExtraPower, setSelectedExtraPower] = useState<MagicalPower | null>(null);
@@ -65,14 +77,17 @@ export function GreyStarCharacterCreationScreen({ book, creationMode, previousCh
 
   const powersReady = selectedPowers.length === REQUIRED_POWERS;
   const giftReady = !needsGift || selectedGift !== null;
-  const willpowerMethodReady = !isCarryOver || willpowerMethod !== null;
-  const extraPowerReady = !isCarryOver || selectedExtraPower !== null;
+  const willpowerMethodReady = !isCarryOver || !usesThreeMethods || willpowerMethod !== null;
+  const extraPowerReady = !needsExtraPower || selectedExtraPower !== null;
 
   const confirm = () => {
     if (isCarryOver) {
       if (!willpowerMethodReady || !extraPowerReady) return;
-      let chart = carryOverGreyStarCharacterToBook(previousChart!, book.id, willpowerMethod!);
-      chart = addExtraMagicalPower(chart, selectedExtraPower!);
+      const newWillpower = usesThreeMethods
+        ? computeThreeMethodWillpowerCarryOver(previousChart!, willpowerMethod!)
+        : autoRolledWillpower;
+      let chart = carryOverGreyStarCharacterToBook(previousChart!, book.id, newWillpower);
+      if (needsExtraPower) chart = addExtraMagicalPower(chart, selectedExtraPower!);
       onReady(chart);
       return;
     }
@@ -107,51 +122,64 @@ export function GreyStarCharacterCreationScreen({ book, creationMode, previousCh
           </p>
         </section>
 
-        <section>
-          <h3>Como recalcular seu WILLPOWER?</h3>
-          <p className="item-detail">
-            Seus poderes de feitiçaria cresceram - de qualquer forma, você soma 10 pontos. O livro
-            reconhece que manter o WILLPOWER atual "não parece justo" (costuma estar baixo ao fim de uma
-            aventura), então você pode escolher entre 3 métodos.
-          </p>
-          <ul className="discipline-picker">
-            {(Object.keys(WILLPOWER_METHOD_LABELS) as GreyStarWillpowerCarryOverMethod[]).map((method) => (
-              <li key={method}>
-                <label>
-                  <input
-                    type="radio"
-                    name="willpower-method"
-                    checked={willpowerMethod === method}
-                    onChange={() => setWillpowerMethod(method)}
-                  />
-                  {WILLPOWER_METHOD_LABELS[method]}
-                </label>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {usesThreeMethods ? (
+          <section>
+            <h3>Como recalcular seu WILLPOWER?</h3>
+            <p className="item-detail">
+              Seus poderes de feitiçaria cresceram - de qualquer forma, você soma 10 pontos. O livro
+              reconhece que manter o WILLPOWER atual "não parece justo" (costuma estar baixo ao fim de
+              uma aventura), então você pode escolher entre 3 métodos.
+            </p>
+            <ul className="discipline-picker">
+              {(Object.keys(WILLPOWER_METHOD_LABELS) as GreyStarWillpowerCarryOverMethod[]).map((method) => (
+                <li key={method}>
+                  <label>
+                    <input
+                      type="radio"
+                      name="willpower-method"
+                      checked={willpowerMethod === method}
+                      onChange={() => setWillpowerMethod(method)}
+                    />
+                    {WILLPOWER_METHOD_LABELS[method]}
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : (
+          <section>
+            <h3>Novo WILLPOWER: {autoRolledWillpower}</h3>
+            <p className="item-detail">
+              O livro reconhece que pedir pra rolar os 3 atributos do zero "não tem precedente" e é
+              provavelmente um erro - por isso seu COMBAT SKILL e ENDURANCE continuam os mesmos, só o
+              WILLPOWER é re-rolado (com um bônus que cresce conforme o progresso na série).
+            </p>
+          </section>
+        )}
 
-        <section>
-          <h3>Escolha mais 1 Magical Power ({availableExtraPowers.length} disponíveis)</h3>
-          <p className="item-detail">
-            Se escolher Alchemy e ainda não tiver, você ganha o Herb Pouch agora.
-          </p>
-          <ul className="discipline-picker">
-            {availableExtraPowers.map((power) => (
-              <li key={power}>
-                <label>
-                  <input
-                    type="radio"
-                    name="extra-power"
-                    checked={selectedExtraPower === power}
-                    onChange={() => setSelectedExtraPower(power)}
-                  />
-                  {MAGICAL_POWER_LABELS[power]}
-                </label>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {needsExtraPower && (
+          <section>
+            <h3>Escolha mais 1 Magical Power ({availableExtraPowers.length} disponíveis)</h3>
+            <p className="item-detail">
+              Se escolher Alchemy e ainda não tiver, você ganha o Herb Pouch agora.
+            </p>
+            <ul className="discipline-picker">
+              {availableExtraPowers.map((power) => (
+                <li key={power}>
+                  <label>
+                    <input
+                      type="radio"
+                      name="extra-power"
+                      checked={selectedExtraPower === power}
+                      onChange={() => setSelectedExtraPower(power)}
+                    />
+                    {MAGICAL_POWER_LABELS[power]}
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <button
           type="button"

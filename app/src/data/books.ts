@@ -81,6 +81,12 @@ export const BOOKS: BookMeta[] = [
   // describes a real carry-over path from gsw. Source folder is named "acp", not "tfc", hence
   // contentDirName. equipmentMode is a placeholder like gsw's - unused (see greyStarBookEquipment.ts).
   { id: 'tfc', code: '02tfc', title: 'The Forbidden City', order: 31, equipmentMode: 'choose-five', contentRoot: 'world_of_lone_wolf', phase: 'world_of_lone_wolf', sectionCount: 310, finalSection: 310, contentDirName: 'acp', contentCodeSegment: 'gs', extraIntroFile: 'coming.htm' },
+  // Book 3 of the Grey Star mini-series - a direct continuation of Book 2 (confirmed: tfc's sect310
+  // ends with "you step through" the Shadow Gate, this book's sect1 opens with "you step forward" into
+  // it - same scene). Source folder is already named "bng", matching this id. Introduces a genuinely
+  // different WILLPOWER carry-over rule than Book 2 - see greyStarBookEquipment.ts's
+  // willpowerCarryOverMode and greyStarCharacter.ts's rollWillpowerForLaterBookCarryOver.
+  { id: 'bng', code: '03btng', title: 'Beyond the Nightmare Gate', order: 32, equipmentMode: 'choose-five', contentRoot: 'world_of_lone_wolf', phase: 'world_of_lone_wolf', sectionCount: 350, finalSection: 350, contentCodeSegment: 'gs', extraIntroFile: 'coming.htm' },
 ];
 
 export function getBook(id: string): BookMeta {
