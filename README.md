@@ -1,5 +1,15 @@
 # Lone Wolf
 
+[![CI](https://github.com/dufelizardo/LoneWolf/actions/workflows/ci.yml/badge.svg)](https://github.com/dufelizardo/LoneWolf/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/dufelizardo/LoneWolf?label=release)](https://github.com/dufelizardo/LoneWolf/releases)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-B73BFE?logo=vite&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-Express-339933?logo=node.js&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-ArgoCD-326CE5?logo=kubernetes&logoColor=white)
+
 Adaptação web da série de livros-jogo *Lone Wolf* (Joe Dever e Gary Chalk), com progressão entre
 livros: cada livro só é jogável depois que o anterior é concluído (final canônico), e o personagem
 é transferido de um livro para o outro seguindo as regras reais da série (ver ADR-0004).
