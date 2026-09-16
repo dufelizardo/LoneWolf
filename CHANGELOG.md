@@ -4,6 +4,30 @@ Este projeto usa [Semantic Versioning](https://semver.org/). `app/` e `api/` sã
 (sempre lançados/publicados como um par) — a versão exibida no rodapé do app e em `GET /healthz` da
 API deve ser sempre a mesma.
 
+## [0.36.0] — 2026-09-16
+
+Livro 4 da mini-série Grey Star, *War of the Wizards*, adicionado — **continuação direta do Livro 3**
+(a seção final do Livro 3 obtém a Moonstone e aponta pro "Livro 4"; a Seção 1 deste livro abre "At last
+you hold the fabled Moonstone..."). O maior salto de mecânica desde o próprio Livro 1. Ver ADR-0008
+(seção "Atualização — Livro 4") para o detalhamento completo.
+
+- **Bug corrigido, presente desde o Livro 1**: o seletor de ilustrações só reconhecia
+  `alt="[illustration]"` (com colchetes); várias seções dos Livros 1-3 usam `alt="illustration"` (sem
+  colchetes) e tinham suas ilustrações silenciosamente perdidas. Corrigido de forma aditiva — nenhuma
+  ilustração existente mudou, só as que faltavam passaram a aparecer.
+- **Higher Magicks**: um segundo nível de poderes mágicos (6 novos, revelados pela posse da Moonstone),
+  em um campo independente das Magical Powers ("Lesser") já existentes — 4 escolhidos numa primeira
+  aventura, 5 numa transferência. Escolher Theurgy sem já ter Alchemy também concede o Herb Pouch.
+- **Fórmulas de personagem fresco mudam pela primeira vez**: WILLPOWER e ENDURANCE começam fixos em
+  50/30 (sem rolagem) — só COMBAT SKILL continua rolado.
+- **Terceira regra de carry-over, e a primeira a mudar o teto de ENDURANCE**: WILLPOWER +50 e ENDURANCE
+  +30 sobre os valores finais do livro anterior, sem escolha do jogador — e essa soma também vira o
+  novo teto de ENDURANCE, algo que nenhum outro livro da série faz.
+- Novo item fixo: a Moonstone (Special Item, com uma habilidade narrativa de teleporte único).
+- Zero mudança de combate. 360 seções, 24 becos sem saída, zero seções-quebra-cabeça.
+
+`SAVE_VERSION`: 10 → 11 (novo campo `higherMagicalPowers`).
+
 ## [0.35.0] — 2026-09-15
 
 Livro 3 da mini-série Grey Star, *Beyond the Nightmare Gate*, adicionado — **continuação direta do

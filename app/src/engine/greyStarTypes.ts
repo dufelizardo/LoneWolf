@@ -33,6 +33,30 @@ export const MAGICAL_POWER_LABELS: Record<MagicalPower, string> = {
 /** The one-time gift chosen at character creation (equipmnt.htm: "you may choose one of them"). */
 export type StartingGift = 'JewelledDagger' | 'MagicTalisman' | 'VialOfLaumspur';
 
+/** The six "Higher Magicks" - unlocked only by possessing the Moonstone (Book 4+, powers.htm: "There
+ * are thirteen Magical Powers, the first seven of which are called the Lesser Magicks... Possession of
+ * the Moonstone reveals... the Higher Magicks"). Each is an "advanced form" of one specific Lesser
+ * Magick (e.g. Theurgy/Alchemy), but is tracked as its own independent choice, not an upgrade path. */
+export type HigherMagicalPower = 'Thaumaturgy' | 'Telergy' | 'Physiurgy' | 'Theurgy' | 'Visionary' | 'Necromancy';
+
+export const ALL_HIGHER_MAGICAL_POWERS: HigherMagicalPower[] = [
+  'Thaumaturgy',
+  'Telergy',
+  'Physiurgy',
+  'Theurgy',
+  'Visionary',
+  'Necromancy',
+];
+
+export const HIGHER_MAGICAL_POWER_LABELS: Record<HigherMagicalPower, string> = {
+  Thaumaturgy: 'Thaumaturgy',
+  Telergy: 'Telergy',
+  Physiurgy: 'Physiurgy',
+  Theurgy: 'Theurgy',
+  Visionary: 'Visionary',
+  Necromancy: 'Necromancy',
+};
+
 export interface GreyStarActionChart {
   bookId: string;
   combatSkill: number;
@@ -52,6 +76,10 @@ export interface GreyStarActionChart {
   enduranceMax: number;
   /** Exactly five of the seven ALL_MAGICAL_POWERS, chosen once at creation. */
   magicalPowers: MagicalPower[];
+  /** Empty for every character before Book 4 (War of the Wizards) - see chooseHigherMagicalPowers in
+   * greyStarCharacter.ts. Unlike magicalPowers, these are never upgrades of existing choices; they're a
+   * wholly separate pool unlocked by possessing the Moonstone. */
+  higherMagicalPowers: HigherMagicalPower[];
   /**
    * Plain strings, not the shared Lone Wolf WeaponType enum - Grey Star's rules never reference that
    * 10-item weapon list (it's a wholly different book), and reusing it here would leak an irrelevant

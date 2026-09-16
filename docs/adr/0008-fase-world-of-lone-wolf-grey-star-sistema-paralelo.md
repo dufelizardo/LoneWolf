@@ -2,9 +2,9 @@
 
 ## Status
 
-**Implementada.** Livros 1 (*Grey Star the Wizard*), 2 (*The Forbidden City*) e 3 (*Beyond the Nightmare
-Gate*) jogáveis de ponta a ponta — primeiras entregas da fase "World of Lone Wolf", um spin-off da série
-principal, não uma décima fase numérica.
+**Implementada.** Livros 1 (*Grey Star the Wizard*), 2 (*The Forbidden City*), 3 (*Beyond the Nightmare
+Gate*) e 4 (*War of the Wizards*) jogáveis de ponta a ponta — primeiras entregas da fase "World of Lone
+Wolf", um spin-off da série principal, não uma décima fase numérica.
 
 ## Contexto
 
@@ -287,3 +287,80 @@ esconder esse passo quando `previousChart.magicalPowers.length !== 5`.
 padrão do Livro 2. Sem tabela de presente único (`grantsStartingGift: false`, igual ao Livro 2).
 `cmbtrulz.htm` mecanicamente idêntico. Sem mudança de `SAVE_VERSION` — nenhum campo novo persistido,
 só a refatoração da política de cálculo do WILLPOWER.
+
+## Atualização — Livro 4 (War of the Wizards)
+
+O Livro 4 (*War of the Wizards*, `world_of_lone_wolf/ww/en/xhtml/gs/04wotw/`) é a quarta entrega da
+mini-série Grey Star — continuação direta do Livro 3, confirmada comparando `bng` `sect350` (obtém a
+Moonstone, aponta pro "Livro 4... War of the Wizards") com `ww` `tssf.htm`/`sect1` ("At last you hold
+the fabled Moonstone..."). É, de longe, o maior salto de mecânica desde o próprio Livro 1.
+
+### Bug real encontrado e corrigido: seletor de ilustração perdia imagens desde o Livro 1
+
+Investigando o Livro 4, `sect1.htm` revelou que a ilustração real usa `alt="illustration"` (sem
+colchetes), diferente do `alt="[illustration]"` (com colchetes) usado pelos Livros 1-3. Ao generalizar o
+seletor de `parseContent.ts` pra `div.illustration img[alt]:not([alt=""])` e re-rodar o parser em todos
+os livros, descobriu-se que **os Livros 1, 2 e 3 já continham várias seções com essa mesma variante sem
+colchetes**, que o seletor antigo (`img[alt="[illustration]"]` exato) vinha perdendo silenciosamente
+desde a implementação do Livro 1 — 18 seções no `gsw`, mais outras no `tfc`/`bng`, tinham
+`"illustrations": []` quando deveriam ter a imagem real listada. Confirmado que a correção é puramente
+aditiva (`git diff` mostra só arrays vazios virando arrays com 1 item, nunca uma ilustração existente
+sendo trocada ou removida) — os 30 livros da série principal usam exclusivamente `<figure>`, não
+afetados por nenhuma dessas duas variantes.
+
+### Higher Magicks — um segundo nível de poderes mágicos
+
+`powers.htm`: "There are thirteen Magical Powers, the first seven... Lesser Magicks... Possession of
+the Moonstone reveals... the Higher Magicks, of which there are six" (Thaumaturgy, Telergy, Physiurgy,
+Theurgy, Visionary, Necromancy). Contagem de escolha: 5 Lesser + **4 Higher** numa primeira aventura
+Grey Star; Lesser **fica como está** (nota de rodapé 6 — mesma correção "sem precedente" já vista no
+Livro 3) + **5 Higher** (escolha inteiramente nova) numa transferência. Modelado como um campo novo e
+independente, `GreyStarActionChart.higherMagicalPowers: HigherMagicalPower[]` (não uma extensão de
+`magicalPowers`, já que as duas contagens/validações são independentes) e uma nova função
+`chooseHigherMagicalPowers(chart, powers, expectedCount)`, espelhando o estilo de
+`chooseMagicalPowers`/`addExtraMagicalPower`. Gatilho do Herb Pouch estendido: dispara também ao
+escolher **Theurgy** sem já ter Alchemy (equipmnt.htm nota 8/9) — reaproveita
+`grantHerbPouchStartingContents` sem mudança, agora com 3 pontos de chamada.
+`SAVE_VERSION`: 10 → 11 (novo campo).
+
+### Fórmulas de personagem fresco mudam pela primeira vez
+
+`gamerulz.htm`: COMBAT SKILL continua 10+d10 (rolado, nunca mudou). Mas WILLPOWER começa fixo em **50**
+e ENDURANCE fixo em **30** — sem rolagem nenhuma, "your first touch of the Moonstone... regenerates your
+Magical Powers immediately" / "fills your body with energy and power". Novos campos opcionais em
+`greyStarBookEquipment.ts` (`freshWillpowerFlat`/`freshEnduranceFlat`), consumidos por
+`createFreshGreyStarCharacter` no lugar da rolagem quando presentes — sem afetar nenhum livro anterior
+(campos ausentes = fórmula antiga, inalterada).
+
+### Terceira regra de carry-over — e a primeira a mudar o teto de ENDURANCE
+
+Notas de rodapé 1, 2 e 5 resolvem a mesma ambiguidade "sem precedente" já vista nos Livros 2 e 3:
+COMBAT SKILL não muda (mesma recomendação desde o Livro 2); **WILLPOWER = WILLPOWER final do livro
+anterior + 50**; **ENDURANCE = ENDURANCE final do livro anterior + 30, e essa soma vira o novo teto
+também** (nota 5, explícita: "na série Lone Wolf é padrão restaurar o ENDURANCE ao total original ao
+transferir, mas o poder da Moonstone parece mudar essa regra aqui") — a única vez em toda a série
+(Lone Wolf ou Grey Star) onde o carry-over muda o teto de ENDURANCE. Sem dado, sem escolha do jogador.
+
+Isso exigiu generalizar `carryOverGreyStarCharacterToBook`: em vez de receber um
+`GreyStarWillpowerCarryOverMethod` do Livro 2 (acoplamento que já não fazia sentido pra uma 3ª regra
+totalmente diferente), a função central agora recebe um `GreyStarCarryOverPatch` já calculado
+(`{ willpowerCurrent, enduranceCurrent?, enduranceMax? }`) e só aplica + propaga o resto via spread — o
+cálculo de cada regra é uma função pura própria (`computeThreeMethodWillpowerCarryOver`,
+`rollWillpowerForLaterBookCarryOver`, e a nova `computeMoonstoneCarryOver`), selecionada por
+`willpowerCarryOverMode` (`'threeMethods' | 'autoReroll' | 'moonstoneBonus'`) em
+`greyStarBookEquipment.ts`. Os dois modos anteriores continuam produzindo exatamente o mesmo resultado
+de antes (patch sem `enduranceCurrent`/`Max` = ENDURANCE inalterado, mesmo comportamento já testado).
+
+### Item novo: a Moonstone
+
+`equipmnt.htm`: parte do kit fixo, concede uma habilidade narrativa de teleporte único até Shasarak —
+puramente uma escolha de seção futura, sem mecânica de motor nova (mesma categoria de "habilidade
+única" que o presente de despedida do Livro 1 já não precisava de código especial). Modelada como mais
+um `GreyStarSpecialItem` fixo, via a função exportada `grantMoonstone` (reaproveitada tanto por
+`createFreshGreyStarCharacter` quanto pelo fluxo de transferência da tela de criação, já que esse
+caminho não passa pela primeira).
+
+### Sem mudança de combate
+
+Mesmo multiplicador de WILLPOWER, mesmas penalidades de arma, `crtneg.png`/`crtpos.png` byte-idênticos
+por md5 — `greyStarCombat.ts` não precisou de nenhuma mudança.

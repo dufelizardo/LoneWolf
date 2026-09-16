@@ -150,11 +150,12 @@ function parseSectionFile(contentDir: string, num: number): Section {
   const hasPuzzle = clone.find('p.puzzle').length > 0;
 
   const illustrations: string[] = [];
-  // Modern Lone Wolf-series books mark real illustrations with <figure><img/></figure>. Grey Star the
-  // Wizard (world_of_lone_wolf) instead wraps a bordered <table> in <div class="illustration">, with
-  // decorative border-tile <img>s (alt="") alongside the real illustration, which alone carries the
-  // literal alt text "[illustration]" (with brackets) - that's what distinguishes it from the tiles.
-  clone.find('figure img, div.illustration img[alt="[illustration]"]').each((_, el) => {
+  // Modern Lone Wolf-series books mark real illustrations with <figure><img/></figure>. Grey Star
+  // (world_of_lone_wolf) instead wraps a bordered <table> in <div class="illustration">, with
+  // decorative border-tile <img>s (alt="") alongside the real illustration - Books 1-3 give it the
+  // literal alt text "[illustration]" (with brackets), Book 4 uses "illustration" (no brackets), so the
+  // selector matches any non-empty alt rather than one exact string (still excludes the alt="" tiles).
+  clone.find('figure img, div.illustration img[alt]:not([alt=""])').each((_, el) => {
     const src = $(el).attr('src');
     if (src) illustrations.push(src);
   });
