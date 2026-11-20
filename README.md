@@ -130,9 +130,10 @@ kubectl create secret generic lonewolf-postgres-secret \
   --namespace lonewolf \
   --from-literal=POSTGRES_PASSWORD='SENHA-AQUI'
 
-# 3. Resolver o domínio local (mesmo padrão do *.mais-saude.local),
-#    usando o IP do Traefik/MetalLB (192.168.0.200 neste cluster)
-echo "192.168.0.200 lonewolf.local" | sudo tee -a /etc/hosts
+# 3. O nome lonewolf.local é anunciado por mDNS pelo Deployment mdns (k8s/base/deployment-mdns.yaml):
+#    qualquer aparelho do Wi-Fi abre o jogo sem mexer no arquivo hosts. Só se a rede bloquear mDNS,
+#    resolva à mão com o IP do Traefik/MetalLB (192.168.0.200 neste cluster):
+#    echo "192.168.0.200 lonewolf.local" | sudo tee -a /etc/hosts
 
 # 4. Acessar
 curl http://lonewolf.local

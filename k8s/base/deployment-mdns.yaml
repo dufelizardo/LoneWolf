@@ -1,0 +1,63 @@
+# Anuncia lonewolf.local na rede local por mDNS, para qualquer aparelho do Wi-Fi abrir o jogo sem mexer
+# no arquivo hosts. Mesmo anunciador do mais_saude_publica (ADR-0169 de lá); usa a rede do servidor porque o
+# mDNS só circula no Wi-Fi, e divide a porta 5353 com os outros anunciadores do cluster.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdns
+  labels:
+    app: mdns
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mdns
+  template:
+    metadata:
+      labels:
+        app: mdns
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+      containers:
+        - name: mdns
+          image: python:3.13-alpine
+          command: ["python", "-u", "/app/anunciador.py"]
+          env:
+            # IP do Ingress no MetalLB (ADR-0012).
+            - name: MDNS_IP
+              value: "192.168.0.200"
+            - name: MDNS_INTERFACE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          envFrom:
+            - configMapRef:
+                name: mdns-config
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 5m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 48Mi
+          volumeMounts:
+            - name: anunciador
+              mountPath: /app
+              readOnly: true
+      volumes:
+        - name: anunciador
+          configMap:
+            name: mdns-anunciador
