@@ -12,3 +12,13 @@ resources:
   - postgres-service.yaml
   - api-deployment.yaml
   - api-service.yaml
+  - deployment-mdns.yaml
+
+# Nome na rede local por mDNS (deployment-mdns.yaml).
+configMapGenerator:
+  - name: mdns-anunciador
+    files:
+      - mdns/anunciador.py
+  - name: mdns-config
+    literals:
+      - MDNS_NOME=lonewolf.local
